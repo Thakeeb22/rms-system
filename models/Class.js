@@ -12,4 +12,4 @@ const classSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-module.exports = mongoose.model("CLass", classSchema);
+module.exports = mongoose.model("Class", classSchema);

@@ -27,7 +27,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["admin", "teacher"],
       default: "teacher",
-      required: null,
+    },
+    assignedClass: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
     },
     subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subject" }],
     status: {
