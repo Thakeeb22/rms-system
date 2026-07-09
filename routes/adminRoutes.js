@@ -20,6 +20,12 @@ const {
   getAllSubjects,
   updateSubject,
   getSubjectById,
+
+  createSession,
+  getAllSessions,
+  getSessionById,
+  updateSession,
+  setCurrentSession,
 } = require("../controllers/adminController");
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
@@ -53,4 +59,12 @@ router.post("/subjects", auth, isAdmin, createSubject);
 router.get("/subjects", auth, isAdmin, getAllSubjects);
 router.get("/subjects/:id", auth, isAdmin, getSubjectById);
 router.put("/subjects/:id", auth, isAdmin, updateSubject);
+
+// session routes
+router.post("/session", auth, isAdmin, createSession);
+router.get("/session", auth, isAdmin, getAllSessions);
+router.get("/session/:id", auth, isAdmin, getSessionById);
+router.put("/session/:id", auth, isAdmin, updateSession);
+router.patch("/session/:id/set-current", auth, isAdmin, setCurrentSession);
+
 module.exports = router;

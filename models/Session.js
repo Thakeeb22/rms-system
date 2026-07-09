@@ -6,6 +6,7 @@ const sessionSchema = new mongoose.Schema(
       required: [true, "Session Name is required"],
       unique: true,
       trim: true,
+      uppercase: true,
     },
     isCurrent: {
       type: Boolean,
