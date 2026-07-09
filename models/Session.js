@@ -3,11 +3,11 @@ const sessionSchema = new mongoose.Schema(
   {
     sessionName: {
       type: String,
-      required: [true, "Session NAme is required"],
+      required: [true, "Session Name is required"],
       unique: true,
       trim: true,
     },
-    isActive: {
+    isCurrent: {
       type: Boolean,
       default: false,
     },

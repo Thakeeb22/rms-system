@@ -10,7 +10,17 @@ const {
   deactivateTeacher,
   activateTeacher,
 } = require("../controllers/teacherController");
+const {
+  createClass,
+  getAllClasses,
+  getClassById,
+  updateClass,
 
+  createSubject,
+  getAllSubjects,
+  updateSubject,
+  getSubjectById,
+} = require("../controllers/adminController");
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
     success: true,
@@ -23,10 +33,24 @@ router.get("/dashboard", auth, isAdmin, (req, res) => {
     },
   });
 });
+// teacher routes
 router.post("/teachers", auth, isAdmin, createTeacher);
 router.get("/teachers", auth, isAdmin, getAllTeachers);
 router.get("/teachers/:id", auth, isAdmin, getTeacherById);
 router.put("/teachers/:id", auth, isAdmin, updateTeacher);
+
 router.patch("/teachers/:id/deactivate", auth, isAdmin, deactivateTeacher);
 router.patch("/teachers/:id/activate", auth, isAdmin, activateTeacher);
+
+// class routes
+router.post("/classes", auth, isAdmin, createClass);
+router.get("/classes", auth, isAdmin, getAllClasses);
+router.get("/classes/:id", auth, isAdmin, getClassById);
+router.put("/classes/:id", auth, isAdmin, updateClass);
+
+// subjects routes
+router.post("/subjects", auth, isAdmin, createSubject);
+router.get("/subjects", auth, isAdmin, getAllSubjects);
+router.get("/subjects/:id", auth, isAdmin, getSubjectById);
+router.put("/subjects/:id", auth, isAdmin, updateSubject);
 module.exports = router;
