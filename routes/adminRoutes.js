@@ -15,18 +15,21 @@ const {
   getAllClasses,
   getClassById,
   updateClass,
-
+} = require("../controllers/classController");
+const {
   createSubject,
   getAllSubjects,
   updateSubject,
   getSubjectById,
-
+} = require("../controllers/subjectController");
+const {
   createSession,
   getAllSessions,
   getSessionById,
   updateSession,
   setCurrentSession,
-
+} = require("../controllers/sessionController");
+const {
   createTerm,
   getAllTerms,
   getTermById,
