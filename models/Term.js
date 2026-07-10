@@ -6,8 +6,9 @@ const termSchema = new mongoose.Schema(
       required: [true, "Term Name is required"],
       enum: ["First Term", "Second Term", "Third Term"],
       unique: true,
+      trim:true,
     },
-    isActive: {
+    isCurrent: {
       type: Boolean,
       default: false,
     },

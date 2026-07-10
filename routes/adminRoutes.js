@@ -26,6 +26,12 @@ const {
   getSessionById,
   updateSession,
   setCurrentSession,
+
+  createTerm,
+  getAllTerms,
+  getTermById,
+  updateTerm,
+  setCurrentTerm,
 } = require("../controllers/adminController");
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
@@ -61,10 +67,17 @@ router.get("/subjects/:id", auth, isAdmin, getSubjectById);
 router.put("/subjects/:id", auth, isAdmin, updateSubject);
 
 // session routes
-router.post("/session", auth, isAdmin, createSession);
-router.get("/session", auth, isAdmin, getAllSessions);
-router.get("/session/:id", auth, isAdmin, getSessionById);
-router.put("/session/:id", auth, isAdmin, updateSession);
-router.patch("/session/:id/set-current", auth, isAdmin, setCurrentSession);
+router.post("/sessions", auth, isAdmin, createSession);
+router.get("/sessions", auth, isAdmin, getAllSessions);
+router.get("/sessions/:id", auth, isAdmin, getSessionById);
+router.put("/sessions/:id", auth, isAdmin, updateSession);
+router.patch("/sessions/:id/set-current", auth, isAdmin, setCurrentSession);
+
+// term routes
+router.post("/terms", auth, isAdmin, createTerm);
+router.get("/terms", auth, isAdmin, getAllTerms);
+router.get("/terms/:id", auth, isAdmin, getTermById);
+router.put("/terms/:id", auth, isAdmin, updateTerm);
+router.patch("/terms/:id/set-current", auth, isAdmin, setCurrentTerm);
 
 module.exports = router;
