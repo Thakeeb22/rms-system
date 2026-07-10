@@ -32,7 +32,7 @@ const {
   getTermById,
   updateTerm,
   setCurrentTerm,
-} = require("../controllers/adminController");
+} = require("../controllers/termController");
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
     success: true,
