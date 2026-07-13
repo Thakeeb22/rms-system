@@ -1,4 +1,4 @@
-const mongoose = required("mongoose");
+const mongoose = require("mongoose");
 const studentSchema = new mongoose.Schema(
   {
     admissionNumber: {
@@ -6,10 +6,16 @@ const studentSchema = new mongoose.Schema(
       required: [true, "Admission Number is required"],
       unique: true,
       trim: true,
+      uppercase: true,
     },
     fullname: {
       type: String,
       required: [true, "Student Name is required"],
+      trim: true,
+    },
+    guardianName: {
+      type: String,
+      required: [true, "Guardian Name is required"],
       trim: true,
     },
     gender: {
@@ -35,6 +41,10 @@ const studentSchema = new mongoose.Schema(
       type: String,
       enum: ["Active", "Graduated", "Transferred"],
       default: "Active",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {

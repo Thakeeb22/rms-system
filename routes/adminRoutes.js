@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
+
 const {
   createTeacher,
   getAllTeachers,
@@ -10,18 +11,21 @@ const {
   deactivateTeacher,
   activateTeacher,
 } = require("../controllers/teacherController");
+
 const {
   createClass,
   getAllClasses,
   getClassById,
   updateClass,
 } = require("../controllers/classController");
+
 const {
   createSubject,
   getAllSubjects,
   updateSubject,
   getSubjectById,
 } = require("../controllers/subjectController");
+
 const {
   createSession,
   getAllSessions,
@@ -29,6 +33,7 @@ const {
   updateSession,
   setCurrentSession,
 } = require("../controllers/sessionController");
+
 const {
   createTerm,
   getAllTerms,
@@ -36,6 +41,14 @@ const {
   updateTerm,
   setCurrentTerm,
 } = require("../controllers/termController");
+
+const {
+  assignSubjectToClass,
+  getAllClassSubjects,
+  getClassSubjectById,
+  deleteClassSubject,
+} = require("../controllers/classSubjectController");
+
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
     success: true,
@@ -82,5 +95,11 @@ router.get("/terms", auth, isAdmin, getAllTerms);
 router.get("/terms/:id", auth, isAdmin, getTermById);
 router.put("/terms/:id", auth, isAdmin, updateTerm);
 router.patch("/terms/:id/set-current", auth, isAdmin, setCurrentTerm);
+
+// assign subject to class routes
+router.post("/class-subjects", auth, isAdmin, assignSubjectToClass);
+router.get("/class-subjects", auth, isAdmin, getAllClassSubjects);
+router.get("/class-subjects/:id", auth, isAdmin, getClassSubjectById);
+router.delete("/class-subjects/:id", auth, isAdmin, deleteClassSubject);
 
 module.exports = router;
