@@ -49,6 +49,17 @@ const {
   deleteClassSubject,
 } = require("../controllers/classSubjectController");
 
+const {
+  createStudent,
+  getAllStudents,
+  getStudentById,
+  updateStudent,
+  graduateStudent,
+  transferStudent,
+  deactivateStudent,
+  activateStudent,
+} = require("../controllers/studentController");
+
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
     success: true,
@@ -101,5 +112,15 @@ router.post("/class-subjects", auth, isAdmin, assignSubjectToClass);
 router.get("/class-subjects", auth, isAdmin, getAllClassSubjects);
 router.get("/class-subjects/:id", auth, isAdmin, getClassSubjectById);
 router.delete("/class-subjects/:id", auth, isAdmin, deleteClassSubject);
+
+// student routes
+router.post("/students", auth, isAdmin, createStudent);
+router.get("/students", auth, isAdmin, getAllStudents);
+router.get("/students/:id", auth, isAdmin, getStudentById);
+router.put("/students/:id", auth, isAdmin, updateStudent);
+router.patch("/students/:id/graduate", auth, isAdmin, graduateStudent);
+router.patch("/students/:id/transfer", auth, isAdmin, transferStudent);
+router.patch("/students/:id/deactivate", auth, isAdmin, deactivateStudent);
+router.patch("/students/:id/activate", auth, isAdmin, activateStudent);
 
 module.exports = router;
