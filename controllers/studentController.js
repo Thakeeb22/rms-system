@@ -72,7 +72,7 @@ const createStudent = async (req, res) => {
         guardianPhone: student.guardianPhone,
         class: student.class,
         status: student.status,
-        isActive:student.isActive,
+        isActive: student.isActive,
       },
     });
   } catch (error) {
@@ -219,7 +219,7 @@ const updateStudent = async (req, res) => {
         dateOfBirth: student.dateOfBirth,
         guardianPhone: student.guardianPhone,
         class: student.class,
-        isActive:student.isActive,
+        isActive: student.isActive,
       },
     });
   } catch (error) {
@@ -260,6 +260,7 @@ const graduateStudent = async (req, res) => {
       });
     }
     student.status = "Graduated";
+    student.isActive = false;
     await student.save();
     return res.status(200).json({
       success: true,
@@ -269,7 +270,7 @@ const graduateStudent = async (req, res) => {
         admissionNumber: student.admissionNumber,
         fullname: student.fullname,
         status: student.status,
-        isActive:student.isActive
+        isActive: student.isActive,
       },
     });
   } catch (error) {
@@ -309,6 +310,7 @@ const transferStudent = async (req, res) => {
       });
     }
     student.status = "Transferred";
+    student.isActive = false
     await student.save();
     return res.status(200).json({
       success: true,
@@ -318,7 +320,7 @@ const transferStudent = async (req, res) => {
         admissionNumber: student.admissionNumber,
         fullname: student.fullname,
         status: student.status,
-        isActive:student.isActive
+        isActive: student.isActive,
       },
     });
   } catch (error) {
@@ -387,6 +389,12 @@ const activateStudent = async (req, res) => {
         success: false,
         message: "Student not found.",
       });
+    }
+    if(student.status==="Graduated"||student.status==="Transferred"){
+      return res.status(400).json({
+        success:false,
+        message:"Graduated and Transferred students cannot be activated."
+      })
     }
     if (student.isActive) {
       return res.status(400).json({
