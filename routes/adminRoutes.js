@@ -3,7 +3,9 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
 const isTeacher = require("../middleware/isTeacher");
-const isAdminOrTeacher = require("../middleware/isAdminorTeacher")
+const isAdminOrTeacher = require("../middleware/isAdminorTeacher");
+
+const { login, changePassword } = require("../controllers/authController");
 
 const {
   createTeacher,
@@ -12,6 +14,7 @@ const {
   updateTeacher,
   deactivateTeacher,
   activateTeacher,
+  resetTeacherPassword,
 } = require("../controllers/teacherController");
 
 const {
@@ -92,6 +95,13 @@ router.put("/teachers/:id", auth, isAdmin, updateTeacher);
 
 router.patch("/teachers/:id/deactivate", auth, isAdmin, deactivateTeacher);
 router.patch("/teachers/:id/activate", auth, isAdmin, activateTeacher);
+router.patch("/teachers/:id/change-password", auth, changePassword);
+router.patch(
+  "/teachers/:id/reset-password",
+  auth,
+  isAdmin,
+  resetTeacherPassword,
+);
 
 // class routes
 router.post("/classes", auth, isAdmin, createClass);

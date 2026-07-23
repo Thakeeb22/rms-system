@@ -36,7 +36,8 @@ const createTeacher = async (req, res) => {
         message: "A user with this email already exists.",
       });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const temporaryPassword = Math.random().toString(36).slice(-8);
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
     const teacher = await User.create({
       fullname,
       email: email.toLowerCase().trim(),
@@ -46,10 +47,13 @@ const createTeacher = async (req, res) => {
       status: "active",
       assignedClass,
       subjects,
+      mustChangePassword: true,
     });
+
     return res.status(201).json({
       success: true,
       message: "Teacher created successfully.",
+      temporaryPassword,
       teacher: {
         id: teacher.id,
         fullname: teacher.fullname,
@@ -186,6 +190,7 @@ const updateTeacher = async (req, res) => {
     }
     if (password) {
       teacher.password = await bcrypt.hash(password, 10);
+      teacher.mustChangePassword = true;
     }
 
     await teacher.save();
@@ -282,7 +287,7 @@ const activateTeacher = async (req, res) => {
         message: "Only teacher accounts can be activated",
       });
     }
-    if (teacher.status === "active.") {
+    if (teacher.status === "active") {
       return res.status(400).json({
         success: false,
         message: "Teacher is already active.",
@@ -308,6 +313,48 @@ const activateTeacher = async (req, res) => {
     });
   }
 };
+
+const resetTeacherPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        messgage: "Invalid Teacher ID.",
+      });
+    }
+    const teacher = await User.findById(id);
+    if (!teacher) {
+      return res.status(404).json({
+        success: false,
+        message: "Teacher not found.",
+      });
+    }
+    if (teacher.role !== "teacher") {
+      return res.status(400).json({
+        success: false,
+        message: "Selected user is not a teacher.",
+      });
+    }
+
+    const temporaryPassword = Match.random().toString(36).slice(-8);
+    teacher.password = await bcrypt.hash(temporaryPassword, 10);
+    teacher.mustChangePassword = true;
+    await teacher.save();
+    return res.status(200).json({
+      success: true,
+      message: "Password res successfully.",
+      temporaryPassword,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
+
 module.exports = {
   createTeacher,
   getAllTeachers,
@@ -315,4 +362,5 @@ module.exports = {
   updateTeacher,
   deactivateTeacher,
   activateTeacher,
+  resetTeacherPassword,
 };
