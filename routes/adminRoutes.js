@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
+const isTeacher = require("../middleware/isTeacher");
+const isAdminOrTeacher = require("../middleware/isAdminorTeacher")
 
 const {
   createTeacher,
@@ -59,6 +61,16 @@ const {
   deactivateStudent,
   activateStudent,
 } = require("../controllers/studentController");
+
+const {
+  createResult,
+  getAllResults,
+  getResultById,
+  updateResult,
+  deleteResult,
+  publishResult,
+  unpublishResult,
+} = require("../controllers/resultController");
 
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
@@ -122,5 +134,15 @@ router.patch("/students/:id/graduate", auth, isAdmin, graduateStudent);
 router.patch("/students/:id/transfer", auth, isAdmin, transferStudent);
 router.patch("/students/:id/deactivate", auth, isAdmin, deactivateStudent);
 router.patch("/students/:id/activate", auth, isAdmin, activateStudent);
+
+// result routes
+router.post("/results", auth, isAdminOrTeacher, createResult);
+router.get("/results", auth, isAdminOrTeacher, getAllResults);
+router.get("/results/:id", auth, isAdminOrTeacher, getResultById);
+router.put("/results/:id", auth, isAdminOrTeacher, updateResult);
+router.delete("/results/:id", auth, isAdminOrTeacher, deleteResult);
+
+router.patch("/results/publish", auth, isAdmin, publishResult);
+router.patch("/results/unpublish", auth, isAdmin, unpublishResult);
 
 module.exports = router;

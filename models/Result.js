@@ -52,17 +52,20 @@ const resultSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
-      required: true,
+      default: 0,
       min: 0,
       max: 100,
     },
     grade: {
       type: String,
-      required: true,
+      enum: ["A", "B", "C", "D", "E", "F"],
     },
     remark: {
       type: String,
-      required: true,
+    },
+    published: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -81,4 +84,27 @@ resultSchema.index(
     unique: true,
   },
 );
+resultSchema.pre("save", function (next) {
+  this.total = this.test1 + this.test2 + this.exam;
+  if (this.total >= 70) {
+    this.grade = "A";
+    this.remark = "Excellent";
+  } else if (this.total >= 60) {
+    this.grade = "B";
+    this.remark = "Very Good";
+  } else if (this.total >= 50) {
+    this.grade = "C";
+    this.remark = "Good";
+  } else if (this.total >= 45) {
+    this.grade = "D";
+    this.remark = "Fair";
+  } else if (this.total >= 40) {
+    this.grade = "E";
+    this.remark = "Pass";
+  } else {
+    this.grade = "F";
+    this.remark = "Fail";
+  }
+  next();
+});
 module.exports = mongoose.model("Result", resultSchema);
