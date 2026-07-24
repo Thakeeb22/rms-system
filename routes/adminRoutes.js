@@ -95,7 +95,8 @@ router.put("/teachers/:id", auth, isAdmin, updateTeacher);
 
 router.patch("/teachers/:id/deactivate", auth, isAdmin, deactivateTeacher);
 router.patch("/teachers/:id/activate", auth, isAdmin, activateTeacher);
-router.patch("/teachers/:id/change-password", auth, changePassword);
+
+router.patch("/change-password", auth, changePassword);
 router.patch(
   "/teachers/:id/reset-password",
   auth,

@@ -197,6 +197,7 @@ const createResult = async (req, res) => {
       student: studentId,
       subject: subjectId,
       teacher: teacherId,
+      class: classId,
       session: sessionId,
       term: termId,
       test1,
@@ -209,8 +210,8 @@ const createResult = async (req, res) => {
       { path: "subject", select: "subjectName" },
       { path: "teacher", select: "fullname" },
       { path: "class", select: "className" },
-      { path: "session", select: "name" },
-      { path: "term", select: "name" },
+      { path: "session", select: "sessionName" },
+      { path: "term", select: "termName" },
     ]);
     return res.status(201).json({
       success: true,
@@ -270,8 +271,8 @@ const getAllResults = async (req, res) => {
       .populate("subject", "subjectName")
       .populate("teacher", "fullname")
       .populate("class", "className")
-      .populate("session", "name")
-      .populate("term", "name")
+      .populate("session", "sessionName")
+      .populate("term", "termName")
       .sort({ createdAt: -1 });
     return res.status(200).json({
       success: true,
@@ -302,8 +303,8 @@ const getResultById = async (req, res) => {
       .populate("subject", "subjectName")
       .populate("teacher", "fullname")
       .populate("class", "className")
-      .populate("session", "name")
-      .populate("term", "name");
+      .populate("session", "sessionName")
+      .populate("term", "termName");
     if (!result) {
       return res.status(404).json({
         success: false,
@@ -398,8 +399,8 @@ const updateResult = async (req, res) => {
       { path: "subject", select: "subjectName" },
       { path: "teacher", select: "fullname" },
       { path: "class", select: "className" },
-      { path: "session", select: "name" },
-      { path: "term", select: "name" },
+      { path: "session", select: "sessionName" },
+      { path: "term", select: "termName" },
     ]);
     return res.status(200).json({
       success: true,

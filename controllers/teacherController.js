@@ -6,12 +6,11 @@ const mongoose = require("mongoose");
 
 const createTeacher = async (req, res) => {
   try {
-    const { fullname, email, password, phone, assignedClass, subjects } =
+    const { fullname, email, phone, assignedClass, subjects } =
       req.body;
     if (
       !fullname ||
       !email ||
-      !password ||
       !phone ||
       !assignedClass ||
       !subjects
@@ -337,7 +336,7 @@ const resetTeacherPassword = async (req, res) => {
       });
     }
 
-    const temporaryPassword = Match.random().toString(36).slice(-8);
+    const temporaryPassword = Math.random().toString(36).slice(-8);
     teacher.password = await bcrypt.hash(temporaryPassword, 10);
     teacher.mustChangePassword = true;
     await teacher.save();

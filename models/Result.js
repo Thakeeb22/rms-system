@@ -77,6 +77,7 @@ resultSchema.index(
   {
     student: 1,
     subject: 1,
+    class: 1,
     session: 1,
     term: 1,
   },
@@ -105,6 +106,5 @@ resultSchema.pre("save", function (next) {
     this.grade = "F";
     this.remark = "Fail";
   }
-  next();
 });
 module.exports = mongoose.model("Result", resultSchema);

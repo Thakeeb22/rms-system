@@ -38,12 +38,13 @@ const login = async (req, res) => {
       success: true,
       message: "Login Successful!!!",
       token,
-      mustChangePassword: user.mustChangePassword,
+
       user: {
         id: user.id,
         fullname: user.fullname,
         email: user.email,
         role: user.role,
+        mustChangePassword: user.mustChangePassword,
       },
     });
   } catch (error) {
@@ -77,7 +78,7 @@ const changePassword = async (req, res) => {
       });
     }
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (isMatch) {
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
         message: "Current password is incorrect.",
@@ -91,7 +92,7 @@ const changePassword = async (req, res) => {
       });
     }
     user.password = await bcrypt.hash(newPassword, 10);
-    user.mustChangePassword = false
+    user.mustChangePassword = false;
     await user.save();
     return res.status(200).json({
       success: true,
