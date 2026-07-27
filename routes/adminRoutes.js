@@ -75,6 +75,15 @@ const {
   unpublishResult,
 } = require("../controllers/resultController");
 
+const { getStudentReport } = require("../controllers/reportController");
+const {
+  createAssessment,
+  getAllAssessments,
+  getAssessmentById,
+  updateAssessment,
+  deleteAssessment,
+} = require("../controllers/studentAssessmentController");
+
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
     success: true,
@@ -155,5 +164,15 @@ router.delete("/results/:id", auth, isAdminOrTeacher, deleteResult);
 
 router.patch("/results/publish", auth, isAdmin, publishResult);
 router.patch("/results/unpublish", auth, isAdmin, unpublishResult);
+
+// report route
+router.get("/report-card", auth, isAdminOrTeacher, getStudentReport);
+
+// student assessment
+router.post("/student-assessments", auth, isAdminOrTeacher, createAssessment);
+router.get("/assessments", auth, isAdminOrTeacher, getAllAssessments);
+router.get("/assessments/:id", auth, isAdminOrTeacher, getAssessmentById);
+router.put("/assessments/:id", auth, isAdminOrTeacher, updateAssessment);
+router.delete("/assessments/:id", auth, isAdminOrTeacher, deleteAssessment);
 
 module.exports = router;

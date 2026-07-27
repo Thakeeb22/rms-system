@@ -7,6 +7,10 @@ const classSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    classTeacher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Teacher",
+    },
   },
   {
     timestamps: true,
