@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const pdfRoutes = require("./routes/pdfRoutes");
+const annualReportRoutes = require("./routes/annualReportRoutes");
 
 dotenv.config();
 connectDB();
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/pdf", pdfRoutes);
+app.use("/api/annual-report",annualReportRoutes)
 // test route
 app.get("/", (req, res) => {
   res.json({
