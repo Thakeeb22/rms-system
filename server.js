@@ -7,10 +7,12 @@ const adminRoutes = require("./routes/adminRoutes");
 const pdfRoutes = require("./routes/pdfRoutes");
 const annualReportRoutes = require("./routes/annualReportRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const path = require("path")
 
 dotenv.config();
 connectDB();
 const app = express();
+
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -20,6 +22,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/pdf", pdfRoutes);
 app.use("/api/annual-report", annualReportRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use(express.static(path.join(__dirname,"views")))
 
 // test route
 app.get("/", (req, res) => {
