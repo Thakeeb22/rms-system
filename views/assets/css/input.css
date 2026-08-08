@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .card {
+    @apply flex flex-col justify-between gap-4 p-4 items-center md:items-start rounded shadow-md hover:shadow-lg bg-white cursor-pointer duration-200;
+  }
+  th {
+    @apply p-4
+    text-left
+    font-semibold
+    text-gray-700
+    border-b
+    border-gray-200;
+  }
+
+  td {
+    @apply p-4
+    text-left
+    border-b
+    border-gray-100;
+  }
+
+  tbody tr {
+    @apply hover:bg-blue-50 transition-colors duration-200;
+  }
+  .tab-active {
+    @apply border-b-2 border-blue-500 text-blue-600;
+  }
+
+  .tab-inactive {
+    @apply text-gray-500 hover:text-blue-600;
+  }
+}

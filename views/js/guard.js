@@ -1,9 +1,4 @@
-requiresAuth()
-
-const currentUser = getUser()
-if(!currentUser){
-    logout()
-}
+requireAuth()
 
 function requireAdmin(){
     requireRole("admin")

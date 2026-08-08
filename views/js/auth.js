@@ -3,6 +3,7 @@ function saveAuth(user, token, remember = false) {
   localStorage.removeItem("user");
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("user");
+  
   const storage = remember ? localStorage : sessionStorage;
 
   storage.setItem("token", token);
@@ -22,10 +23,14 @@ function requireAuth() {
   }
 }
 function requireRole(role) {
-  requireAuth();
   const user = getUser();
-  if (!user || user.role !== role) {
+  if (!user || !isAuthenticated()) {
     logout();
+    return
+  }
+  if (user.role !== role){
+    logout()
+    return
   }
 }
 function logout() {
