@@ -1,5 +1,8 @@
 function showMessage(elementId, message, type = "error") {
   const element = document.getElementById(elementId);
+
+  if (!element) return;
+
   element.textContent = message;
   element.classList.remove("hidden");
 
@@ -11,17 +14,32 @@ function showMessage(elementId, message, type = "error") {
     element.classList.add("text-green-600");
   }
 }
+
 function hideMessage(elementId) {
-  document.getElementById(elementId).classList.add("hidden");
+  const element = document.getElementById(elementId);
+
+  if (!element) return;
+
+  element.classList.add("hidden");
 }
+
 function setButtonLoading(button, loading, text = "Loading...") {
+  if (!button) return;
+
   if (loading) {
     button.disabled = true;
-    button.dataset.originalText = button.textContent;
-    button.textContent = text;
-    return;
+    button.dataset.originalHTML = button.innerHTML;
+
+    button.innerHTML = `
+      <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+      ${text}
+    `;
   } else {
     button.disabled = false;
-    button.textContent = button.dataset.originalText;
+
+    if (button.dataset.originalHTML) {
+      button.innerHTML = button.dataset.originalHTML;
+      delete button.dataset.originalHTML;
+    }
   }
 }
