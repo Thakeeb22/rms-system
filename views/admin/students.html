@@ -1,12 +1,1131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students</title>
-    <link rel="stylesheet" href="../assets/css/output.css">
-</head>
-<body>
-   
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Management</title>
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css"
+      integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 h-screen overflow-hidden font-[Inter]">
+    <div
+      class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen"
+    >
+      <aside
+        class="hidden md:col-span-1 row-span-3 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300"
+      >
+        <div
+          class="flex flex-col border-b-2 border-gray-400 justify-center items-center"
+        >
+          <div class="w-[100px] h-[100px]">
+            <img
+              src="../images/Education logo.jpg"
+              class="w-full h-full object-contain"
+              alt="Edulog Academy logo"
+            />
+          </div>
+          <h1 class="font-bold text-2xl text-blue-500">Edulog Academy</h1>
+          <p>Result Management System</p>
+        </div>
+        <nav>
+          <ul class="flex flex-col p-3 font-bold">
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./dashboard.html"
+                ><i class="fa-solid fa-gauge-high text-current"></i>
+                Dashboard</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./teachers.html"
+                ><i class="fa-solid fa-chalkboard-user text-current"></i>
+                Teacher Management</a
+              >
+            </li>
+            <li
+              class="rounded bg-blue-500 transition-all duration-200 p-4 cursor-pointer text-white ease-in-out"
+            >
+              <a href="./students.html"
+                ><i class="fa-solid fa-user-graduate text-current"></i> Student
+                Management</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./classes.html"
+                ><i class="fa-solid fa-school text-current"></i> Classes</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./subjects.html"
+                ><i class="fa-solid fa-book-open text-current"></i> Subjects</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./sessions.html"
+                ><i class="fa-regular fa-calendar-days text-current"></i>
+                Sessions</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./terms.html"
+                ><i class="fa-solid fa-calendar-check text-current"></i>
+                Terms</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./class-subject.html"
+                ><i class="fa-solid fa-diagram-project text-current"></i>
+                Assignments</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./results.html"
+                ><i class="fa-solid fa-chart-column text-current"></i>
+                Reports</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <div class="p-4 border-t-2 border-gray-400">
+          <button
+            id="logoutBtn"
+            class="w-full p-2 bg-blue-500 text-white font-bold hover:bg-blue-600 transition ease-in-out duration-200 rounded"
+          >
+            <i class="fa-solid fa-right-from-bracket text-current"></i> Sign Out
+          </button>
+        </div>
+      </aside>
+      <header
+        class="col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-evenly items-center text-blue-500"
+      >
+        <img
+          src="../images/Education logo.jpg"
+          alt="Edulog logo"
+          class="w-20 h-20 md:hidden"
+        />
+        <p class="hidden md:block">Edulog > Student Management</p>
+        <div class="relative">
+          <i
+            class="fa-solid fa-magnifying-glass absolute top-4 left-2 z-10 text-blue-500"
+          ></i>
+          <input
+            id="globalSearch"
+            class="p-2 pl-8 rounded-full outline-none w-[200px] md:w-[400px] border-2 border-blue-400 bg-gray-50 focus:ring focus:ring-blue-400"
+            type="search"
+            placeholder="Search records, students or reports ..."
+            autocomplete="off"
+          />
+          <div
+            id="searchResults"
+            class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-[400px] overflow-y-auto"
+          ></div>
+        </div>
+        <button
+          id="mobileMenuBtn"
+          class="md:hidden text-blue-400 p-4 text-xl"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </header>
+
+      <!-- Mobile Navigation -->
+      <div id="mobileMenu" class="hidden md:hidden fixed inset-0 z-50">
+        <!-- Overlay -->
+        <div id="mobileMenuOverlay" class="absolute inset-0 bg-black/40"></div>
+
+        <!-- Menu -->
+        <aside
+          class="absolute right-0 top-0 h-full w-72 bg-white shadow-xl p-5 overflow-y-auto"
+        >
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-blue-500">Edulog Academy</h2>
+
+            <button
+              id="closeMobileMenu"
+              class="text-gray-600 hover:text-blue-500 text-xl"
+              aria-label="Close navigation menu"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <nav>
+            <ul class="flex flex-col gap-2 font-bold">
+              <li class="rounded hover:bg-blue-500 hover:text-white p-4">
+                <a href="./dashboard.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-gauge-high"></i>
+                  Dashboard
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./teachers.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                  Teacher Management
+                </a>
+              </li>
+
+              <li class="rounded bg-blue-500 text-white p-4 transition">
+                <a href="./students.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-user-graduate"></i>
+                  Student Management
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./classes.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-school"></i>
+                  Classes
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./subjects.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-book-open"></i>
+                  Subjects
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./sessions.html" class="flex items-center gap-3">
+                  <i class="fa-regular fa-calendar-days"></i>
+                  Sessions
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./terms.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-calendar-check"></i>
+                  Terms
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./class-subject.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-diagram-project"></i>
+                  Assignments
+                </a>
+              </li>
+
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./results.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-chart-column"></i>
+                  Reports
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="mt-6 pt-5 border-t">
+            <button
+              id="mobileLogoutBtn"
+              class="w-full p-3 bg-blue-500 text-white font-bold hover:bg-blue-600 transition rounded"
+            >
+              <i class="fa-solid fa-right-from-bracket mr-2"></i>
+              Sign Out
+            </button>
+          </div>
+        </aside>
+      </div>
+      <main
+        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center"
+      >
+        <div
+          class="col-span-1 md:col-span-4 p-4 space-y-2 text-center md:text-left"
+        >
+          <h1 class="text-4xl font-bold flex flex-col">Student Management</h1>
+
+          <p>
+            Manage your students' lifecycle from initial admission to
+            graduation, monitor class distribution, and maintain comprehensive
+            student records for the <span id="currentSession"></span> academic
+            session.
+          </p>
+          <button
+            class="rounded p-3 bg-blue-500 text-white font-bold hover:bg-blue-600 transition"
+            id="addNewStudentBtn"
+          >
+            <i class="fa-solid fa-user-plus"></i> Add New Student
+          </button>
+        </div>
+        <div
+          id="addNewStudentFormBox"
+          class="hidden col-span-1 md:col-span-4 p-4 md:p-5"
+        >
+          <div class="bg-white rounded-xl shadow-md border border-gray-100">
+            <!-- Form Header -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b"
+            >
+              <div>
+                <h2 class="text-2xl font-bold text-gray-800">
+                  Add New Student
+                </h2>
+                <div
+                  id="studentCreatedBox"
+                  class="hidden p-4 rounded-lg border border-green-200 bg-green-50"
+                >
+                  <div class="flex items-start gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0"
+                    >
+                      <i class="fa-solid fa-check text-green-600"></i>
+                    </div>
+
+                    <div>
+                      <h3 class="font-bold text-green-700">
+                        Student Created Successfully
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">
+                  Create a student account.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                id="closeAddStudentFormBtn"
+                class="self-start sm:self-auto w-10 h-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition"
+                title="Close form"
+              >
+                <i class="fa-solid fa-xmark text-lg"></i>
+              </button>
+            </div>
+
+            <!-- Form -->
+            <form id="addNewStudentForm" class="p-5 space-y-6" novalidate>
+              <!-- Message -->
+              <div
+                id="studentFormMessage"
+                class="hidden p-3 rounded-lg text-sm font-medium"
+              ></div>
+
+              <!-- Personal Information -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                  Personal Information
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <!-- Admission Number -->
+                  <div>
+                    <label
+                      for="admissionNumber"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Admission Number
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                      <i
+                        class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      ></i>
+
+                      <input
+                        type="text"
+                        id="admissionNumber"
+                        name="admissionNumber"
+                        placeholder="e.g. ADM/2026/001"
+                        autocomplete="off"
+                        required
+                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      />
+                    </div>
+                  </div>
+                  <!-- Fullname -->
+                  <div>
+                    <label
+                      for="fullname"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Full Name
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                      <i
+                        class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      ></i>
+
+                      <input
+                        type="text"
+                        id="fullname"
+                        name="fullname"
+                        placeholder="e.g. Muhammad Ahmad"
+                        autocomplete="name"
+                        required
+                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      />
+                    </div>
+                  </div>
+                  <!-- Guardian Name -->
+                  <div>
+                    <label
+                      for="guardianName"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Guardian Name
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                      <i
+                        class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      ></i>
+
+                      <input
+                        type="text"
+                        id="guardianName"
+                        name="guardianName"
+                        placeholder="e.g. Muhammad Ahmad"
+                        autocomplete="name"
+                        required
+                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Gender -->
+                  <input
+                    type="radio"
+                    id="genderMale"
+                    name="gender"
+                    value="Male"
+                  />
+
+                  <label for="genderMale">Male</label>
+
+                  <input
+                    type="radio"
+                    id="genderFemale"
+                    name="gender"
+                    value="Female"
+                  />
+
+                  <label for="genderFemale">Female</label>
+
+                  <!-- Date of Birth -->
+                  <div>
+                    <label
+                      for="dateOfBirth"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Date of Birth
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                      <i
+                        class="fa-regular fa-calendar-days absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      ></i>
+
+                      <input
+                        type="date"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        placeholder="e.g. 08/04/2004"
+                        autocomplete="date"
+                        required
+                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      />
+                    </div>
+                  </div>
+                  <!-- Guardian Phone Number -->
+                  <div>
+                    <label
+                      for="guardianPhone"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Guardian Phone Number
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                      <i
+                        class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      ></i>
+                      <input
+                        type="tel"
+                        id="guardianPhone"
+                        name="guardianPhone"
+                        placeholder="e.g. 08012212922"
+                        autocomplete="tel"
+                        required
+                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Academic Assignment -->
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                  Academic Assignment
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <!-- Assigned Class -->
+                  <div>
+                    <label
+                      for="classId"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Assigned Class
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                      <i
+                        class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+                      ></i>
+
+                      <select
+                        name="classId"
+                        id="classId"
+                        required
+                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition appearance-none"
+                      >
+                        <option value="">Select assigned class</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div
+                class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t"
+              >
+                <button
+                  type="button"
+                  id="cancelAddStudentBtn"
+                  class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  id="createStudentBtn"
+                  class="px-5 py-3 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <i class="fa-solid fa-user-plus mr-2"></i>
+                  Create Student
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div
+          class="col-span-1 md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4"
+        >
+          <div class="card">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-group text-blue-600"></i>
+            </div>
+
+            <h2 class="font-semibold text-xl">Total Students</h2>
+            <p class="text-4xl font-bold" id="totalStudents">0</p>
+          </div>
+          <div class="card">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-group text-blue-600"></i>
+            </div>
+
+            <h2 class="font-semibold text-xl">Total Active Students</h2>
+            <p class="text-4xl font-bold" id="totalActiveStudents">0</p>
+          </div>
+          <div class="card">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-group text-blue-600"></i>
+            </div>
+
+            <h2 class="font-semibold text-xl">Total Transferred Students</h2>
+            <p class="text-4xl font-bold" id="totalTransferredStudents">0</p>
+          </div>
+          <div class="card">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-group text-blue-600"></i>
+            </div>
+
+            <h2 class="font-semibold text-xl">Total Graduated Students</h2>
+            <p class="text-4xl font-bold" id="totalGraduatedStudents">0</p>
+          </div>
+          <div class="card">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-group text-blue-600"></i>
+            </div>
+
+            <h2 class="font-semibold text-xl">Total Inactive Students</h2>
+            <p class="text-4xl font-bold" id="totalInactiveStudents">0</p>
+          </div>
+        </div>
+
+        <div class="col-span-1 md:col-span-4 p-5">
+          <div
+            class="bg-white col-span-1 md:col-span-4 p-5 text-blue-500 flex flex-col md:flex-row justify-between items-center gap-3"
+          >
+            <div class="relative">
+              <i
+                class="fa-solid fa-magnifying-glass absolute top-4 left-2 z-10"
+              ></i>
+              <input
+                id="studentSearch"
+                class="p-2 pl-8 rounded-full outline-none w-[200px] md:w-[400px] border-2 border-blue-400 bg-gray-50 focus:ring focus:ring-blue-400"
+                type="search"
+                placeholder="Search by name  or admission number ..."
+                autocomplete="off"
+              />
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-angle-down absolute top-4 left-2 z-10"></i>
+              <button
+                class="rounded p-3 pl-8 bg-gray-100 text-black font-bold transition"
+                type="button"
+                id="classFilterBtn"
+              >
+                All Classes
+              </button>
+              <div
+                id="classFilterMenu"
+                class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-[400px] overflow-y-auto"
+              ></div>
+            </div>
+          </div>
+          <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+            <table class="w-full min-w-[750px]">
+              <thead
+                class="bg-gray-100 items-center justify-center p-4 border-b-2 text-blue-600"
+                id="studentsHead"
+              >
+                <tr>
+                  <th>Student's Name</th>
+                  <th>Admission Number</th>
+                  <th>Guardian Name</th>
+                  <th>Gender</th>
+                  <th>Guardian Phone</th>
+                  <th>Class</th>
+                  <th>Date of Birth</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="studentsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+      <footer class="col-span-5 p-6 text-center">
+        <p>All Rights Reserved. &copy 2026</p>
+      </footer>
+    </div>
+    <!-- View Student Modal -->
+    <div
+      id="viewStudentModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <!-- Overlay -->
+      <div
+        id="viewStudentModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+
+      <!-- Modal -->
+      <div
+        class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-graduate text-blue-600 text-xl"></i>
+            </div>
+
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Student Details</h2>
+
+              <p class="text-sm text-gray-500">View student information</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            id="closeViewStudentModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition"
+            aria-label="Close student details"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div id="viewStudentLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+
+          <p class="text-gray-500">Loading student details...</p>
+        </div>
+
+        <!-- Error -->
+        <div
+          id="viewStudentError"
+          class="hidden m-5 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700"
+        ></div>
+
+        <!-- Content -->
+        <div id="viewStudentContent" class="hidden p-5 space-y-6">
+          <!-- Student Identity -->
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          >
+            <div>
+              <h3 id="viewStudentName" class="text-2xl font-bold text-gray-800">
+                —
+              </h3>
+
+              <p id="viewStudentAdmissionNumber" class="text-gray-500 mt-1">
+                —
+              </p>
+            </div>
+
+            <span
+              id="viewStudentStatus"
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
+            >
+              —
+            </span>
+          </div>
+
+          <!-- Information Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Gender -->
+            <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-venus-mars text-blue-600"></i>
+                </div>
+
+                <div>
+                  <p id="viewStudentGender" class="font-semibold text-gray-800">
+                    —
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Assigned Class -->
+            <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-school text-purple-600"></i>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Assigned Class</p>
+
+                  <p id="viewStudentClass" class="font-semibold text-gray-800">
+                    —
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Of Birth -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-regular fa-calendar-days text-blue-500"></i>
+
+              <h3 class="font-semibold text-gray-800">Date of Birth</h3>
+            </div>
+
+            <p
+              id="viewStudentDateOfBirth"
+              class="font-medium text-gray-800"
+            ></p>
+          </div>
+          <!-- Guardian Name -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-user-shield text-blue-500"></i>
+              <h3 class="font-semibold text-gray-800">Guardian Name</h3>
+            </div>
+
+            <p id="viewGuardianName" class="font-medium text-gray-800">—</p>
+          </div>
+          <!-- Guardian Phone Number -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-user-shield text-blue-500"></i>
+              <h3 class="font-semibold text-gray-800">Guardian Phone Number</h3>
+            </div>
+
+            <p id="viewGuardianNumber" class="font-medium text-gray-800">—</p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end p-5 border-t bg-gray-50">
+          <button
+            type="button"
+            id="closeViewStudentModalBtn"
+            class="px-5 py-2.5 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Edit Student Modal -->
+    <div
+      id="editStudentModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <!-- Overlay -->
+      <div
+        id="editStudentModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+
+      <!-- Modal -->
+      <div
+        class="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-2xl"
+      >
+        <!-- Header -->
+        <div
+          class="sticky top-0 z-10 flex items-center justify-between p-5 border-b bg-white"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-pen text-yellow-600 text-xl"></i>
+            </div>
+
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Edit Student</h2>
+
+              <p class="text-sm text-gray-500">Update student information.</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            id="closeEditStudentModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
+            aria-label="Close edit student modal"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div id="editStudentLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+
+          <p class="text-gray-500">Loading Student information...</p>
+        </div>
+
+        <!-- Error -->
+        <div
+          id="editStudentError"
+          class="hidden m-5 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700"
+        ></div>
+
+        <!-- Form -->
+        <form id="editStudentForm" class="hidden p-5 space-y-6" novalidate>
+          <!-- Success/Error Message -->
+          <div
+            id="editStudentFormMessage"
+            class="hidden p-3 rounded-lg text-sm font-medium"
+          ></div>
+
+          <!-- Personal Information -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              Personal Information
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <!-- Full Name -->
+              <div>
+                <label
+                  for="editFullname"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Full Name
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  ></i>
+
+                  <input
+                    type="text"
+                    id="editFullname"
+                    name="fullname"
+                    autocomplete="name"
+                    required
+                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  />
+                </div>
+              </div>
+              <!-- Admission Number -->
+              <div>
+                <label
+                  for="editAdmissionNumber"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Admission Number
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  ></i>
+
+                  <input
+                    type="text"
+                    id="editAdmissionNumber"
+                    name="admissionNumber"
+                    autocomplete="off"
+                    required
+                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  />
+                </div>
+              </div>
+
+              <!-- Gender -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Gender
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <span
+                    ><input type="radio" name="gender" value="Male" />
+                    Male</span
+                  >
+                  <span
+                    ><input type="radio" name="gender" value="Female" />
+                    Female</span
+                  >
+                </div>
+              </div>
+
+              <!-- date of birth -->
+              <div>
+                <label
+                  for="editDateOfBirth"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Date of Birth
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-regular fa-calendar-days absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  ></i>
+
+                  <input
+                    type="date"
+                    id="editDateOfBirth"
+                    name="dateOfBirth"
+                    autocomplete="date"
+                    required
+                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  />
+                </div>
+              </div>
+              <!-- Guardian Name -->
+              <div>
+                <label
+                  for="guardianName"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Guardian Name
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-user-shield absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  ></i>
+
+                  <input
+                    type="text"
+                    id="editGuardianName"
+                    name="guardianName"
+                    autocomplete="name"
+                    required
+                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  />
+                </div>
+              </div>
+              <!-- Guardian Phone Number -->
+              <div>
+                <label
+                  for="guardianPhone"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Guardian Phone Number
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  ></i>
+
+                  <input
+                    type="tel"
+                    id="editGuardianPhoneNumber"
+                    name="guardianPhone"
+                    autocomplete="tel"
+                    required
+                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Assignment -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              Academic Assignment
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <!-- Class -->
+              <div>
+                <label
+                  for="editClassId"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Assigned Class
+                  <span class="text-red-500">*</span>
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+                  ></i>
+
+                  <select
+                    id="editClassId"
+                    name="classId"
+                    required
+                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition appearance-none"
+                  >
+                    <option value="">Select assigned class</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div
+            class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t"
+          >
+            <button
+              type="button"
+              id="cancelEditStudentBtn"
+              class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              id="saveStudentChangesBtn"
+              class="px-5 py-3 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <i class="fa-solid fa-floppy-disk mr-2"></i>
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/guard.js"></script>
+    <script src="./js/search.js"></script>
+    <script src="./js/students.js"></script>
+  </body>
 </html>

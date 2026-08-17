@@ -160,7 +160,7 @@ function renderSearchResults(data) {
       searchResults.innerHTML += `
         <div
           class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b"
-          onclick="openSearchResult('/admin/students.html?id=${student._id}')"
+          onclick="openSearchResult('./students.html?studentId=${student._id}')"
         >
           <p class="font-semibold">
             ${student.fullname || "Unknown student"}
@@ -305,3 +305,7 @@ function setupGlobalSearch() {
     }
   });
 }
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadSearchData();
+  setupGlobalSearch();
+});

@@ -78,7 +78,7 @@ function renderTeachers(data = teachers) {
   if (data.length === 0) {
     teachersBody.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center p-6 text-gray-500">
+        <td colspan="6" class="text-center p-6 text-gray-500">
           No teachers found.
         </td>
       </tr>
@@ -114,7 +114,23 @@ function renderTeachers(data = teachers) {
       <td class="p-4 text-gray-800">
         ${subjectNames}
       </td>
-
+      <td class="p-4">
+        ${
+          teacher.status === "active"
+            ? `
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                Active
+              </span>
+            `
+            : `
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                <span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                Inactive
+              </span>
+            `
+        }
+      </td>
       <td class="p-4">
         <div class="flex gap-2">
 
@@ -553,12 +569,18 @@ async function deactivateTeacher(id) {
     });
 
     if (!response.ok) {
-      throw new Error(response.data.message || "Failed to deactivate teacher.");
+      throw new Error(
+        response.data.message || "Failed to deactivate teacher.",
+      );
     }
 
     alert(response.data.message);
 
+    // Refresh teacher table and statistics
     await loadTeachers();
+
+    // Keep global search data synchronized
+    await loadSearchData();
   } catch (error) {
     console.error(error);
 
@@ -572,12 +594,18 @@ async function activateTeacher(id) {
     });
 
     if (!response.ok) {
-      throw new Error(response.data.message || "Failed to activate teacher.");
+      throw new Error(
+        response.data.message || "Failed to activate teacher.",
+      );
     }
 
     alert(response.data.message);
 
+    // Refresh teacher table and statistics
     await loadTeachers();
+
+    // Keep global search data synchronized
+    await loadSearchData();
   } catch (error) {
     console.error(error);
 

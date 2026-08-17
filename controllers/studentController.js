@@ -390,19 +390,20 @@ const activateStudent = async (req, res) => {
         message: "Student not found.",
       });
     }
-    if(student.status==="Graduated"||student.status==="Transferred"){
-      return res.status(400).json({
-        success:false,
-        message:"Graduated and Transferred students cannot be activated."
-      })
-    }
-    if (student.isActive) {
+    // if(student.status==="Graduated"||student.status==="Transferred"){
+    //   return res.status(400).json({
+    //     success:false,
+    //     message:"Graduated and Transferred students cannot be activated."
+    //   })
+    // }
+    if (student.isActive && student.status === "Active") {
       return res.status(400).json({
         success: false,
         message: "Student is already active.",
       });
     }
     student.isActive = true;
+    student.status = "Active";
     await student.save();
     return res.status(200).json({
       success: true,
