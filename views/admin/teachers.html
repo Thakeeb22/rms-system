@@ -279,7 +279,7 @@
           <h1 class="text-4xl font-bold flex flex-col">Teacher Management</h1>
 
           <p>
-            Manage your academic staff, monitor subject and class distribtuion
+            Manage your academic staff, monitor subject and class distribution
             and maintain comprehensive professional records for the
             <span id="currentSession"></span> academic session
           </p>
@@ -345,7 +345,7 @@
                   </div>
                 </div>
                 <p class="text-sm text-gray-500 mt-1">
-                  Create a teacher account and assign their class and subjects.
+                  Create and manage teacher accounts and professional Information.
                 </p>
               </div>
 
@@ -457,70 +457,6 @@
                 </div>
               </div>
 
-              <!-- Academic Assignment -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                  Academic Assignment
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <!-- Assigned Class -->
-                  <div>
-                    <label
-                      for="assignedClass"
-                      class="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Assigned Class
-                      <span class="text-red-500">*</span>
-                    </label>
-
-                    <div class="relative">
-                      <i
-                        class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
-                      ></i>
-
-                      <select
-                        name="assignedClass"
-                        id="assignedClass"
-                        required
-                        class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition appearance-none"
-                      >
-                        <option value="">Select assigned class</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <!-- Subjects -->
-                  <div>
-                    <label
-                      for="subjects"
-                      class="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Subjects
-                      <span class="text-red-500">*</span>
-                    </label>
-
-                    <select
-                      name="subjects"
-                      id="subjects"
-                      multiple
-                      required
-                      size="5"
-                      class="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                    ></select>
-
-                    <p class="text-xs text-gray-500 mt-2">
-                      <i class="fa-solid fa-circle-info mr-1"></i>
-                      Hold
-                      <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">
-                        Ctrl
-                      </kbd>
-                      to select multiple subjects.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               <!-- Account Information -->
               <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
                 <div class="flex gap-3">
@@ -619,20 +555,6 @@
                 autocomplete="off"
               />
             </div>
-            <div class="relative">
-              <i class="fa-solid fa-angle-down absolute top-4 left-2 z-10"></i>
-              <button
-                class="rounded p-3 pl-8 bg-gray-100 text-black font-bold transition"
-                type="button"
-                id="subjectFilterBtn"
-              >
-                All Subjects
-              </button>
-              <div
-                id="subjectFilterMenu"
-                class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-[400px] overflow-y-auto"
-              ></div>
-            </div>
           </div>
           <div class="overflow-x-auto bg-white rounded-lg shadow-md">
             <table class="w-full min-w-[750px]">
@@ -643,8 +565,7 @@
                 <tr>
                   <th>Teacher's Name</th>
                   <th>Email</th>
-                  <th>Class</th>
-                  <th>Subject</th>
+                  <th>Phone</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -654,14 +575,14 @@
           </div>
         </div>
       </main>
-      <footer class="col-span-5 p-6 text-center">
+      <footer class="col-span-1 md:col-span-5 p-6 text-center">
         <p>All Rights Reserved. &copy 2026</p>
       </footer>
     </div>
     <!-- View Teacher Modal -->
     <div
       id="viewTeacherModal"
-      class="hidden fixed inset-0 z-50  items-center justify-center p-4"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
     >
       <!-- Overlay -->
       <div
@@ -756,36 +677,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Assigned Class -->
-            <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center"
-                >
-                  <i class="fa-solid fa-school text-purple-600"></i>
-                </div>
-
-                <div>
-                  <p class="text-xs text-gray-500">Assigned Class</p>
-
-                  <p id="viewTeacherClass" class="font-semibold text-gray-800">
-                    —
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Subjects -->
-          <div>
-            <div class="flex items-center gap-2 mb-3">
-              <i class="fa-solid fa-book-open text-blue-500"></i>
-
-              <h3 class="font-semibold text-gray-800">Assigned Subjects</h3>
-            </div>
-
-            <div id="viewTeacherSubjects" class="flex flex-wrap gap-2"></div>
           </div>
         </div>
 
@@ -804,7 +695,7 @@
     <!-- Edit Teacher Modal -->
     <div
       id="editTeacherModal"
-      class="hidden fixed inset-0 z-50  items-center justify-center p-4"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
     >
       <!-- Overlay -->
       <div
@@ -952,70 +843,6 @@
                     class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
                   />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Academic Assignment -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-              Academic Assignment
-            </h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <!-- Class -->
-              <div>
-                <label
-                  for="editAssignedClass"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Assigned Class
-                  <span class="text-red-500">*</span>
-                </label>
-
-                <div class="relative">
-                  <i
-                    class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
-                  ></i>
-
-                  <select
-                    id="editAssignedClass"
-                    name="assignedClass"
-                    required
-                    class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition appearance-none"
-                  >
-                    <option value="">Select assigned class</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Subjects -->
-              <div>
-                <label
-                  for="editSubjects"
-                  class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Subjects
-                  <span class="text-red-500">*</span>
-                </label>
-
-                <select
-                  id="editSubjects"
-                  name="subjects"
-                  multiple
-                  required
-                  size="5"
-                  class="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                ></select>
-
-                <p class="text-xs text-gray-500 mt-2">
-                  <i class="fa-solid fa-circle-info mr-1"></i>
-                  Hold
-                  <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">
-                    Ctrl
-                  </kbd>
-                  to select multiple subjects.
-                </p>
               </div>
             </div>
           </div>

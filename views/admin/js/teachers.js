@@ -1,12 +1,9 @@
 requireAdmin();
 
 let teachers = [];
-let classes = [];
-let subjects = [];
 
 let teacherFilters = {
   search: "",
-  subject: "",
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,8 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initializeTeachersPage() {
   await Promise.all([
     loadTeachers(),
-    loadClasses(),
-    loadSubjects(),
     loadSearchData(),
   ]);
 
@@ -25,7 +20,6 @@ async function initializeTeachersPage() {
   setupGlobalSearch();
   setupTeacherForm();
   setupAddTeacherButton();
-  setupSubjectFilter();
   setupLogoutButtons();
   setupMobileMenu();
 
@@ -37,6 +31,11 @@ async function initializeTeachersPage() {
   // Handle teacher opened from global search
   openTeacherFromSearch();
 }
+
+/* =========================================================
+   GLOBAL SEARCH → OPEN TEACHER
+========================================================= */
+
 async function openTeacherFromSearch() {
   const params = new URLSearchParams(window.location.search);
   const teacherId = params.get("teacherId");
@@ -45,9 +44,18 @@ async function openTeacherFromSearch() {
 
   await viewTeacher(teacherId);
 
-  // Remove the query parameter from the URL
-  window.history.replaceState({}, document.title, window.location.pathname);
+  // Remove query parameter from URL
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname,
+  );
 }
+
+/* =========================================================
+   LOAD TEACHERS
+========================================================= */
+
 async function loadTeachers() {
   try {
     const response = await apiRequest("/admin/teachers", {
@@ -55,7 +63,9 @@ async function loadTeachers() {
     });
 
     if (!response.ok) {
-      throw new Error(response.data.message || "Failed to load teachers.");
+      throw new Error(
+        response.data?.message || "Failed to load teachers.",
+      );
     }
 
     teachers = response.data.teachers || [];
@@ -68,6 +78,11 @@ async function loadTeachers() {
     alert(error.message || "Failed to load teachers.");
   }
 }
+
+/* =========================================================
+   RENDER TEACHERS
+========================================================= */
+
 function renderTeachers(data = teachers) {
   const teachersBody = document.getElementById("teachersBody");
 
@@ -78,7 +93,7 @@ function renderTeachers(data = teachers) {
   if (data.length === 0) {
     teachersBody.innerHTML = `
       <tr>
-        <td colspan="6" class="text-center p-6 text-gray-500">
+        <td colspan="5" class="text-center p-6 text-gray-500">
           No teachers found.
         </td>
       </tr>
@@ -92,12 +107,6 @@ function renderTeachers(data = teachers) {
 
     row.className = "border-b hover:bg-gray-50";
 
-    const subjectNames = teacher.subjects?.length
-      ? teacher.subjects.map((subject) => subject.subjectName).join(", ")
-      : "No subject";
-
-    const className = teacher.assignedClass?.className || "No class";
-
     row.innerHTML = `
       <td class="p-4 font-semibold text-gray-800">
         ${teacher.fullname || "N/A"}
@@ -108,12 +117,9 @@ function renderTeachers(data = teachers) {
       </td>
 
       <td class="p-4 text-gray-800">
-        ${className}
+        ${teacher.phone || "N/A"}
       </td>
 
-      <td class="p-4 text-gray-800">
-        ${subjectNames}
-      </td>
       <td class="p-4">
         ${
           teacher.status === "active"
@@ -131,6 +137,7 @@ function renderTeachers(data = teachers) {
             `
         }
       </td>
+
       <td class="p-4">
         <div class="flex gap-2">
 
@@ -181,6 +188,11 @@ function renderTeachers(data = teachers) {
 
   attachTeacherActions();
 }
+
+/* =========================================================
+   TEACHER STATISTICS
+========================================================= */
+
 function updateTeacherStats() {
   const totalTeachers = teachers.length;
 
@@ -192,111 +204,55 @@ function updateTeacherStats() {
     (teacher) => teacher.status === "inactive",
   ).length;
 
-  document.getElementById("totalTeachers").textContent = totalTeachers;
+  const totalElement = document.getElementById("totalTeachers");
+  const activeElement = document.getElementById(
+    "totalActiveTeachers",
+  );
+  const inactiveElement = document.getElementById(
+    "totalInactiveTeachers",
+  );
 
-  document.getElementById("totalActiveTeachers").textContent = activeTeachers;
-
-  document.getElementById("totalInactiveTeachers").textContent =
-    inactiveTeachers;
-}
-async function loadClasses() {
-  try {
-    const response = await apiRequest("/admin/classes", {
-      method: "GET",
-    });
-
-    if (!response.ok) {
-      throw new Error(response.data.message || "Failed to load classes.");
-    }
-
-    classes = response.data.classes || [];
-
-    populateClassSelect();
-  } catch (error) {
-    console.error("Error loading classes:", error);
-
-    alert(error.message || "Failed to load classes.");
-  }
-}
-function populateClassSelect() {
-  const select = document.getElementById("assignedClass");
-
-  if (!select) return;
-
-  select.innerHTML = `
-    <option value="">Select Assigned Class</option>
-  `;
-
-  classes.forEach((classItem) => {
-    const option = document.createElement("option");
-
-    option.value = classItem._id;
-    option.textContent = classItem.className;
-
-    select.appendChild(option);
-  });
-}
-async function loadSubjects() {
-  try {
-    const response = await apiRequest("/admin/subjects", {
-      method: "GET",
-    });
-
-    if (!response.ok) {
-      throw new Error(response.data.message || "Failed to load subjects.");
-    }
-
-    subjects = response.data.subjects || [];
-
-    populateSubjectSelect();
-    populateSubjectFilter();
-  } catch (error) {
-    console.error("Error loading subjects:", error);
-
-    alert(error.message || "Failed to load subjects.");
-  }
-}
-function populateSubjectSelect() {
-  const select = document.getElementById("subjects");
-
-  if (!select) return;
-
-  select.innerHTML = "";
-
-  if (subjects.length === 0) {
-    const option = document.createElement("option");
-
-    option.disabled = true;
-    option.textContent = "No subjects available";
-
-    select.appendChild(option);
-
-    return;
+  if (totalElement) {
+    totalElement.textContent = totalTeachers;
   }
 
-  subjects.forEach((subject) => {
-    const option = document.createElement("option");
+  if (activeElement) {
+    activeElement.textContent = activeTeachers;
+  }
 
-    option.value = subject._id;
-    option.textContent = subject.subjectName;
-
-    select.appendChild(option);
-  });
+  if (inactiveElement) {
+    inactiveElement.textContent = inactiveTeachers;
+  }
 }
+
+/* =========================================================
+   CREATE TEACHER
+========================================================= */
+
 function setupTeacherForm() {
   const form = document.getElementById("addNewTeacherForm");
 
   if (!form) return;
 
-  const submitButton = form.querySelector('button[type="submit"]');
+  const submitButton = form.querySelector(
+    'button[type="submit"]',
+  );
 
-  const messageBox = document.getElementById("teacherFormMessage");
+  const messageBox = document.getElementById(
+    "teacherFormMessage",
+  );
 
-  const createdBox = document.getElementById("teacherCreatedBox");
+  const createdBox = document.getElementById(
+    "teacherCreatedBox",
+  );
 
-  const temporaryPassword = document.getElementById("temporaryPassword");
+  const temporaryPassword = document.getElementById(
+    "temporaryPassword",
+  );
 
-  const copyPasswordBtn = document.getElementById("copyTemporaryPassword");
+  const copyPasswordBtn = document.getElementById(
+    "copyTemporaryPassword",
+  );
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -307,27 +263,27 @@ function setupTeacherForm() {
       createdBox.classList.add("hidden");
     }
 
-    const fullname = document.getElementById("fullname").value.trim();
+    const fullname =
+      document.getElementById("fullname")?.value.trim();
 
-    const email = document.getElementById("email").value.trim();
+    const email =
+      document.getElementById("email")?.value.trim();
 
-    const phone = document.getElementById("phoneNumber").value.trim();
+    const phone =
+      document.getElementById("phoneNumber")?.value.trim();
 
-    const assignedClass = document.getElementById("assignedClass").value;
+    /* -------------------------
+       Validation
+    ------------------------- */
 
-    const subjectSelect = document.getElementById("subjects");
-
-    const selectedSubjects = Array.from(subjectSelect.selectedOptions)
-      .map((option) => option.value)
-      .filter(Boolean);
-
-    // Validation
     if (!fullname) {
       showMessage(
         "teacherFormMessage",
         "Please enter the teacher's full name.",
       );
-      document.getElementById("fullname").focus();
+
+      document.getElementById("fullname")?.focus();
+
       return;
     }
 
@@ -336,7 +292,9 @@ function setupTeacherForm() {
         "teacherFormMessage",
         "Please enter the teacher's email address.",
       );
-      document.getElementById("email").focus();
+
+      document.getElementById("email")?.focus();
+
       return;
     }
 
@@ -345,27 +303,15 @@ function setupTeacherForm() {
         "teacherFormMessage",
         "Please enter the teacher's phone number.",
       );
-      document.getElementById("phoneNumber").focus();
+
+      document.getElementById("phoneNumber")?.focus();
+
       return;
     }
 
-    if (!assignedClass) {
-      showMessage(
-        "teacherFormMessage",
-        "Please select the teacher's assigned class.",
-      );
-      document.getElementById("assignedClass").focus();
-      return;
-    }
-
-    if (selectedSubjects.length === 0) {
-      showMessage(
-        "teacherFormMessage",
-        "Please assign at least one subject to the teacher.",
-      );
-      subjectSelect.focus();
-      return;
-    }
+    /* -------------------------
+       Submit
+    ------------------------- */
 
     setButtonLoading(submitButton, true, "Creating...");
 
@@ -377,39 +323,58 @@ function setupTeacherForm() {
           fullname,
           email,
           phone,
-          assignedClass,
-          subjects: selectedSubjects,
         }),
       });
 
       if (!response.ok) {
-        throw new Error(response.data?.message || "Failed to create teacher.");
+        throw new Error(
+          response.data?.message ||
+            "Failed to create teacher.",
+        );
       }
 
       const teacher = response.data.teacher;
-      const generatedPassword = response.data.temporaryPassword;
 
-      // Show success message
+      const generatedPassword =
+        response.data.temporaryPassword;
+
+      /* -------------------------
+         Success
+      ------------------------- */
+
       showMessage(
         "teacherFormMessage",
         `${teacher.fullname} has been added successfully.`,
         "success",
       );
 
-      // Show temporary password
+      /* -------------------------
+         Temporary password
+      ------------------------- */
+
       if (createdBox && temporaryPassword) {
-        temporaryPassword.textContent = generatedPassword || "Not provided";
+        temporaryPassword.textContent =
+          generatedPassword || "Not provided";
 
         createdBox.classList.remove("hidden");
       }
 
-      // Reset form
+      /* -------------------------
+         Reset form
+      ------------------------- */
+
       form.reset();
 
-      // Refresh teacher data
+      /* -------------------------
+         Refresh teacher list
+      ------------------------- */
+
       await loadTeachers();
 
-      // Refresh global search data
+      /* -------------------------
+         Refresh global search
+      ------------------------- */
+
       await loadSearchData();
     } catch (error) {
       console.error("Create teacher error:", error);
@@ -423,90 +388,63 @@ function setupTeacherForm() {
     }
   });
 
-  // Copy temporary password
+  /* =====================================================
+     COPY TEMPORARY PASSWORD
+  ===================================================== */
+
   if (copyPasswordBtn) {
-    copyPasswordBtn.addEventListener("click", async () => {
-      const password = temporaryPassword?.textContent?.trim();
+    copyPasswordBtn.addEventListener(
+      "click",
+      async () => {
+        const password =
+          temporaryPassword?.textContent?.trim();
 
-      if (!password) return;
+        if (!password) return;
 
-      try {
-        await navigator.clipboard.writeText(password);
+        try {
+          await navigator.clipboard.writeText(password);
 
-        const originalHTML = copyPasswordBtn.innerHTML;
+          const originalHTML =
+            copyPasswordBtn.innerHTML;
 
-        copyPasswordBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+          copyPasswordBtn.innerHTML =
+            '<i class="fa-solid fa-check"></i>';
 
-        setTimeout(() => {
-          copyPasswordBtn.innerHTML = originalHTML;
-        }, 1500);
-      } catch (error) {
-        console.error("Failed to copy password:", error);
-      }
-    });
+          setTimeout(() => {
+            copyPasswordBtn.innerHTML =
+              originalHTML;
+          }, 1500);
+        } catch (error) {
+          console.error(
+            "Failed to copy password:",
+            error,
+          );
+        }
+      },
+    );
   }
 }
-// function showTeacherFormMessage(message) {
-//   const element = document.getElementById("teacherFormMessage");
 
-//   if (!element) return;
+/* =========================================================
+   ADD TEACHER FORM TOGGLE
+========================================================= */
 
-//   element.textContent = message;
-
-//   element.classList.remove(
-//     "hidden",
-//     "bg-green-50",
-//     "text-green-700",
-//     "border-green-200",
-//   );
-
-//   element.classList.add(
-//     "bg-red-50",
-//     "text-red-700",
-//     "border",
-//     "border-red-200",
-//   );
-// }
-
-// function showTeacherFormSuccess(message) {
-//   const element = document.getElementById("teacherFormMessage");
-
-//   if (!element) return;
-
-//   element.textContent = message;
-
-//   element.classList.remove(
-//     "hidden",
-//     "bg-red-50",
-//     "text-red-700",
-//     "border-red-200",
-//   );
-
-//   element.classList.add(
-//     "bg-green-50",
-//     "text-green-700",
-//     "border",
-//     "border-green-200",
-//   );
-// }
-
-// function hideTeacherFormMessage() {
-//   const element = document.getElementById("teacherFormMessage");
-
-//   if (!element) return;
-
-//   element.classList.add("hidden");
-// }
 function setupAddTeacherButton() {
-  const addNewTeacherBtn = document.getElementById("addNewTeacherBtn");
-
-  const addNewTeacherFormBox = document.getElementById("addNewTeacherFormBox");
-
-  const closeAddTeacherFormBtn = document.getElementById(
-    "closeAddTeacherFormBtn",
+  const addNewTeacherBtn = document.getElementById(
+    "addNewTeacherBtn",
   );
 
-  const cancelAddTeacherBtn = document.getElementById("cancelAddTeacherBtn");
+  const addNewTeacherFormBox = document.getElementById(
+    "addNewTeacherFormBox",
+  );
+
+  const closeAddTeacherFormBtn =
+    document.getElementById(
+      "closeAddTeacherFormBtn",
+    );
+
+  const cancelAddTeacherBtn =
+    document.getElementById("cancelAddTeacherBtn");
 
   if (!addNewTeacherBtn || !addNewTeacherFormBox) {
     return;
@@ -520,7 +458,7 @@ function setupAddTeacherButton() {
       Add New Teacher
     `;
 
-    hideTeacherFormMessage();
+    hideMessage("teacherFormMessage");
   }
 
   function openForm() {
@@ -531,7 +469,6 @@ function setupAddTeacherButton() {
       Close Form
     `;
 
-    // Scroll the form into view
     addNewTeacherFormBox.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -539,7 +476,10 @@ function setupAddTeacherButton() {
   }
 
   addNewTeacherBtn.addEventListener("click", () => {
-    const isHidden = addNewTeacherFormBox.classList.contains("hidden");
+    const isHidden =
+      addNewTeacherFormBox.classList.contains(
+        "hidden",
+      );
 
     if (isHidden) {
       openForm();
@@ -548,14 +488,21 @@ function setupAddTeacherButton() {
     }
   });
 
-  if (closeAddTeacherFormBtn) {
-    closeAddTeacherFormBtn.addEventListener("click", closeForm);
-  }
+  closeAddTeacherFormBtn?.addEventListener(
+    "click",
+    closeForm,
+  );
 
-  if (cancelAddTeacherBtn) {
-    cancelAddTeacherBtn.addEventListener("click", closeForm);
-  }
+  cancelAddTeacherBtn?.addEventListener(
+    "click",
+    closeForm,
+  );
 }
+
+/* =========================================================
+   DEACTIVATE TEACHER
+========================================================= */
+
 async function deactivateTeacher(id) {
   const confirmed = confirm(
     "Are you sure you want to deactivate this teacher?",
@@ -564,175 +511,237 @@ async function deactivateTeacher(id) {
   if (!confirmed) return;
 
   try {
-    const response = await apiRequest(`/admin/teachers/${id}/deactivate`, {
-      method: "PATCH",
-    });
+    const response = await apiRequest(
+      `/admin/teachers/${id}/deactivate`,
+      {
+        method: "PATCH",
+      },
+    );
 
     if (!response.ok) {
       throw new Error(
-        response.data.message || "Failed to deactivate teacher.",
+        response.data?.message ||
+          "Failed to deactivate teacher.",
       );
     }
 
     alert(response.data.message);
 
-    // Refresh teacher table and statistics
     await loadTeachers();
-
-    // Keep global search data synchronized
     await loadSearchData();
   } catch (error) {
-    console.error(error);
+    console.error("Deactivate teacher error:", error);
 
-    alert(error.message || "Failed to deactivate teacher.");
+    alert(
+      error.message ||
+        "Failed to deactivate teacher.",
+    );
   }
 }
+
+/* =========================================================
+   ACTIVATE TEACHER
+========================================================= */
+
 async function activateTeacher(id) {
   try {
-    const response = await apiRequest(`/admin/teachers/${id}/activate`, {
-      method: "PATCH",
-    });
+    const response = await apiRequest(
+      `/admin/teachers/${id}/activate`,
+      {
+        method: "PATCH",
+      },
+    );
 
     if (!response.ok) {
       throw new Error(
-        response.data.message || "Failed to activate teacher.",
+        response.data?.message ||
+          "Failed to activate teacher.",
       );
     }
 
     alert(response.data.message);
 
-    // Refresh teacher table and statistics
     await loadTeachers();
-
-    // Keep global search data synchronized
     await loadSearchData();
   } catch (error) {
-    console.error(error);
+    console.error("Activate teacher error:", error);
 
-    alert(error.message || "Failed to activate teacher.");
+    alert(
+      error.message ||
+        "Failed to activate teacher.",
+    );
   }
 }
+
+/* =========================================================
+   TEACHER ACTION BUTTONS
+========================================================= */
+
 function attachTeacherActions() {
-  document.querySelectorAll(".viewTeacherBtn").forEach((button) => {
-    button.addEventListener("click", () => {
-      viewTeacher(button.dataset.id);
+  document
+    .querySelectorAll(".viewTeacherBtn")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        viewTeacher(button.dataset.id);
+      });
     });
-  });
 
-  document.querySelectorAll(".editTeacherBtn").forEach((button) => {
-    button.addEventListener("click", () => {
-      editTeacher(button.dataset.id);
+  document
+    .querySelectorAll(".editTeacherBtn")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        editTeacher(button.dataset.id);
+      });
     });
-  });
 
-  document.querySelectorAll(".deactivateTeacherBtn").forEach((button) => {
-    button.addEventListener("click", () => {
-      deactivateTeacher(button.dataset.id);
+  document
+    .querySelectorAll(".deactivateTeacherBtn")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        deactivateTeacher(button.dataset.id);
+      });
     });
-  });
 
-  document.querySelectorAll(".activateTeacherBtn").forEach((button) => {
-    button.addEventListener("click", () => {
-      activateTeacher(button.dataset.id);
+  document
+    .querySelectorAll(".activateTeacherBtn")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        activateTeacher(button.dataset.id);
+      });
     });
-  });
 }
+
+/* =========================================================
+   VIEW TEACHER
+========================================================= */
+
 async function viewTeacher(id) {
-  const modal = document.getElementById("viewTeacherModal");
-  const loading = document.getElementById("viewTeacherLoading");
-  const content = document.getElementById("viewTeacherContent");
-  const errorBox = document.getElementById("viewTeacherError");
+  const modal =
+    document.getElementById("viewTeacherModal");
+
+  const loading = document.getElementById(
+    "viewTeacherLoading",
+  );
+
+  const content = document.getElementById(
+    "viewTeacherContent",
+  );
+
+  const errorBox = document.getElementById(
+    "viewTeacherError",
+  );
 
   if (!modal) return;
 
-  // Open modal
   modal.classList.remove("hidden");
 
-  // Reset states
-  loading.classList.remove("hidden");
-  content.classList.add("hidden");
-  errorBox.classList.add("hidden");
-  errorBox.textContent = "";
+  loading?.classList.remove("hidden");
+  content?.classList.add("hidden");
+
+  errorBox?.classList.add("hidden");
+
+  if (errorBox) {
+    errorBox.textContent = "";
+  }
 
   try {
-    const response = await apiRequest(`/admin/teachers/${id}`, {
-      method: "GET",
-    });
+    const response = await apiRequest(
+      `/admin/teachers/${id}`,
+      {
+        method: "GET",
+      },
+    );
 
     if (!response.ok) {
       throw new Error(
-        response.data?.message || "Failed to load teacher details.",
+        response.data?.message ||
+          "Failed to load teacher details.",
       );
     }
 
     const teacher = response.data.teacher;
 
-    // Basic information
-    document.getElementById("viewTeacherName").textContent =
-      teacher.fullname || "N/A";
+    /* -------------------------
+       Basic information
+    ------------------------- */
 
-    document.getElementById("viewTeacherEmail").textContent =
-      teacher.email || "N/A";
+    document.getElementById(
+      "viewTeacherName",
+    ).textContent = teacher.fullname || "N/A";
 
-    document.getElementById("viewTeacherPhone").textContent =
-      teacher.phone || "N/A";
+    document.getElementById(
+      "viewTeacherEmail",
+    ).textContent = teacher.email || "N/A";
 
-    document.getElementById("viewTeacherClass").textContent =
-      teacher.assignedClass?.className || "No class assigned";
+    document.getElementById(
+      "viewTeacherPhone",
+    ).textContent = teacher.phone || "N/A";
 
-    // Status
-    const statusElement = document.getElementById("viewTeacherStatus");
+    /* -------------------------
+       Status
+    ------------------------- */
 
-    statusElement.textContent =
-      teacher.status === "active" ? "Active" : "Inactive";
+    const statusElement =
+      document.getElementById(
+        "viewTeacherStatus",
+      );
 
-    statusElement.className =
-      teacher.status === "active"
-        ? "inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700"
-        : "inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-700";
+    if (statusElement) {
+      statusElement.textContent =
+        teacher.status === "active"
+          ? "Active"
+          : "Inactive";
 
-    // Subjects
-    const subjectsContainer = document.getElementById("viewTeacherSubjects");
-
-    subjectsContainer.innerHTML = "";
-
-    if (teacher.subjects?.length) {
-      teacher.subjects.forEach((subject) => {
-        const badge = document.createElement("span");
-
-        badge.className =
-          "px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium";
-
-        badge.textContent = subject.subjectName || "Unknown Subject";
-
-        subjectsContainer.appendChild(badge);
-      });
-    } else {
-      subjectsContainer.innerHTML = `
-        <span class="text-gray-500 text-sm">
-          No subjects assigned.
-        </span>
-      `;
+      statusElement.className =
+        teacher.status === "active"
+          ? "inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700"
+          : "inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-700";
     }
 
-    // Show content
-    loading.classList.add("hidden");
-    content.classList.remove("hidden");
+    /* -------------------------
+       Show content
+    ------------------------- */
+
+    loading?.classList.add("hidden");
+    content?.classList.remove("hidden");
   } catch (error) {
-    console.error("View teacher error:", error);
+    console.error(
+      "View teacher error:",
+      error,
+    );
 
-    loading.classList.add("hidden");
+    loading?.classList.add("hidden");
 
-    errorBox.textContent = error.message || "Failed to load teacher details.";
+    if (errorBox) {
+      errorBox.textContent =
+        error.message ||
+        "Failed to load teacher details.";
 
-    errorBox.classList.remove("hidden");
+      errorBox.classList.remove("hidden");
+    }
   }
 }
+
+/* =========================================================
+   VIEW TEACHER MODAL
+========================================================= */
+
 function setupViewTeacherModal() {
-  const modal = document.getElementById("viewTeacherModal");
-  const closeButton = document.getElementById("closeViewTeacherModal");
-  const closeButtonFooter = document.getElementById("closeViewTeacherModalBtn");
-  const overlay = document.getElementById("viewTeacherModalOverlay");
+  const modal =
+    document.getElementById("viewTeacherModal");
+
+  const closeButton = document.getElementById(
+    "closeViewTeacherModal",
+  );
+
+  const closeButtonFooter =
+    document.getElementById(
+      "closeViewTeacherModalBtn",
+    );
+
+  const overlay = document.getElementById(
+    "viewTeacherModalOverlay",
+  );
 
   if (!modal) return;
 
@@ -740,454 +749,453 @@ function setupViewTeacherModal() {
     modal.classList.add("hidden");
   };
 
-  closeButton?.addEventListener("click", closeModal);
+  closeButton?.addEventListener(
+    "click",
+    closeModal,
+  );
 
-  closeButtonFooter?.addEventListener("click", closeModal);
+  closeButtonFooter?.addEventListener(
+    "click",
+    closeModal,
+  );
 
-  overlay?.addEventListener("click", closeModal);
+  overlay?.addEventListener(
+    "click",
+    closeModal,
+  );
 
-  // Close with Escape
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+    if (
+      event.key === "Escape" &&
+      !modal.classList.contains("hidden")
+    ) {
       closeModal();
     }
   });
 }
+
+/* =========================================================
+   TEACHER SEARCH
+========================================================= */
+
 function setupTeacherSearch() {
-  const teacherSearch = document.getElementById("teacherSearch");
+  const teacherSearch =
+    document.getElementById("teacherSearch");
 
   if (!teacherSearch) return;
 
   teacherSearch.addEventListener("input", () => {
-    teacherFilters.search = teacherSearch.value.toLowerCase().trim();
+    teacherFilters.search =
+      teacherSearch.value
+        .toLowerCase()
+        .trim();
 
     applyTeacherFilters();
   });
 }
+
 function applyTeacherFilters() {
   const searchTerm = teacherFilters.search;
-  const subjectId = teacherFilters.subject;
 
-  const filtered = teachers.filter((teacher) => {
-    /*
-     * SEARCH FILTER
-     */
-    const fullname = teacher.fullname?.toLowerCase() || "";
+  const filtered = teachers.filter(
+    (teacher) => {
+      const fullname =
+        teacher.fullname?.toLowerCase() || "";
 
-    const email = teacher.email?.toLowerCase() || "";
+      const email =
+        teacher.email?.toLowerCase() || "";
 
-    const phone = teacher.phone?.toLowerCase() || "";
+      const phone =
+        teacher.phone?.toLowerCase() || "";
 
-    const className = teacher.assignedClass?.className?.toLowerCase() || "";
-
-    const teacherSubjects =
-      teacher.subjects
-        ?.map((subject) => subject.subjectName?.toLowerCase() || "")
-        .join(" ") || "";
-
-    const matchesSearch =
-      !searchTerm ||
-      fullname.includes(searchTerm) ||
-      email.includes(searchTerm) ||
-      phone.includes(searchTerm) ||
-      className.includes(searchTerm) ||
-      teacherSubjects.includes(searchTerm);
-
-    /*
-     * SUBJECT FILTER
-     */
-    const matchesSubject =
-      !subjectId ||
-      teacher.subjects?.some((subject) => subject._id === subjectId);
-
-    return matchesSearch && matchesSubject;
-  });
+      return (
+        !searchTerm ||
+        fullname.includes(searchTerm) ||
+        email.includes(searchTerm) ||
+        phone.includes(searchTerm)
+      );
+    },
+  );
 
   renderTeachers(filtered);
 }
-function populateSubjectFilter() {
-  const menu = document.getElementById("subjectFilterMenu");
-  const button = document.getElementById("subjectFilterBtn");
 
-  if (!menu || !button) return;
+/* =========================================================
+   EDIT TEACHER
+========================================================= */
 
-  menu.innerHTML = "";
-
-  // All Subjects
-  const allButton = document.createElement("button");
-
-  allButton.type = "button";
-  allButton.className = "block w-full text-left px-4 py-3 hover:bg-blue-50";
-
-  allButton.textContent = "All Subjects";
-
-  allButton.addEventListener("click", () => {
-    teacherFilters.subject = "";
-
-    // Update filter button text
-    button.textContent = "All Subjects";
-
-    applyTeacherFilters();
-
-    menu.classList.add("hidden");
-  });
-
-  menu.appendChild(allButton);
-
-  // Individual subjects
-  subjects.forEach((subject) => {
-    const subjectButton = document.createElement("button");
-
-    subjectButton.type = "button";
-    subjectButton.className =
-      "block w-full text-left px-4 py-3 hover:bg-blue-50";
-
-    subjectButton.textContent = subject.subjectName;
-
-    subjectButton.addEventListener("click", () => {
-      teacherFilters.subject = subject._id;
-
-      // Update filter button text
-      button.textContent = subject.subjectName;
-
-      applyTeacherFilters();
-
-      menu.classList.add("hidden");
-    });
-
-    menu.appendChild(subjectButton);
-  });
-}
-function setupSubjectFilter() {
-  const menu = document.getElementById("subjectFilterMenu");
-  const button = document.getElementById("subjectFilterBtn");
-
-  if (!menu || !button) return;
-
-  button.addEventListener("click", (event) => {
-    event.stopPropagation();
-
-    menu.classList.toggle("hidden");
-  });
-
-  // Close when clicking outside
-  document.addEventListener("click", (event) => {
-    if (!menu.contains(event.target) && !button.contains(event.target)) {
-      menu.classList.add("hidden");
-    }
-  });
-}
-function setupLogoutButtons() {
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", logout);
-  }
-
-  if (mobileLogoutBtn) {
-    mobileLogoutBtn.addEventListener("click", logout);
-  }
-}
-function setupMobileMenu() {
-  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-
-  const mobileMenu = document.getElementById("mobileMenu");
-
-  const closeMobileMenu = document.getElementById("closeMobileMenu");
-
-  const mobileMenuOverlay = document.getElementById("mobileMenuOverlay");
-
-  if (!mobileMenuBtn || !mobileMenu || !closeMobileMenu || !mobileMenuOverlay) {
-    return;
-  }
-
-  mobileMenuBtn.addEventListener("click", () => {
-    mobileMenu.classList.remove("hidden");
-
-    mobileMenuBtn.setAttribute("aria-expanded", "true");
-  });
-
-  const closeMenu = () => {
-    mobileMenu.classList.add("hidden");
-
-    mobileMenuBtn.setAttribute("aria-expanded", "false");
-  };
-
-  closeMobileMenu.addEventListener("click", closeMenu);
-
-  mobileMenuOverlay.addEventListener("click", closeMenu);
-}
 async function editTeacher(id) {
-  const modal = document.getElementById("editTeacherModal");
-  const loading = document.getElementById("editTeacherLoading");
-  const form = document.getElementById("editTeacherForm");
-  const errorBox = document.getElementById("editTeacherError");
+  const modal =
+    document.getElementById("editTeacherModal");
+
+  const loading =
+    document.getElementById(
+      "editTeacherLoading",
+    );
+
+  const form =
+    document.getElementById("editTeacherForm");
+
+  const errorBox =
+    document.getElementById(
+      "editTeacherError",
+    );
 
   if (!modal) return;
 
-  // Open modal
   modal.classList.remove("hidden");
 
-  // Reset state
-  loading.classList.remove("hidden");
-  form.classList.add("hidden");
-  errorBox.classList.add("hidden");
-  errorBox.textContent = "";
+  loading?.classList.remove("hidden");
+  form?.classList.add("hidden");
+
+  errorBox?.classList.add("hidden");
+
+  if (errorBox) {
+    errorBox.textContent = "";
+  }
 
   hideEditTeacherMessage();
 
   try {
-    const response = await apiRequest(`/admin/teachers/${id}`, {
-      method: "GET",
-    });
+    const response = await apiRequest(
+      `/admin/teachers/${id}`,
+      {
+        method: "GET",
+      },
+    );
 
     if (!response.ok) {
-      throw new Error(response.data?.message || "Failed to load teacher.");
+      throw new Error(
+        response.data?.message ||
+          "Failed to load teacher.",
+      );
     }
 
     const teacher = response.data.teacher;
 
-    // Store teacher ID on the form
-    form.dataset.teacherId = teacher._id;
+    /* -------------------------
+       Store teacher ID
+    ------------------------- */
 
-    // Personal information
-    document.getElementById("editFullname").value = teacher.fullname || "";
+    if (form) {
+      form.dataset.teacherId = teacher._id;
+    }
 
-    document.getElementById("editEmail").value = teacher.email || "";
+    /* -------------------------
+       Personal information
+    ------------------------- */
 
-    document.getElementById("editPhone").value = teacher.phone || "";
+    const fullnameInput =
+      document.getElementById("editFullname");
 
-    // Class
-    populateEditClassSelect(teacher.assignedClass?._id);
+    const emailInput =
+      document.getElementById("editEmail");
 
-    // Subjects
-    populateEditSubjectSelect(
-      teacher.subjects?.map((subject) => subject._id) || [],
+    const phoneInput =
+      document.getElementById("editPhone");
+
+    const statusInput =
+      document.getElementById(
+        "editTeacherStatus",
+      );
+
+    if (fullnameInput) {
+      fullnameInput.value =
+        teacher.fullname || "";
+    }
+
+    if (emailInput) {
+      emailInput.value =
+        teacher.email || "";
+    }
+
+    if (phoneInput) {
+      phoneInput.value =
+        teacher.phone || "";
+    }
+
+    if (statusInput) {
+      statusInput.value =
+        teacher.status || "active";
+    }
+
+    /* -------------------------
+       Show form
+    ------------------------- */
+
+    loading?.classList.add("hidden");
+    form?.classList.remove("hidden");
+  } catch (error) {
+    console.error(
+      "Edit teacher load error:",
+      error,
     );
 
-    // Status
-    document.getElementById("editTeacherStatus").value =
-      teacher.status || "active";
+    loading?.classList.add("hidden");
 
-    // Show form
-    loading.classList.add("hidden");
-    form.classList.remove("hidden");
-  } catch (error) {
-    console.error("Edit teacher load error:", error);
+    if (errorBox) {
+      errorBox.textContent =
+        error.message ||
+        "Failed to load teacher.";
 
-    loading.classList.add("hidden");
-
-    errorBox.textContent = error.message || "Failed to load teacher.";
-
-    errorBox.classList.remove("hidden");
+      errorBox.classList.remove("hidden");
+    }
   }
 }
-function populateEditClassSelect(selectedClassId = "") {
-  const select = document.getElementById("editAssignedClass");
 
-  if (!select) return;
+/* =========================================================
+   EDIT TEACHER FORM
+========================================================= */
 
-  select.innerHTML = `
-    <option value="">
-      Select Assigned Class
-    </option>
-  `;
-
-  classes.forEach((classItem) => {
-    const option = document.createElement("option");
-
-    option.value = classItem._id;
-    option.textContent = classItem.className;
-
-    if (classItem._id === selectedClassId) {
-      option.selected = true;
-    }
-
-    select.appendChild(option);
-  });
-}
-function populateEditSubjectSelect(selectedSubjectIds = []) {
-  const select = document.getElementById("editSubjects");
-
-  if (!select) return;
-
-  select.innerHTML = "";
-
-  if (subjects.length === 0) {
-    const option = document.createElement("option");
-
-    option.disabled = true;
-    option.textContent = "No subjects available";
-
-    select.appendChild(option);
-
-    return;
-  }
-
-  subjects.forEach((subject) => {
-    const option = document.createElement("option");
-
-    option.value = subject._id;
-    option.textContent = subject.subjectName;
-
-    if (selectedSubjectIds.includes(subject._id)) {
-      option.selected = true;
-    }
-
-    select.appendChild(option);
-  });
-}
 function setupEditTeacherForm() {
-  const form = document.getElementById("editTeacherForm");
+  const form =
+    document.getElementById("editTeacherForm");
 
   if (!form) return;
 
-  const submitButton = document.getElementById("saveTeacherChangesBtn");
+  const submitButton =
+    document.getElementById(
+      "saveTeacherChangesBtn",
+    );
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  form.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
 
-    hideEditTeacherMessage();
+      hideEditTeacherMessage();
 
-    const teacherId = form.dataset.teacherId;
+      const teacherId =
+        form.dataset.teacherId;
 
-    if (!teacherId) {
-      showEditTeacherError("Teacher ID is missing.");
-      return;
-    }
+      if (!teacherId) {
+        showEditTeacherError(
+          "Teacher ID is missing.",
+        );
 
-    const fullname = document.getElementById("editFullname").value.trim();
-
-    const email = document.getElementById("editEmail").value.trim();
-
-    const phone = document.getElementById("editPhone").value.trim();
-
-    const assignedClass = document.getElementById("editAssignedClass").value;
-
-    const subjectSelect = document.getElementById("editSubjects");
-
-    const selectedSubjects = Array.from(subjectSelect.selectedOptions)
-      .map((option) => option.value)
-      .filter(Boolean);
-
-    const status = document.getElementById("editTeacherStatus").value;
-
-    // Validation
-    if (!fullname) {
-      showEditTeacherError("Please enter the teacher's full name.");
-
-      document.getElementById("editFullname").focus();
-
-      return;
-    }
-
-    if (!email) {
-      showEditTeacherError("Please enter the teacher's email address.");
-
-      document.getElementById("editEmail").focus();
-
-      return;
-    }
-
-    if (!phone) {
-      showEditTeacherError("Please enter the teacher's phone number.");
-
-      document.getElementById("editPhone").focus();
-
-      return;
-    }
-
-    if (!assignedClass) {
-      showEditTeacherError("Please select the teacher's assigned class.");
-
-      document.getElementById("editAssignedClass").focus();
-
-      return;
-    }
-
-    if (selectedSubjects.length === 0) {
-      showEditTeacherError(
-        "Please assign at least one subject to the teacher.",
-      );
-
-      subjectSelect.focus();
-
-      return;
-    }
-
-    setButtonLoading(submitButton, true, "Saving...");
-
-    try {
-      const response = await apiRequest(`/admin/teachers/${teacherId}`, {
-        method: "PUT",
-
-        body: JSON.stringify({
-          fullname,
-          email,
-          phone,
-          assignedClass,
-          subjects: selectedSubjects,
-          status,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(response.data?.message || "Failed to update teacher.");
+        return;
       }
 
-      showEditTeacherSuccess(
-        response.data?.message || "Teacher updated successfully.",
+      const fullname =
+        document.getElementById(
+          "editFullname",
+        )?.value.trim();
+
+      const email =
+        document.getElementById(
+          "editEmail",
+        )?.value.trim();
+
+      const phone =
+        document.getElementById(
+          "editPhone",
+        )?.value.trim();
+
+      const status =
+        document.getElementById(
+          "editTeacherStatus",
+        )?.value;
+
+      /* -------------------------
+         Validation
+      ------------------------- */
+
+      if (!fullname) {
+        showEditTeacherError(
+          "Please enter the teacher's full name.",
+        );
+
+        document
+          .getElementById("editFullname")
+          ?.focus();
+
+        return;
+      }
+
+      if (!email) {
+        showEditTeacherError(
+          "Please enter the teacher's email address.",
+        );
+
+        document
+          .getElementById("editEmail")
+          ?.focus();
+
+        return;
+      }
+
+      if (!phone) {
+        showEditTeacherError(
+          "Please enter the teacher's phone number.",
+        );
+
+        document
+          .getElementById("editPhone")
+          ?.focus();
+
+        return;
+      }
+
+      if (
+        !status ||
+        !["active", "inactive"].includes(
+          status,
+        )
+      ) {
+        showEditTeacherError(
+          "Please select a valid teacher status.",
+        );
+
+        document
+          .getElementById(
+            "editTeacherStatus",
+          )
+          ?.focus();
+
+        return;
+      }
+
+      /* -------------------------
+         Submit
+      ------------------------- */
+
+      setButtonLoading(
+        submitButton,
+        true,
+        "Saving...",
       );
 
-      // Refresh teacher list
-      await loadTeachers();
+      try {
+        const response = await apiRequest(
+          `/admin/teachers/${teacherId}`,
+          {
+            method: "PUT",
 
-      // Refresh global search data
-      await loadSearchData();
+            body: JSON.stringify({
+              fullname,
+              email,
+              phone,
+              status,
+            }),
+          },
+        );
 
-      // Close after short delay
-      setTimeout(() => {
-        closeEditTeacherModal();
-      }, 1000);
-    } catch (error) {
-      console.error("Update teacher error:", error);
+        if (!response.ok) {
+          throw new Error(
+            response.data?.message ||
+              "Failed to update teacher.",
+          );
+        }
 
-      showEditTeacherError(error.message || "Failed to update teacher.");
-    } finally {
-      setButtonLoading(submitButton, false);
-    }
-  });
+        showEditTeacherSuccess(
+          response.data?.message ||
+            "Teacher updated successfully.",
+        );
+
+        /* -------------------------
+           Refresh teacher list
+        ------------------------- */
+
+        await loadTeachers();
+
+        /* -------------------------
+           Refresh global search
+        ------------------------- */
+
+        await loadSearchData();
+
+        /* -------------------------
+           Close modal
+        ------------------------- */
+
+        setTimeout(() => {
+          closeEditTeacherModal();
+        }, 1000);
+      } catch (error) {
+        console.error(
+          "Update teacher error:",
+          error,
+        );
+
+        showEditTeacherError(
+          error.message ||
+            "Failed to update teacher.",
+        );
+      } finally {
+        setButtonLoading(
+          submitButton,
+          false,
+        );
+      }
+    },
+  );
 }
+
+/* =========================================================
+   EDIT TEACHER MODAL
+========================================================= */
+
 function setupEditTeacherModal() {
-  const modal = document.getElementById("editTeacherModal");
+  const modal =
+    document.getElementById(
+      "editTeacherModal",
+    );
 
-  const closeButton = document.getElementById("closeEditTeacherModal");
+  const closeButton =
+    document.getElementById(
+      "closeEditTeacherModal",
+    );
 
-  const cancelButton = document.getElementById("cancelEditTeacherBtn");
+  const cancelButton =
+    document.getElementById(
+      "cancelEditTeacherBtn",
+    );
 
-  const overlay = document.getElementById("editTeacherModalOverlay");
+  const overlay =
+    document.getElementById(
+      "editTeacherModalOverlay",
+    );
 
   if (!modal) return;
 
-  closeButton?.addEventListener("click", closeEditTeacherModal);
+  closeButton?.addEventListener(
+    "click",
+    closeEditTeacherModal,
+  );
 
-  cancelButton?.addEventListener("click", closeEditTeacherModal);
+  cancelButton?.addEventListener(
+    "click",
+    closeEditTeacherModal,
+  );
 
-  overlay?.addEventListener("click", closeEditTeacherModal);
+  overlay?.addEventListener(
+    "click",
+    closeEditTeacherModal,
+  );
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !modal.classList.contains("hidden")) {
-      closeEditTeacherModal();
-    }
-  });
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (
+        event.key === "Escape" &&
+        !modal.classList.contains("hidden")
+      ) {
+        closeEditTeacherModal();
+      }
+    },
+  );
 }
 
 function closeEditTeacherModal() {
-  const modal = document.getElementById("editTeacherModal");
+  const modal =
+    document.getElementById(
+      "editTeacherModal",
+    );
 
-  const form = document.getElementById("editTeacherForm");
+  const form =
+    document.getElementById(
+      "editTeacherForm",
+    );
 
   if (!modal) return;
 
@@ -1201,8 +1209,16 @@ function closeEditTeacherModal() {
 
   hideEditTeacherMessage();
 }
+
+/* =========================================================
+   EDIT TEACHER MESSAGES
+========================================================= */
+
 function showEditTeacherError(message) {
-  const element = document.getElementById("editTeacherFormMessage");
+  const element =
+    document.getElementById(
+      "editTeacherFormMessage",
+    );
 
   if (!element) return;
 
@@ -1213,7 +1229,10 @@ function showEditTeacherError(message) {
 }
 
 function showEditTeacherSuccess(message) {
-  const element = document.getElementById("editTeacherFormMessage");
+  const element =
+    document.getElementById(
+      "editTeacherFormMessage",
+    );
 
   if (!element) return;
 
@@ -1224,9 +1243,107 @@ function showEditTeacherSuccess(message) {
 }
 
 function hideEditTeacherMessage() {
-  const element = document.getElementById("editTeacherFormMessage");
+  const element =
+    document.getElementById(
+      "editTeacherFormMessage",
+    );
 
   if (!element) return;
 
-  element.className = "hidden p-3 rounded-lg text-sm font-medium";
+  element.className =
+    "hidden p-3 rounded-lg text-sm font-medium";
+
+  element.textContent = "";
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function setupLogoutButtons() {
+  const logoutBtn =
+    document.getElementById("logoutBtn");
+
+  const mobileLogoutBtn =
+    document.getElementById(
+      "mobileLogoutBtn",
+    );
+
+  logoutBtn?.addEventListener(
+    "click",
+    logout,
+  );
+
+  mobileLogoutBtn?.addEventListener(
+    "click",
+    logout,
+  );
+}
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+function setupMobileMenu() {
+  const mobileMenuBtn =
+    document.getElementById(
+      "mobileMenuBtn",
+    );
+
+  const mobileMenu =
+    document.getElementById(
+      "mobileMenu",
+    );
+
+  const closeMobileMenu =
+    document.getElementById(
+      "closeMobileMenu",
+    );
+
+  const mobileMenuOverlay =
+    document.getElementById(
+      "mobileMenuOverlay",
+    );
+
+  if (
+    !mobileMenuBtn ||
+    !mobileMenu ||
+    !closeMobileMenu ||
+    !mobileMenuOverlay
+  ) {
+    return;
+  }
+
+  mobileMenuBtn.addEventListener(
+    "click",
+    () => {
+      mobileMenu.classList.remove(
+        "hidden",
+      );
+
+      mobileMenuBtn.setAttribute(
+        "aria-expanded",
+        "true",
+      );
+    },
+  );
+
+  const closeMenu = () => {
+    mobileMenu.classList.add("hidden");
+
+    mobileMenuBtn.setAttribute(
+      "aria-expanded",
+      "false",
+    );
+  };
+
+  closeMobileMenu.addEventListener(
+    "click",
+    closeMenu,
+  );
+
+  mobileMenuOverlay.addEventListener(
+    "click",
+    closeMenu,
+  );
 }

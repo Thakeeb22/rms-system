@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const classSchema = new mongoose.Schema(
   {
     className: {
@@ -7,13 +8,16 @@ const classSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+
     classTeacher: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Teacher",
+      ref: "User",
+      default: null,
     },
   },
   {
     timestamps: true,
   },
 );
+
 module.exports = mongoose.model("Class", classSchema);

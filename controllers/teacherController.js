@@ -1,51 +1,40 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-require("../models/Class");
-require("../models/Subject");
 const mongoose = require("mongoose");
 
 const createTeacher = async (req, res) => {
   try {
-    const { fullname, email, phone, assignedClass, subjects } =
-      req.body;
-    if (
-      !fullname ||
-      !email ||
-      !phone ||
-      !assignedClass ||
-      !subjects
-    ) {
+    const { fullname, email, phone } = req.body;
+
+    if (!fullname || !email || !phone) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required.",
+        message: "Fullname, email and phone are required.",
       });
     }
-    if (!Array.isArray(subjects) || subjects.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Please assign at least one subject.",
-      });
-    }
+
     const existingUser = await User.findOne({
       email: email.toLowerCase().trim(),
     });
+
     if (existingUser) {
       return res.status(409).json({
         success: false,
         message: "A user with this email already exists.",
       });
     }
+
     const temporaryPassword = Math.random().toString(36).slice(-8);
+
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
     const teacher = await User.create({
-      fullname,
+      fullname: fullname.trim(),
       email: email.toLowerCase().trim(),
       password: hashedPassword,
-      phone,
+      phone: phone.trim(),
       role: "teacher",
       status: "active",
-      assignedClass,
-      subjects,
       mustChangePassword: true,
     });
 
@@ -60,18 +49,18 @@ const createTeacher = async (req, res) => {
         phone: teacher.phone,
         role: teacher.role,
         status: teacher.status,
-        assignedClass: teacher.assignedClass,
-        subjects: teacher.subjects,
       },
     });
   } catch (error) {
     console.error(error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
     });
   }
 };
+
 const getAllTeachers = async (req, res) => {
   try {
     const teachers = await User.find({
@@ -130,69 +119,77 @@ const getTeacherById = async (req, res) => {
 const updateTeacher = async (req, res) => {
   try {
     const { id } = req.params;
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid Teacher ID.",
       });
     }
-    const teacher = await User.findById(id);
+
+    const teacher = await User.findOne({
+      _id: id,
+      role: "teacher",
+    });
+
     if (!teacher) {
       return res.status(404).json({
         success: false,
-        message: "Teacher not found",
+        message: "Teacher not found.",
       });
     }
-    const {
-      fullname,
-      email,
-      password,
-      phone,
-      assignedClass,
-      subjects,
-      status,
-    } = req.body;
+
+    const { fullname, email, password, phone, status } = req.body;
+
+    // Update fullname
     if (fullname) {
       teacher.fullname = fullname.trim();
     }
+
+    // Update phone
     if (phone) {
       teacher.phone = phone.trim();
     }
-    if (assignedClass) {
-      teacher.assignedClass = assignedClass;
-    }
-    if (subjects) {
-      if (!Array.isArray(subjects) || subjects.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Please assign at least on subject.",
-        });
-      }
-      teacher.subjects = subjects;
-    }
-    if (status) {
-      teacher.status = status;
-    }
+
+    // Update email
     if (email) {
-      const normalizeEmail = email.toLowerCase().trim();
+      const normalizedEmail = email.toLowerCase().trim();
+
       const existingUser = await User.findOne({
-        email: normalizeEmail,
+        email: normalizedEmail,
         _id: { $ne: teacher._id },
       });
+
       if (existingUser) {
         return res.status(409).json({
           success: false,
           message: "A user with this email already exists.",
         });
       }
-      teacher.email = normalizeEmail;
+
+      teacher.email = normalizedEmail;
     }
+
+    // Update status
+    if (status) {
+      if (!["active", "inactive"].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid teacher status.",
+        });
+      }
+
+      teacher.status = status;
+    }
+
+    // Update password
     if (password) {
       teacher.password = await bcrypt.hash(password, 10);
       teacher.mustChangePassword = true;
     }
 
     await teacher.save();
+
     return res.status(200).json({
       success: true,
       message: "Teacher updated successfully.",
@@ -203,12 +200,11 @@ const updateTeacher = async (req, res) => {
         phone: teacher.phone,
         role: teacher.role,
         status: teacher.status,
-        assignedClass: teacher.assignedClass,
-        subjects: teacher.subjects,
       },
     });
   } catch (error) {
     console.error(error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -247,7 +243,7 @@ const deactivateTeacher = async (req, res) => {
     teacher.status = "inactive";
     await teacher.save();
     return res.status(200).json({
-      succcess: true,
+      success: true,
       message: "Teacher has been deactivated successfully.",
       teacher: {
         id: teacher.id,
@@ -319,7 +315,7 @@ const resetTeacherPassword = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        messgage: "Invalid Teacher ID.",
+        message: "Invalid Teacher ID.",
       });
     }
     const teacher = await User.findById(id);
@@ -342,7 +338,7 @@ const resetTeacherPassword = async (req, res) => {
     await teacher.save();
     return res.status(200).json({
       success: true,
-      message: "Password res successfully.",
+      message: "Password reset successfully.",
       temporaryPassword,
     });
   } catch (error) {

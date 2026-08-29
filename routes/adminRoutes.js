@@ -22,6 +22,9 @@ const {
   getAllClasses,
   getClassById,
   updateClass,
+  assignClassTeacher,
+  removeClassTeacher,
+  deleteClass,
 } = require("../controllers/classController");
 
 const {
@@ -51,6 +54,7 @@ const {
   assignSubjectToClass,
   getAllClassSubjects,
   getClassSubjectById,
+  updateSubjectTeacher,
   deleteClassSubject,
 } = require("../controllers/classSubjectController");
 
@@ -118,6 +122,9 @@ router.post("/classes", auth, isAdmin, createClass);
 router.get("/classes", auth, isAdmin, getAllClasses);
 router.get("/classes/:id", auth, isAdmin, getClassById);
 router.put("/classes/:id", auth, isAdmin, updateClass);
+router.delete("/classes/:id", auth, isAdmin, deleteClass);
+router.patch("/classes/:id/class-teacher", auth, isAdmin, assignClassTeacher);
+router.delete("/classes/:id/teacher", auth, isAdmin, removeClassTeacher);
 
 // subjects routes
 router.post("/subjects", auth, isAdmin, createSubject);
@@ -144,6 +151,12 @@ router.post("/class-subjects", auth, isAdmin, assignSubjectToClass);
 router.get("/class-subjects", auth, isAdmin, getAllClassSubjects);
 router.get("/class-subjects/:id", auth, isAdmin, getClassSubjectById);
 router.delete("/class-subjects/:id", auth, isAdmin, deleteClassSubject);
+router.patch(
+  "/class-subjects/:id/subject-teacher",
+  auth,
+  isAdmin,
+  updateSubjectTeacher,
+);
 
 // student routes
 router.post("/students", auth, isAdmin, createStudent);
