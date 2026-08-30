@@ -10,6 +10,7 @@ let teacherFilters = {
 document.addEventListener("DOMContentLoaded", () => {
   initializeTeachersPage();
   loadCurrentSessionDisplay(); 
+  loadCurrentTermDisplay();
 });
 
 async function initializeTeachersPage() {

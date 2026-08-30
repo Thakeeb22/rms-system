@@ -50,6 +50,7 @@ const {
   getTermById,
   updateTerm,
   setCurrentTerm,
+  deleteTerm
 } = require("../controllers/termController");
 
 const {
@@ -149,6 +150,7 @@ router.get("/terms", auth, isAdmin, getAllTerms);
 router.get("/terms/:id", auth, isAdmin, getTermById);
 router.put("/terms/:id", auth, isAdmin, updateTerm);
 router.patch("/terms/:id/set-current", auth, isAdmin, setCurrentTerm);
+router.delete("/terms/:id", auth, isAdmin, deleteTerm);
 
 // assign subject to class routes
 router.post("/class-subjects", auth, isAdmin, assignSubjectToClass);

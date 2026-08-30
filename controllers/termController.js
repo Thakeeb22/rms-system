@@ -173,10 +173,53 @@ const setCurrentTerm = async (req, res) => {
   }
 };
 
+const deleteTerm = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Term ID.",
+      });
+    }
+
+    const termData = await Term.findById(id);
+    if (!termData) {
+      return res.status(404).json({
+        success: false,
+        message: "Term not found.",
+      });
+    }
+
+    // Prevent deletion of current term
+    if (termData.isCurrent) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete the current term. Set another term as current first.",
+      });
+    }
+
+    await Term.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Term deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete term error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
+
 module.exports = {
   createTerm,
   getAllTerms,
   getTermById,
   updateTerm,
   setCurrentTerm,
+  deleteTerm
 };

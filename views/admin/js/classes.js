@@ -894,4 +894,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadClasses();
   await loadCurrentSessionDisplay(); 
+  await loadCurrentTermDisplay();
 });

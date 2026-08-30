@@ -115,3 +115,26 @@ async function loadCurrentSessionDisplay() {
     sessionDisplay.textContent = "Not Set";
   }
 }
+/**
+ * Fetches the current term and updates the UI element.
+ * Call this function on any page that needs to display the current term.
+ */
+async function loadCurrentTermDisplay() {
+  const termDisplay = document.getElementById("currentTerm");
+
+  if (!termDisplay) return;
+
+  try {
+    const response = await apiRequest("/admin/terms");
+
+    if (response.ok && response.data?.terms) {
+      const currentTerm = response.data.terms.find((t) => t.isCurrent);
+      termDisplay.textContent = currentTerm ? currentTerm.termName : "Not Set";
+    } else {
+      termDisplay.textContent = "Not Set";
+    }
+  } catch (error) {
+    console.error("Failed to load current term:", error);
+    termDisplay.textContent = "Not Set";
+  }
+}

@@ -522,4 +522,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupSessionEvents();
   setupSessionSearch();
   await loadSessions();
+  await loadCurrentTermDisplay();
 });

@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Handle student opened from global search
     await openStudentFromSearch();
     await loadCurrentSessionDisplay(); 
+    await loadCurrentTermDisplay();
   } catch (error) {
     console.error("Student Management initialization error:", error);
   }

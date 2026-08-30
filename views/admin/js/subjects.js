@@ -424,4 +424,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupSubjectSearch();
   await loadSubjects();
   await loadCurrentSessionDisplay(); 
+  await loadCurrentTermDisplay();
 });
