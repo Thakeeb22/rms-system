@@ -54,20 +54,33 @@
             required
           />
         </div>
+
         <div class="space-y-5">
-          <label for="password" class="block text-sm font-medium text-gray-700"
-            ><span><i class="fa-solid fa-lock"></i> Password</span></label
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Password</label
           >
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="******"
-            class="p-3 bg-gray-200 rounded w-full text-black focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 border-2 border-gray-200"
-            autocomplete="current-password"
-            required
-          />
+          <div class="relative">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+              class="w-full p-3 pr-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+            />
+            <button
+              type="button"
+              id="togglePasswordBtn"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition focus:outline-none"
+              aria-label="Toggle password visibility"
+            >
+              <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+            </button>
+          </div>
         </div>
+
         <div class="flex items-center justify-between">
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" id="remember" />

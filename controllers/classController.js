@@ -305,7 +305,7 @@ const assignClassTeacher = async (req, res) => {
     classData.classTeacher = teacher._id;
 
     await classData.save();
-
+    await User.findByIdAndUpdate(teacher._id, { assignedClass: classData._id });
     // -----------------------------
     // Populate response
     // -----------------------------
@@ -355,11 +355,11 @@ const removeClassTeacher = async (req, res) => {
         message: "This class does not have a class teacher.",
       });
     }
-
+    const previousTeacherId = classData.classTeacher;
     classData.classTeacher = null;
 
     await classData.save();
-
+    await User.findByIdAndUpdate(previousTeacherId, { assignedClass: null });
     return res.status(200).json({
       success: true,
       message: "Class teacher removed successfully.",

@@ -7,7 +7,20 @@ if (user) {
     window.location.href = "teacher/dashboard.html";
   }
 }
+const togglePasswordBtn = document.getElementById("togglePasswordBtn");
+const passwordInput = document.getElementById("password");
+const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
+if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+  togglePasswordBtn.addEventListener("click", () => {
+    const isPassword = passwordInput.type === "password";
+    passwordInput.type = isPassword ? "text" : "password";
+
+    // Toggle the icon class
+    togglePasswordIcon.classList.toggle("fa-eye");
+    togglePasswordIcon.classList.toggle("fa-eye-slash");
+  });
+}
 const loginForm = document.getElementById("loginForm");
 const loginBtn = document.getElementById("loginBtn");
 
@@ -21,8 +34,8 @@ loginForm.addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const remember = document.getElementById("remember").checked;
-  if(!email || !password){
-    showMessage("loginError", "Email and password are required.")
+  if (!email || !password) {
+    showMessage("loginError", "Email and password are required.");
   }
 
   const response = await apiRequest("/auth/login", {

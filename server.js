@@ -8,6 +8,7 @@ const pdfRoutes = require("./routes/pdfRoutes");
 const annualReportRoutes = require("./routes/annualReportRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const path = require("path")
+const teacherRoutes = require("./routes/teacherRoutes");
 
 dotenv.config();
 connectDB();
@@ -23,6 +24,7 @@ app.use("/api/pdf", pdfRoutes);
 app.use("/api/annual-report", annualReportRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use(express.static(path.join(__dirname,"views")))
+app.use("/api/teacher", teacherRoutes);
 
 // test route
 app.get("/", (req, res) => {
