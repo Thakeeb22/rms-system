@@ -1,11 +1,9 @@
 requireAdmin();
-
-// let allSubjects = [];
+setupLogout();
+setupMobileMenu();
 let filteredSubjects = [];
 
-/* =========================================================
-LOAD SUBJECTS
-========================================================= */
+// LOAD SUBJECTS
 async function loadSubjects() {
   const subjectsContainer = document.getElementById("subjectsContainer");
   const loadingElement = document.getElementById("subjectsLoading");
@@ -57,9 +55,7 @@ async function loadSubjects() {
   }
 }
 
-/* =========================================================
-RENDER SUBJECTS
-========================================================= */
+// RENDER SUBJECTS
 function renderSubjects() {
   const subjectsContainer = document.getElementById("subjectsContainer");
   if (!subjectsContainer) return;
@@ -78,9 +74,7 @@ function renderSubjects() {
   subjectsContainer.innerHTML = filteredSubjects.map((subject) => createSubjectCard(subject)).join("");
 }
 
-/* =========================================================
-CREATE SUBJECT CARD
-========================================================= */
+// CREATE SUBJECT CARD
 function createSubjectCard(subject) {
   const subjectId = subject._id;
 
@@ -121,9 +115,7 @@ function createSubjectCard(subject) {
   `;
 }
 
-/* =========================================================
-CREATE SUBJECT
-========================================================= */
+// CREATE SUBJECT
 async function createSubject() {
   const form = document.getElementById("addNewSubjectForm");
   const subjectNameInput = document.getElementById("subjectName");
@@ -174,9 +166,7 @@ async function createSubject() {
   }
 }
 
-/* =========================================================
-EDIT SUBJECT
-========================================================= */
+// EDIT SUBJECT
 async function openEditSubjectModal(subjectId) {
   const modal = document.getElementById("editSubjectModal");
   const loading = document.getElementById("editSubjectLoading");
@@ -268,9 +258,7 @@ async function updateSubject(event) {
   }
 }
 
-/* =========================================================
-DELETE SUBJECT
-========================================================= */
+// DELETE SUBJECT
 async function deleteSubject(subjectId, subjectName) {
   if (!confirm(`Are you sure you want to delete the subject "${subjectName}"? This action cannot be undone.`)) {
     return;
@@ -293,9 +281,7 @@ async function deleteSubject(subjectId, subjectName) {
   }
 }
 
-/* =========================================================
-FORM CONTROLS
-========================================================= */
+// FORM CONTROLS
 function openAddSubjectForm() {
   const formBox = document.getElementById("addNewSubjectFormBox");
   const form = document.getElementById("addNewSubjectForm");
@@ -349,9 +335,7 @@ function closeEditSubjectModal() {
   hideMessage("editSubjectFormMessage");
 }
 
-/* =========================================================
-SEARCH
-========================================================= */
+// SEARCH
 function setupSubjectSearch() {
   const subjectSearch = document.getElementById("subjectSearch");
   if (!subjectSearch) return;
@@ -374,18 +358,14 @@ function setupSubjectSearch() {
   });
 }
 
-/* =========================================================
-COUNT
-========================================================= */
+// COUNT
 function updateSubjectCount() {
   const totalSubjects = document.getElementById("totalSubjects");
   if (!totalSubjects) return;
   totalSubjects.textContent = allSubjects.length;
 }
 
-/* =========================================================
-EVENT LISTENERS
-========================================================= */
+// EVENT LISTENERS
 function setupSubjectEvents() {
   // Add subject
   document.getElementById("addNewSubjectBtn")?.addEventListener("click", openAddSubjectForm);
@@ -426,9 +406,7 @@ function setupSubjectEvents() {
   });
 }
 
-/* =========================================================
-HTML ESCAPE
-========================================================= */
+// HTML ESCAPE
 function escapeHTML(value) {
   if (value === null || value === undefined) return "";
 
@@ -440,11 +418,10 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
-/* =========================================================
-INITIALIZE
-========================================================= */
+// INITIALIZE
 document.addEventListener("DOMContentLoaded", async () => {
   setupSubjectEvents();
   setupSubjectSearch();
   await loadSubjects();
+  await loadCurrentSessionDisplay(); 
 });

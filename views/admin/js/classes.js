@@ -1,15 +1,12 @@
 requireAdmin();
-
-// let allClasses = [];
+setupLogout();
+setupMobileMenu();
 let filteredClasses = [];
-// let allTeachers = [];
 
 let classTeachersMap = {};
 let classSubjectsMap = {};
 
-/* =========================================================
-   LOAD CLASSES
-========================================================= */
+//  LOAD CLASSES
 
 async function loadClasses() {
   const classesContainer = document.getElementById("classesContainer");
@@ -23,22 +20,6 @@ async function loadClasses() {
   }
 
   try {
-    /*
-     * Classes:
-     * GET /admin/classes
-     *
-     * Teachers:
-     * GET /admin/teachers
-     *
-     * Class subjects:
-     * GET /admin/class-subjects
-     *
-     * NOTE:
-     * Subject assignment itself is handled on the
-     * Assignment page. This page only reads the
-     * assignments to display them.
-     */
-
     const [classesResponse, teachersResponse, assignmentsResponse] =
       await Promise.all([
         apiRequest("/admin/classes"),
@@ -46,19 +27,14 @@ async function loadClasses() {
         apiRequest("/admin/class-subjects"),
       ]);
 
-    /* -----------------------------
-       Validate classes response
-    ----------------------------- */
-
+    //  Validate classes response
     if (!classesResponse.ok) {
       throw new Error(
         classesResponse.data?.message || "Failed to load classes.",
       );
     }
 
-    /* -----------------------------
-       Validate teachers response
-    ----------------------------- */
+    //  Validate teachers response
 
     if (!teachersResponse.ok) {
       throw new Error(
@@ -66,9 +42,7 @@ async function loadClasses() {
       );
     }
 
-    /* -----------------------------
-       Validate assignments response
-    ----------------------------- */
+    //  Validate assignments response
 
     if (!assignmentsResponse.ok) {
       throw new Error(
@@ -76,9 +50,7 @@ async function loadClasses() {
       );
     }
 
-    /* -----------------------------
-       Store data
-    ----------------------------- */
+    //  Store data
 
     allClasses = classesResponse.data?.classes || [];
 
@@ -88,17 +60,12 @@ async function loadClasses() {
 
     const assignments = assignmentsResponse.data?.assignments || [];
 
-    /* -----------------------------
-       Build lookup maps
-    ----------------------------- */
+    //  Build lookup maps
 
     buildClassTeachersMap();
 
     buildClassSubjectsMap(assignments);
-
-    /* -----------------------------
-       Render
-    ----------------------------- */
+    //  Render
 
     renderClasses();
 
@@ -143,9 +110,7 @@ async function loadClasses() {
   }
 }
 
-/* =========================================================
-   CLASS / TEACHER MAP
-========================================================= */
+//  CLASS / TEACHER MAP
 
 function buildClassTeachersMap() {
   classTeachersMap = {};
@@ -167,10 +132,7 @@ function buildClassTeachersMap() {
     classTeachersMap[classId].push(teacher);
   });
 }
-
-/* =========================================================
-   CLASS / SUBJECT MAP
-========================================================= */
+//  CLASS / SUBJECT MAP
 
 function buildClassSubjectsMap(assignments) {
   classSubjectsMap = {};
@@ -195,9 +157,7 @@ function buildClassSubjectsMap(assignments) {
   });
 }
 
-/* =========================================================
-   RENDER CLASSES
-========================================================= */
+//  RENDER CLASSES
 
 function renderClasses() {
   const classesContainer = document.getElementById("classesContainer");
@@ -231,25 +191,12 @@ function renderClasses() {
     .join("");
 }
 
-/* =========================================================
-   CREATE CLASS CARD
-========================================================= */
+//  CREATE CLASS CARD
 
 function createClassCard(classItem) {
   const classId = classItem._id;
 
-  /*
-   * Teachers are read from the teachers endpoint.
-   */
-
   const teachers = classTeachersMap[classId] || [];
-
-  /*
-   * Subjects are read from the assignment endpoint.
-   *
-   * This page does NOT assign subjects.
-   * The Assignment page handles that.
-   */
 
   const subjectAssignments = classSubjectsMap[classId] || [];
 
@@ -258,9 +205,7 @@ function createClassCard(classItem) {
       class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 hover:shadow-md transition"
     >
 
-      <!-- =========================
-           CLASS HEADER
-      ========================== -->
+        
 
       <div class="flex items-start justify-between gap-3">
 
@@ -287,9 +232,7 @@ function createClassCard(classItem) {
       </div>
 
 
-      <!-- =========================
-           CLASS TEACHER
-      ========================== -->
+          
 
       <div class="mt-5 pt-4 border-t">
 
@@ -355,11 +298,7 @@ function createClassCard(classItem) {
 
       </div>
 
-
-      <!-- =========================
-           SUBJECTS
-           READ ONLY
-      ========================== -->
+         
 
       <div class="mt-5 pt-4 border-t">
 
@@ -416,9 +355,7 @@ function createClassCard(classItem) {
       </div>
 
 
-      <!-- =========================
-           ACTIONS
-      ========================== -->
+          
 
       <div
         class="mt-5 pt-4 border-t flex justify-end gap-2"
@@ -447,9 +384,7 @@ function createClassCard(classItem) {
   `;
 }
 
-/* =========================================================
-   CREATE CLASS
-========================================================= */
+//  CREATE CLASS
 
 async function createClass() {
   const form = document.getElementById("addNewClassForm");
@@ -517,9 +452,7 @@ async function createClass() {
   }
 }
 
-/* =========================================================
-   EDIT CLASS
-========================================================= */
+//  EDIT CLASS
 
 async function openEditClassModal(classId) {
   const modal = document.getElementById("editClassModal");
@@ -561,12 +494,10 @@ async function openEditClassModal(classId) {
     classNameInput.value = classData.className || "";
     form.dataset.classId = classId;
 
-    // NEW: Store the old teacher ID to know if we need to update it later
     form.dataset.oldTeacherId = classData.classTeacher
       ? classData.classTeacher._id
       : "";
 
-    // NEW: Populate the teacher dropdown
     teacherSelect.innerHTML = '<option value="">No Class Teacher</option>';
     allTeachers.forEach((teacher) => {
       if (teacher.status === "active") {
@@ -574,7 +505,6 @@ async function openEditClassModal(classId) {
         option.value = teacher._id;
         option.textContent = teacher.fullname;
 
-        // Pre-select if this is the current class teacher
         if (
           classData.classTeacher &&
           classData.classTeacher._id === teacher._id
@@ -596,9 +526,7 @@ async function openEditClassModal(classId) {
   }
 }
 
-/* =========================================================
-   UPDATE CLASS
-========================================================= */
+//  UPDATE CLASS
 
 async function updateClass(event) {
   event.preventDefault();
@@ -631,7 +559,6 @@ async function updateClass(event) {
   try {
     setButtonLoading(saveButton, true, "Saving...");
 
-    // 1. Always update the class name (Backend handles this)
     const classResponse = await apiRequest(`/admin/classes/${classId}`, {
       method: "PUT",
       body: JSON.stringify({ className }),
@@ -643,10 +570,8 @@ async function updateClass(event) {
       );
     }
 
-    // 2. Check if the teacher assignment has changed
     if (newTeacherId !== oldTeacherId) {
       if (newTeacherId === "") {
-        // Remove the teacher
         const removeResponse = await apiRequest(
           `/admin/classes/${classId}/teacher`,
           {
@@ -659,7 +584,6 @@ async function updateClass(event) {
           );
         }
       } else {
-        // Assign the new teacher
         const assignResponse = await apiRequest(
           `/admin/classes/${classId}/class-teacher`,
           {
@@ -696,9 +620,7 @@ async function updateClass(event) {
   }
 }
 
-/* =========================================================
-   ADD CLASS FORM
-========================================================= */
+//  ADD CLASS FORM
 
 function openAddClassForm() {
   const formBox = document.getElementById("addNewClassFormBox");
@@ -801,9 +723,7 @@ async function deleteClass(classId, className) {
     alert(error.message || "Failed to delete class.");
   }
 }
-/* =========================================================
-   EDIT MODAL
-========================================================= */
+//  EDIT MODAL
 
 function closeEditClassModal() {
   const modal = document.getElementById("editClassModal");
@@ -841,9 +761,7 @@ function closeEditClassModal() {
   hideMessage("editClassFormMessage");
 }
 
-/* =========================================================
-   SEARCH
-========================================================= */
+//  SEARCH
 
 function setupClassSearch() {
   const classSearch = document.getElementById("classSearch");
@@ -864,11 +782,6 @@ function setupClassSearch() {
     filteredClasses = allClasses.filter((classItem) => {
       const className = classItem.className?.toLowerCase() || "";
 
-      /*
-       * Search teachers assigned
-       * to the class.
-       */
-
       const teachers = classTeachersMap[classItem._id] || [];
 
       const teacherMatch = teachers.some(
@@ -876,11 +789,6 @@ function setupClassSearch() {
           teacher.fullname?.toLowerCase().includes(query) ||
           teacher.email?.toLowerCase().includes(query),
       );
-
-      /*
-       * Search subjects assigned
-       * to the class.
-       */
 
       const subjects = classSubjectsMap[classItem._id] || [];
 
@@ -895,9 +803,7 @@ function setupClassSearch() {
   });
 }
 
-/* =========================================================
-   CLASS COUNT
-========================================================= */
+//  CLASS COUNT
 
 function updateClassCount() {
   const totalClasses = document.getElementById("totalClasses");
@@ -907,12 +813,6 @@ function updateClassCount() {
   totalClasses.textContent = `Total Classes: ${allClasses.length}`;
 }
 
-/* =========================================================
-   EVENT LISTENERS
-========================================================= */
-/* -----------------------------
-Delete class buttons
------------------------------ */
 document.addEventListener("click", (event) => {
   const deleteButton = event.target.closest(".delete-class-btn");
   if (!deleteButton) return;
@@ -925,33 +825,17 @@ document.addEventListener("click", (event) => {
 });
 
 function setupClassEvents() {
-  /* -----------------------------
-     Add class
-  ----------------------------- */
-
   document
     .getElementById("addNewClassBtn")
     ?.addEventListener("click", openAddClassForm);
-
-  /* -----------------------------
-     Cancel add
-  ----------------------------- */
 
   document
     .getElementById("cancelAddClassBtn")
     ?.addEventListener("click", closeAddClassForm);
 
-  /* -----------------------------
-     Close add form
-  ----------------------------- */
-
   document
     .getElementById("closeAddClassFormBtn")
     ?.addEventListener("click", closeAddClassForm);
-
-  /* -----------------------------
-     Create class
-  ----------------------------- */
 
   document
     .getElementById("addNewClassForm")
@@ -960,10 +844,6 @@ function setupClassEvents() {
 
       createClass();
     });
-
-  /* -----------------------------
-     Edit class buttons
-  ----------------------------- */
 
   document.addEventListener("click", (event) => {
     const editButton = event.target.closest(".edit-class-btn");
@@ -977,17 +857,9 @@ function setupClassEvents() {
     openEditClassModal(classId);
   });
 
-  /* -----------------------------
-     Edit form submit
-  ----------------------------- */
-
   document
     .getElementById("editClassForm")
     ?.addEventListener("submit", updateClass);
-
-  /* -----------------------------
-     Close edit modal
-  ----------------------------- */
 
   document
     .getElementById("closeEditClassModal")
@@ -997,18 +869,10 @@ function setupClassEvents() {
     .getElementById("cancelEditClassBtn")
     ?.addEventListener("click", closeEditClassModal);
 
-  /* -----------------------------
-     Close modal via overlay
-  ----------------------------- */
-
   document
     .getElementById("editClassModalOverlay")
     ?.addEventListener("click", closeEditClassModal);
 }
-
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
 
 function escapeHTML(value) {
   if (value === null || value === undefined) {
@@ -1023,14 +887,11 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
 document.addEventListener("DOMContentLoaded", async () => {
   setupClassEvents();
 
   setupClassSearch();
 
   await loadClasses();
+  await loadCurrentSessionDisplay(); 
 });

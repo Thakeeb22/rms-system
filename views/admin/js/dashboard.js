@@ -1,4 +1,6 @@
 requireAdmin();
+setupLogout();
+setupMobileMenu();
 const user = getUser();
 
 document.getElementById("adminName").textContent =

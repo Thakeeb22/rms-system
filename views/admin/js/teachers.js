@@ -1,5 +1,6 @@
 requireAdmin();
-
+setupLogout();
+setupMobileMenu();
 let teachers = [];
 
 let teacherFilters = {
@@ -8,6 +9,7 @@ let teacherFilters = {
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeTeachersPage();
+  loadCurrentSessionDisplay(); 
 });
 
 async function initializeTeachersPage() {

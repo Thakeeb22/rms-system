@@ -41,6 +41,7 @@ const {
   getSessionById,
   updateSession,
   setCurrentSession,
+  deleteSession,
 } = require("../controllers/sessionController");
 
 const {
@@ -140,6 +141,7 @@ router.get("/sessions", auth, isAdmin, getAllSessions);
 router.get("/sessions/:id", auth, isAdmin, getSessionById);
 router.put("/sessions/:id", auth, isAdmin, updateSession);
 router.patch("/sessions/:id/set-current", auth, isAdmin, setCurrentSession);
+router.delete("/sessions/:id", auth, isAdmin, deleteSession);
 
 // term routes
 router.post("/terms", auth, isAdmin, createTerm);

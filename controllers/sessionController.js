@@ -169,10 +169,52 @@ const setCurrentSession = async (req, res) => {
     });
   }
 };
+const deleteSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Session ID.",
+      });
+    }
+
+    const sessionData = await Session.findById(id);
+    if (!sessionData) {
+      return res.status(404).json({
+        success: false,
+        message: "Session not found.",
+      });
+    }
+
+    // Prevent deletion of current session
+    if (sessionData.isCurrent) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete the current session. Set another session as current first.",
+      });
+    }
+
+    await Session.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Session deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete session error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
 module.exports = {
   createSession,
   getAllSessions,
   getSessionById,
   updateSession,
   setCurrentSession,
+  deleteSession,
 };

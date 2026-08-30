@@ -1,4 +1,6 @@
 requireAdmin();
+setupLogout();
+setupMobileMenu();
 let students = [];
 let classes = [];
 
@@ -29,6 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupClassFilter();
     // Handle student opened from global search
     await openStudentFromSearch();
+    await loadCurrentSessionDisplay(); 
   } catch (error) {
     console.error("Student Management initialization error:", error);
   }
