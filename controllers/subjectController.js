@@ -128,9 +128,53 @@ const updateSubject = async (req, res) => {
     });
   }
 };
+const deleteSubject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Subject ID.",
+      });
+    }
+
+    const subjectData = await Subject.findById(id);
+    if (!subjectData) {
+      return res.status(404).json({
+        success: false,
+        message: "Subject not found.",
+      });
+    }
+
+    // Optional: Check if subject is assigned to any class
+    // const ClassSubject = require("../models/ClassSubject");
+    // const assignments = await ClassSubject.countDocuments({ subject: id });
+    // if (assignments > 0) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: `Cannot delete subject. It is assigned to ${assignments} class(es).`,
+    //   });
+    // }
+
+    await Subject.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Subject deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete subject error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
 module.exports = {
   createSubject,
   getAllSubjects,
   getSubjectById,
   updateSubject,
+  deleteSubject,
 };

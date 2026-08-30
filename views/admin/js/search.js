@@ -212,7 +212,8 @@ function renderSearchResults(data) {
       searchResults.innerHTML += `
         <div
           class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b"
-          onclick="openSearchResult('/admin/classes.html?id=${classItem._id}')"
+          // Classes
+onclick="openSearchResult('./classes.html?id=${classItem._id}')"
         >
           <p class="font-semibold">
             ${classItem.className || "Unknown class"}
@@ -228,27 +229,27 @@ function renderSearchResults(data) {
 
   if (data.subjects.length > 0) {
     searchResults.innerHTML += `
-      <div class="px-4 py-2 bg-gray-100 font-semibold text-blue-600">
-        <i class="fa-solid fa-book mr-2"></i>
-        Subjects (${data.subjects.length})
-      </div>
-    `;
+    <div class="px-4 py-2 bg-gray-100 font-semibold text-blue-600">
+      <i class="fa-solid fa-book mr-2"></i>
+      Subjects (${data.subjects.length})
+    </div>
+  `;
 
     data.subjects.slice(0, 10).forEach((subject) => {
       searchResults.innerHTML += `
-        <div
-          class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b"
-          onclick="openSearchResult('/admin/subjects.html?id=${subject._id}')"
-        >
-          <p class="font-semibold">
-            ${subject.subjectName || "Unknown subject"}
-          </p>
+      <div
+        class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b"
+        onclick="openSearchResult('./subjects.html?id=${subject._id}')"
+      >
+        <p class="font-semibold">
+          ${subject.subjectName || "Unknown subject"}
+        </p>
 
-          <p class="text-sm text-gray-500">
-            Subject
-          </p>
-        </div>
-      `;
+        <p class="text-sm text-gray-500">
+          Subject
+        </p>
+      </div>
+    `;
     });
   }
 
@@ -264,7 +265,8 @@ function renderSearchResults(data) {
       searchResults.innerHTML += `
         <div
           class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b"
-          onclick="openSearchResult('/admin/results.html?id=${result._id}')"
+          // Results
+onclick="openSearchResult('./results.html?id=${result._id}')"
         >
           <p class="font-semibold">
             ${result.student?.fullname || "Unknown student"}

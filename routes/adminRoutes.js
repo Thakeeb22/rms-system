@@ -32,6 +32,7 @@ const {
   getAllSubjects,
   updateSubject,
   getSubjectById,
+  deleteSubject,
 } = require("../controllers/subjectController");
 
 const {
@@ -131,6 +132,7 @@ router.post("/subjects", auth, isAdmin, createSubject);
 router.get("/subjects", auth, isAdmin, getAllSubjects);
 router.get("/subjects/:id", auth, isAdmin, getSubjectById);
 router.put("/subjects/:id", auth, isAdmin, updateSubject);
+router.delete("/subjects/:id", auth, isAdmin, deleteSubject);
 
 // session routes
 router.post("/sessions", auth, isAdmin, createSession);
