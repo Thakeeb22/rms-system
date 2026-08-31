@@ -119,4 +119,77 @@ const getTeacherDashboard = async (req, res) => {
   }
 };
 
-module.exports = { getTeacherDashboard };
+const getTeacherStudents = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const { classId } = req.query; // ✅ Accept classId from query
+
+    const teacher = await User.findById(teacherId)
+      .populate("assignedClass", "className");
+
+    if (!teacher || teacher.role !== "teacher") {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized as a teacher.",
+      });
+    }
+
+    // Determine which class to fetch students from
+    let targetClassId = null;
+
+    if (classId) {
+      // ✅ Validate the teacher is assigned to teach in this class
+      if (!mongoose.Types.ObjectId.isValid(classId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid class ID.",
+        });
+      }
+
+      const classSubjectAssignment = await ClassSubject.findOne({
+        class: classId,
+        subjectTeacher: teacherId,
+      });
+
+      if (!classSubjectAssignment) {
+        return res.status(403).json({
+          success: false,
+          message: "You are not assigned to teach in this class.",
+        });
+      }
+
+      targetClassId = classId;
+    } else if (teacher.assignedClass) {
+      // Fallback to assigned class
+      targetClassId = teacher.assignedClass._id;
+    } else {
+      return res.status(200).json({
+        success: true,
+        students: [],
+        message: "No class assigned to this teacher.",
+      });
+    }
+
+    // Get students in the target class
+    const students = await Student.find({
+      class: targetClassId,
+      isActive: true,
+    })
+      .select("fullname admissionNumber gender dateOfBirth guardianName guardianPhone")
+      .sort({ fullname: 1 });
+
+    return res.status(200).json({
+      success: true,
+      count: students.length,
+      students,
+    });
+  } catch (error) {
+    console.error("Get teacher students error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error.",
+    });
+  }
+};
+
+module.exports = { getTeacherDashboard, getTeacherStudents };

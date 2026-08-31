@@ -6,6 +6,7 @@ const Session = require("../models/Session");
 const Term = require("../models/Term");
 const User = require("../models/User");
 const Result = require("../models/Result");
+const ClassSubject = require("../models/classSubject");
 
 const createResult = async (req, res) => {
   try {
@@ -151,22 +152,17 @@ const createResult = async (req, res) => {
         message: "Student does not belong to the selected class.",
       });
     }
-    if (
-      !teacherData.assignedClass ||
-      teacherData.assignedClass.toString() !== classId
-    ) {
+    // ✅ NEW: Check if teacher is assigned to teach this subject in this class
+    const classSubjectAssignment = await ClassSubject.findOne({
+      class: classId,
+      subject: subjectId,
+      subjectTeacher: teacherId,
+    });
+
+    if (!classSubjectAssignment) {
       return res.status(400).json({
         success: false,
-        message: "Teacher is not assigned to the selected class.",
-      });
-    }
-    const teachesSubject = teacherData.subjects.some(
-      (subject) => subject.toString() === subjectId,
-    );
-    if (!teachesSubject) {
-      return res.status(400).json({
-        success: false,
-        message: "Teacher is not assigned to this subject.",
+        message: "You are not assigned to teach this subject in this class.",
       });
     }
     if (!studentData.isActive) {
