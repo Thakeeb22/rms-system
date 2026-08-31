@@ -30,11 +30,17 @@ const getTeacherDashboard = async (req, res) => {
 
     // Get students in teacher's assigned class
     let totalStudents = 0;
+    let students = []; // ✅ NEW: Array to hold actual student objects
+
     if (teacher.assignedClass) {
-      totalStudents = await Student.countDocuments({
+      students = await Student.find({
         class: teacher.assignedClass._id,
         isActive: true,
-      });
+      })
+        .select("fullname admissionNumber gender guardianName guardianPhone")
+        .sort({ fullname: 1 });
+
+      totalStudents = students.length;
     }
 
     // Get class-subject assignments where this teacher is the subject teacher
@@ -78,9 +84,9 @@ const getTeacherDashboard = async (req, res) => {
         class: teacher.assignedClass._id,
         isActive: true,
       }).select("_id");
-      
+
       const studentIds = studentsInClass.map((s) => s._id);
-      
+
       totalAssessments = await StudentAssessment.countDocuments({
         student: { $in: studentIds },
         session: currentSession._id,
@@ -101,6 +107,7 @@ const getTeacherDashboard = async (req, res) => {
         currentSession,
         currentTerm,
         totalStudents,
+        students,
         totalAssignments: myAssignments.length,
         myAssignments,
         totalResults,
@@ -124,8 +131,10 @@ const getTeacherStudents = async (req, res) => {
     const teacherId = req.user.id;
     const { classId } = req.query; // ✅ Accept classId from query
 
-    const teacher = await User.findById(teacherId)
-      .populate("assignedClass", "className");
+    const teacher = await User.findById(teacherId).populate(
+      "assignedClass",
+      "className",
+    );
 
     if (!teacher || teacher.role !== "teacher") {
       return res.status(403).json({
@@ -175,7 +184,9 @@ const getTeacherStudents = async (req, res) => {
       class: targetClassId,
       isActive: true,
     })
-      .select("fullname admissionNumber gender dateOfBirth guardianName guardianPhone")
+      .select(
+        "fullname admissionNumber gender dateOfBirth guardianName guardianPhone",
+      )
       .sort({ fullname: 1 });
 
     return res.status(200).json({
