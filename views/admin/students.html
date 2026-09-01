@@ -435,23 +435,40 @@
                   </div>
 
                   <!-- Gender -->
-                  <input
-                    type="radio"
-                    id="genderMale"
-                    name="gender"
-                    value="Male"
-                  />
-
-                  <label for="genderMale">Male</label>
-
-                  <input
-                    type="radio"
-                    id="genderFemale"
-                    name="gender"
-                    value="Female"
-                  />
-
-                  <label for="genderFemale">Female</label>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Gender
+                      <span class="text-red-500">*</span>
+                    </label>
+                    <div
+                      class="flex gap-6 p-3 bg-gray-50 rounded-lg border border-gray-300"
+                    >
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          id="genderMale"
+                          name="gender"
+                          value="Male"
+                          required
+                          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span class="ml-2 text-gray-800 font-medium">Male</span>
+                      </label>
+                      <label class="inline-flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          id="genderFemale"
+                          name="gender"
+                          value="Female"
+                          required
+                          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span class="ml-2 text-gray-800 font-medium"
+                          >Female</span
+                        >
+                      </label>
+                    </div>
+                  </div>
 
                   <!-- Date of Birth -->
                   <div>
@@ -973,16 +990,29 @@
                   Gender
                   <span class="text-red-500">*</span>
                 </label>
-
-                <div class="relative">
-                  <span
-                    ><input type="radio" name="gender" value="Male" />
-                    Male</span
-                  >
-                  <span
-                    ><input type="radio" name="gender" value="Female" />
-                    Female</span
-                  >
+                <div
+                  class="flex gap-6 p-3 bg-gray-50 rounded-lg border border-gray-300"
+                >
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="Male"
+                      required
+                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                    />
+                    <span class="ml-2 text-gray-800 font-medium">Male</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="Female"
+                      required
+                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                    />
+                    <span class="ml-2 text-gray-800 font-medium">Female</span>
+                  </label>
                 </div>
               </div>
 
