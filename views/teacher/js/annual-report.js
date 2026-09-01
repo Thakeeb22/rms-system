@@ -1,8 +1,8 @@
-requireAdmin();
-setupLogout();
-setupMobileMenu();
+requireTeacher();
+if (typeof setupLogout === "function") setupLogout();
+if (typeof setupMobileMenu === "function") setupMobileMenu();
 
-let allSessions = [];
+let teacherStudents = [];
 let currentAnnualReport = null;
 
 /* =========================================================
@@ -10,15 +10,14 @@ LOAD INITIAL DATA
 ========================================================= */
 async function loadInitialData() {
   try {
-    const [studentsRes, sessionsRes] = await Promise.all([
-      apiRequest("/admin/students"),
-      apiRequest("/admin/sessions"),
-    ]);
+    const dashboardRes = await apiRequest("/teacher/dashboard");
+    if (dashboardRes.ok && dashboardRes.data?.dashboard) {
+      const dashboard = dashboardRes.data.dashboard;
+      teacherStudents = dashboard.students || [];
 
-    if (studentsRes.ok) allStudents = studentsRes.data?.students || [];
-    if (sessionsRes.ok) allSessions = sessionsRes.data?.sessions || [];
-
-    populateDropdowns();
+      populateStudentDropdown();
+      populateSessionDropdown(dashboard.currentSession);
+    }
   } catch (error) {
     console.error("Failed to load initial data:", error);
   }
@@ -27,31 +26,24 @@ async function loadInitialData() {
 /* =========================================================
 POPULATE DROPDOWNS
 ========================================================= */
-function populateDropdowns() {
+function populateStudentDropdown() {
   const studentSelect = document.getElementById("annualStudent");
+  if (!studentSelect) return;
+
+  studentSelect.innerHTML =
+    '<option value="">Select a student</option>' +
+    teacherStudents
+      .map(
+        (s) =>
+          `<option value="${s._id}">${s.fullname} (${s.admissionNumber})</option>`,
+      )
+      .join("");
+}
+
+function populateSessionDropdown(currentSession) {
   const sessionSelect = document.getElementById("annualSession");
-
-  if (studentSelect) {
-    studentSelect.innerHTML = '<option value="">Select a student</option>';
-    allStudents
-      .filter((s) => s.isActive)
-      .forEach((student) => {
-        const opt = document.createElement("option");
-        opt.value = student._id;
-        opt.textContent = `${student.fullname} (${student.admissionNumber})`;
-        studentSelect.appendChild(opt);
-      });
-  }
-
-  if (sessionSelect) {
-    sessionSelect.innerHTML = '<option value="">Select a session</option>';
-    allSessions.forEach((session) => {
-      const opt = document.createElement("option");
-      opt.value = session._id;
-      opt.textContent = session.sessionName;
-      if (session.isCurrent) opt.selected = true;
-      sessionSelect.appendChild(opt);
-    });
+  if (sessionSelect && currentSession) {
+    sessionSelect.innerHTML = `<option value="${currentSession._id}">${currentSession.sessionName}</option>`;
   }
 }
 
@@ -79,8 +71,10 @@ async function generateAnnualReport() {
   if (loading) loading.classList.remove("hidden");
   if (preview) preview.classList.add("hidden");
   if (downloadBtn) downloadBtn.classList.add("hidden");
+  currentAnnualReport = null;
 
   try {
+    // Uses the admin endpoint which is allowed for teachers via isAdminOrTeacher middleware
     const response = await apiRequest(
       `/annual-report?studentId=${studentId}&sessionId=${sessionId}`,
     );
@@ -124,7 +118,7 @@ function renderAnnualPreview(report) {
   const student = report.student || {};
   const session = report.session || {};
   const termReports = report.termReports || [];
-  const summary = report.summary || {};
+  const summary = report.annualSummary || {};
 
   preview.innerHTML = `
     <div class="max-w-4xl mx-auto">
@@ -146,7 +140,7 @@ function renderAnnualPreview(report) {
         </div>
         <div>
           <p class="text-sm text-gray-500">Class</p>
-          <p class="font-semibold text-gray-800">${escapeHTML(student.className)}</p>
+          <p class="font-semibold text-gray-800">${escapeHTML(student.class)}</p>
         </div>
         <div>
           <p class="text-sm text-gray-500">Session</p>
@@ -166,7 +160,7 @@ function renderAnnualPreview(report) {
               (termReport) => `
             <div class="mb-6 border border-gray-200 rounded-lg overflow-hidden">
               <div class="bg-purple-50 px-4 py-3 border-b border-gray-200">
-                <h3 class="text-lg font-bold text-purple-700">${escapeHTML(termReport.termName)}</h3>
+                <h3 class="text-lg font-bold text-purple-700">${escapeHTML(termReport.term)}</h3>
               </div>
 
               <div class="overflow-x-auto">
@@ -204,10 +198,11 @@ function renderAnnualPreview(report) {
                 </table>
               </div>
 
-              <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-4">
-                <p class="text-sm text-gray-600">Total: <span class="font-bold text-gray-800">${termReport.grandTotal || 0}</span></p>
-                <p class="text-sm text-gray-600">Average: <span class="font-bold text-gray-800">${termReport.average || 0}</span></p>
-                <p class="text-sm text-gray-600">Position: <span class="font-bold text-gray-800">${escapeHTML(termReport.positionDisplay || "N/A")}</span></p>
+              <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-4 text-sm">
+                <p class="text-gray-600">Total: <span class="font-bold text-gray-800">${termReport.grandTotal || 0}</span></p>
+                <p class="text-gray-600">Average: <span class="font-bold text-gray-800">${termReport.average || 0}</span></p>
+                <p class="text-gray-600">Grade: <span class="font-bold text-gray-800">${termReport.grade || "-"}</span></p>
+                <p class="text-gray-600">Remark: <span class="font-bold text-gray-800">${escapeHTML(termReport.remark || "-")}</span></p>
               </div>
             </div>
           `,
@@ -235,7 +230,7 @@ function renderAnnualPreview(report) {
           </div>
           <div>
             <p class="text-sm text-gray-600">Annual Position</p>
-            <p class="text-2xl font-bold text-purple-600">${escapeHTML(summary.annualPositionDisplay || "N/A")}</p>
+            <p class="text-2xl font-bold text-purple-600">${escapeHTML(summary.positionDisplay || "N/A")}</p>
           </div>
           <div>
             <p class="text-sm text-gray-600">Overall Grade</p>
@@ -243,7 +238,7 @@ function renderAnnualPreview(report) {
           </div>
           <div>
             <p class="text-sm text-gray-600">Total Subjects</p>
-            <p class="text-2xl font-bold text-purple-600">${summary.totalSubjects || 0}</p>
+            <p class="text-2xl font-bold text-purple-600">${summary.annualSubjects || 0}</p>
           </div>
           <div>
             <p class="text-sm text-gray-600">Terms Completed</p>
@@ -251,50 +246,26 @@ function renderAnnualPreview(report) {
           </div>
           <div>
             <p class="text-sm text-gray-600">Promotion Status</p>
-            <p class="text-lg font-bold ${summary.promoted ? "text-green-600" : "text-red-600"}">
-              ${summary.promoted ? "Promoted" : "Not Promoted"}
+            <p class="text-lg font-bold ${summary.promotionStatus && summary.promotionStatus.toLowerCase().includes("promoted") && !summary.promotionStatus.toLowerCase().includes("not") ? "text-green-600" : "text-red-600"}">
+              ${escapeHTML(summary.promotionStatus || "N/A")}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Promotion Remark -->
-      ${
-        summary.promotionRemark
-          ? `
-        <div class="mb-6 p-4 ${summary.promoted ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"} rounded-lg border">
-          <p class="text-sm ${summary.promoted ? "text-green-600" : "text-red-600"} mb-1">Promotion Remark</p>
-          <p class="text-gray-800 font-medium">${escapeHTML(summary.promotionRemark)}</p>
+      <!-- Remarks -->
+      <div class="border-t-2 border-gray-300 pt-4 space-y-3">
+        <div>
+          <p class="text-sm text-gray-600 mb-1">Teacher's Remark</p>
+          <p class="text-gray-800 italic">${escapeHTML(summary.teacherRemark || "-")}</p>
         </div>
-      `
-          : ""
-      }
-
-      <!-- Principal Remark -->
-      ${
-        summary.principalRemark
-          ? `
-        <div class="border-t-2 border-gray-300 pt-4">
+        <div>
           <p class="text-sm text-gray-600 mb-1">Principal's Remark</p>
-          <p class="text-gray-800 italic">${escapeHTML(summary.principalRemark)}</p>
+          <p class="text-gray-800 italic">${escapeHTML(summary.principalRemark || "-")}</p>
         </div>
-      `
-          : ""
-      }
+      </div>
     </div>
   `;
-}
-
-function getGradeColor(grade) {
-  const colors = {
-    A: "bg-green-100 text-green-600",
-    B: "bg-blue-100 text-blue-600",
-    C: "bg-yellow-100 text-yellow-600",
-    D: "bg-orange-100 text-orange-600",
-    E: "bg-red-100 text-red-600",
-    F: "bg-red-200 text-red-700",
-  };
-  return colors[grade] || "bg-gray-100 text-gray-600";
 }
 
 /* =========================================================
@@ -309,25 +280,28 @@ function downloadPDF() {
     return;
   }
 
-  const pdfUrl = `${API_URL}/annual-report/pdf?studentId=${studentId}&sessionId=${sessionId}&token=${token}`;
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+  const pdfUrl = `${CONFIG.BASE_URL}/annual-report/pdf?studentId=${studentId}&sessionId=${sessionId}&token=${token}`;
+
   window.open(pdfUrl, "_blank");
 }
 
 /* =========================================================
-EVENT LISTENERS
+HELPERS
 ========================================================= */
-function setupEvents() {
-  document
-    .getElementById("generateAnnualBtn")
-    ?.addEventListener("click", generateAnnualReport);
-  document
-    .getElementById("downloadAnnualPdfBtn")
-    ?.addEventListener("click", downloadPDF);
+function getGradeColor(grade) {
+  const colors = {
+    A: "bg-green-100 text-green-600",
+    B: "bg-blue-100 text-blue-600",
+    C: "bg-yellow-100 text-yellow-600",
+    D: "bg-orange-100 text-orange-600",
+    E: "bg-red-100 text-red-600",
+    F: "bg-red-200 text-red-700",
+  };
+  return colors[grade] || "bg-gray-100 text-gray-600";
 }
 
-/* =========================================================
-HTML ESCAPE
-========================================================= */
 function escapeHTML(value) {
   if (value === null || value === undefined) return "";
   return String(value)
@@ -338,12 +312,32 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
+function hideMessage(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add("hidden");
+    el.textContent = "";
+  }
+}
+
+function showMessage(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = `p-3 rounded-lg text-sm font-medium ${type === "error" ? "bg-red-50 text-red-700 border border-red-200" : "bg-green-50 text-green-700 border border-green-200"}`;
+  el.classList.remove("hidden");
+}
+
 /* =========================================================
-INITIALIZE
+EVENT LISTENERS
 ========================================================= */
 document.addEventListener("DOMContentLoaded", async () => {
-  setupEvents();
-  await loadCurrentSessionDisplay();
-  await loadCurrentTermDisplay();
   await loadInitialData();
+
+  document
+    .getElementById("generateAnnualBtn")
+    ?.addEventListener("click", generateAnnualReport);
+  document
+    .getElementById("downloadAnnualPdfBtn")
+    ?.addEventListener("click", downloadPDF);
 });

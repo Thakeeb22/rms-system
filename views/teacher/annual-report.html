@@ -1,12 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annual Report</title>
-    <link rel="stylesheet" href="../assets/css/output.css">
-</head>
-<body>
-   
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Annual Reports</title>
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-50 h-screen overflow-hidden font-[Inter]">
+    <div class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen">
+      
+      <!-- Sidebar -->
+      <aside class="hidden md:col-span-1 row-span-3 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300">
+        <div class="flex flex-col border-b-2 border-gray-400 justify-center items-center p-4">
+          <div class="w-[80px] h-[80px] mb-2">
+            <img src="../images/Education logo.jpg" class="w-full h-full object-contain" alt="Edulog Academy logo" />
+          </div>
+          <h1 class="font-bold text-xl text-blue-500 text-center">Edulog Academy</h1>
+          <p class="text-xs text-gray-500 text-center">Teacher Portal</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="flex flex-col p-3 font-bold space-y-1">
+            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+              <a href="./dashboard.html" class="flex items-center gap-3"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            </li>
+            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+              <a href="./results.html" class="flex items-center gap-3"><i class="fa-solid fa-chart-column"></i> Enter Results</a>
+            </li>
+            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+              <a href="./assessments.html" class="flex items-center gap-3"><i class="fa-solid fa-clipboard-check"></i> Assessments</a>
+            </li>
+            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+              <a href="./report-card.html" class="flex items-center gap-3"><i class="fa-solid fa-file-pdf"></i> Report Cards</a>
+            </li>
+            <li class="rounded bg-blue-500 text-white p-3 transition">
+              <a href="./annual-report.html" class="flex items-center gap-3"><i class="fa-solid fa-file-lines"></i> Annual Reports</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="p-4 border-t-2 border-gray-400">
+          <button id="logoutBtn" class="w-full p-2 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <!-- Header -->
+      <header class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-between items-center text-blue-500">
+        <div class="flex items-center gap-3">
+          <img src="../images/Education logo.jpg" alt="Edulog logo" class="w-12 h-12 md:hidden" />
+          <p class="hidden md:block font-semibold">Edulog > Annual Reports</p>
+        </div>
+        <button id="mobileMenuBtn" class="md:hidden text-blue-500 p-2 text-xl" aria-label="Open navigation menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </header>
+
+      <!-- Mobile Navigation -->
+      <div id="mobileMenu" class="hidden md:hidden fixed inset-0 z-50">
+        <div id="mobileMenuOverlay" class="absolute inset-0 bg-black/40"></div>
+        <aside class="absolute right-0 top-0 h-full w-72 bg-white shadow-xl p-5 overflow-y-auto">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-blue-500">Teacher Portal</h2>
+            <button id="closeMobileMenu" class="text-gray-600 hover:text-blue-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <nav>
+            <ul class="flex flex-col gap-2 font-bold">
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./dashboard.html" class="flex items-center gap-3"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./results.html" class="flex items-center gap-3"><i class="fa-solid fa-chart-column"></i> Enter Results</a></li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./assessments.html" class="flex items-center gap-3"><i class="fa-solid fa-clipboard-check"></i> Assessments</a></li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./report-card.html" class="flex items-center gap-3"><i class="fa-solid fa-file-pdf"></i> Report Cards</a></li>
+              <li class="rounded bg-blue-500 text-white p-3"><a href="./annual-report.html" class="flex items-center gap-3"><i class="fa-solid fa-file-lines"></i> Annual Reports</a></li>
+            </ul>
+          </nav>
+          <div class="mt-6 pt-5 border-t">
+            <button id="mobileLogoutBtn" class="w-full p-3 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Main Content -->
+      <main class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4">
+        
+        <!-- Page Header -->
+        <div class="col-span-1 md:col-span-4">
+          <h1 class="text-3xl font-bold text-gray-800">Annual Report Generation</h1>
+          <p class="text-gray-500 mt-1">Generate and download student annual reports for the academic session.</p>
+
+          <!-- Quick Links -->
+          <div class="flex flex-wrap gap-3 mt-4">
+            <a href="./results.html" class="rounded p-3 bg-blue-500 text-white font-bold hover:bg-blue-600 transition">
+              <i class="fa-solid fa-arrow-left mr-2"></i>Back to Results
+            </a>
+            <a href="./report-card.html" class="rounded p-3 bg-green-500 text-white font-bold hover:bg-green-600 transition">
+              <i class="fa-solid fa-file-pdf mr-2"></i>Generate Term Report Card
+            </a>
+          </div>
+        </div>
+
+        <!-- Selection Form -->
+        <div class="col-span-1 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Select Student and Session</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1">Student <span class="text-red-500">*</span></label>
+              <select id="annualStudent" class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500">
+                <option value="">Select a student</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1">Session <span class="text-red-500">*</span></label>
+              <select id="annualSession" class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500">
+                <option value="">Select a session</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mt-4">
+            <button id="generateAnnualBtn" class="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm font-semibold hover:bg-purple-600 transition">
+              <i class="fa-solid fa-file-lines mr-1"></i> Generate Annual Report
+            </button>
+            <button id="downloadAnnualPdfBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 transition hidden">
+              <i class="fa-solid fa-download mr-1"></i> Download PDF
+            </button>
+          </div>
+
+          <div id="annualMessage" class="hidden mt-4 p-3 rounded-lg text-sm font-medium"></div>
+        </div>
+
+        <!-- Report Preview -->
+        <div class="col-span-1 md:col-span-4">
+          <div id="annualLoading" class="hidden p-10 text-center bg-white rounded-xl shadow-sm border border-gray-200">
+            <i class="fa-solid fa-spinner fa-spin text-purple-500 text-3xl mb-3"></i>
+            <p class="text-gray-500">Generating annual report...</p>
+          </div>
+
+          <div id="annualPreview" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 p-8"></div>
+        </div>
+
+      </main>
+
+      <!-- Footer -->
+      <footer class="col-span-1 md:col-span-5 p-6 text-center text-sm text-gray-500 border-t border-gray-200 bg-white">
+        <p>All Rights Reserved. &copy; 2026 Edulog Academy</p>
+      </footer>
+    </div>
+
+    <script src="../admin/js/config.js"></script>
+    <script src="../admin/js/api.js"></script>
+    <script src="../admin/js/auth.js"></script>
+    <script src="../admin/js/utils.js"></script>
+    <script src="../admin/js/guard.js"></script>
+    <script src="./js/annual-report.js"></script>
+  </body>
 </html>
