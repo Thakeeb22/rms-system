@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Students</title>
+    <link rel="stylesheet" href="../assets/css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 h-screen overflow-hidden font-[Inter]">
+    <div
+      class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen"
+    >
+      <!-- Sidebar -->
+      <aside
+        class="hidden md:col-span-1 row-span-3 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300"
+      >
+        <div
+          class="flex flex-col border-b-2 border-gray-400 justify-center items-center p-4"
+        >
+          <div class="w-[80px] h-[80px] mb-2">
+            <img
+              src="../images/Education logo.jpg"
+              class="w-full h-full object-contain"
+              alt="Edulog Academy logo"
+            />
+          </div>
+          <h1 class="font-bold text-xl text-blue-500 text-center">
+            Edulog Academy
+          </h1>
+          <p class="text-xs text-gray-500 text-center">Teacher Portal</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="flex flex-col p-3 font-bold space-y-1">
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./dashboard.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+              </a>
+            </li>
+            <li class="rounded bg-blue-500 text-white p-3 transition">
+              <a href="./students.html" class="flex items-center gap-3"
+                ><i class="fa-solid fa-user-graduate"></i> My Students</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./results.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-chart-column"></i> Enter Results
+              </a>
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./assessments.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-check"></i> Assessments
+              </a>
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./report-card.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-file-pdf"></i> Report Cards
+              </a>
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./annual-report.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-file-lines"></i> Annual Reports
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="p-4 border-t-2 border-gray-400">
+          <button
+            id="logoutBtn"
+            class="w-full p-2 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <!-- Header -->
+      <header
+        class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-between items-center text-blue-500"
+      >
+        <div class="flex items-center gap-3">
+          <img
+            src="../images/Education logo.jpg"
+            alt="Edulog logo"
+            class="w-12 h-12 md:hidden"
+          />
+          <p class="hidden md:block font-semibold">Edulog > My Students</p>
+        </div>
+        <button id="mobileMenuBtn" class="md:hidden text-blue-500 p-2 text-xl">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </header>
+
+      <!-- Mobile Menu (Simplified for brevity, copy from dashboard.html if needed) -->
+      <div id="mobileMenu" class="hidden md:hidden fixed inset-0 z-50">
+        <div id="mobileMenuOverlay" class="absolute inset-0 bg-black/40"></div>
+        <aside
+          class="absolute right-0 top-0 h-full w-72 bg-white shadow-xl p-5 overflow-y-auto"
+        >
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-blue-500">Teacher Portal</h2>
+            <button
+              id="closeMobileMenu"
+              class="text-gray-600 hover:text-blue-500 text-xl"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <nav>
+            <ul class="flex flex-col gap-2 font-bold">
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./dashboard.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-gauge-high"></i> Dashboard</a
+                >
+              </li>
+              <li class="rounded bg-blue-500 text-white p-3">
+                <a href="./students.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-user-graduate"></i> My Students</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./results.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-chart-column"></i> Enter Results</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./assessments.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-clipboard-check"></i> Assessments</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./report-card.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-file-pdf"></i> Report Cards</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./annual-report.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
+                >
+              </li>
+            </ul>
+          </nav>
+          <div class="mt-6 pt-5 border-t">
+            <button
+              id="mobileLogoutBtn"
+              class="w-full p-3 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2"
+            >
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Main Content -->
+      <main
+        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4"
+      >
+        <div class="col-span-1 md:col-span-4">
+          <h1 class="text-3xl font-bold text-gray-800">My Students</h1>
+          <p class="text-gray-500 mt-1">
+            View and add students to your assigned class:
+            <span id="myClassName" class="font-semibold text-blue-600"
+              >Loading...</span
+            >
+          </p>
+
+          <!-- Warning for Subject Teachers -->
+          <div
+            id="subjectTeacherWarning"
+            class="hidden mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800"
+          >
+            <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+            You are not assigned as a Class Teacher. Only Class Teachers can add
+            students.
+          </div>
+
+          <button
+            id="addNewStudentBtn"
+            class="hidden mt-4 rounded p-3 bg-blue-500 text-white font-bold hover:bg-blue-600 transition"
+          >
+            <i class="fa-solid fa-user-plus mr-2"></i> Add New Student
+          </button>
+        </div>
+
+        <!-- Add Student Form -->
+        <div
+          id="addNewStudentFormBox"
+          class="hidden col-span-1 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 p-5"
+        >
+          <h2 class="text-xl font-bold text-gray-800 mb-4">
+            Add New Student to Your Class
+          </h2>
+          <form id="addNewStudentForm" class="space-y-4" novalidate>
+            <div
+              id="studentFormMessage"
+              class="hidden p-3 rounded-lg text-sm font-medium"
+            ></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Admission Number <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  id="admissionNumber"
+                  required
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Full Name <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  id="fullname"
+                  required
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Guardian Name <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  id="guardianName"
+                  required
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Guardian Phone <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="tel"
+                  id="guardianPhone"
+                  required
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Gender <span class="text-red-500">*</span></label
+                >
+                <select
+                  id="gender"
+                  required
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Date of Birth <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="date"
+                  id="dateOfBirth"
+                  required
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                />
+              </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+              <button
+                type="button"
+                id="cancelAddStudentBtn"
+                class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                id="createStudentBtn"
+                class="px-5 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600"
+              >
+                Add Student
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Students Table -->
+        <div
+          class="col-span-1 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+        >
+          <div id="studentsLoading" class="hidden p-10 text-center">
+            <i class="fa-solid fa-spinner fa-spin text-blue-500 text-2xl"></i>
+          </div>
+          <div class="overflow-x-auto">
+            <!-- Bulk Actions Bar (Hidden by default) -->
+            <div
+              id="bulkActionsBar"
+              class="hidden bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4 items-center justify-between"
+            >
+              <div class="flex items-center gap-3">
+                <span class="font-semibold text-indigo-700">
+                  <span id="selectedCount">0</span> student(s) selected
+                </span>
+                <button
+                  type="button"
+                  id="clearSelectionBtn"
+                  class="text-sm text-indigo-600 hover:text-indigo-800 underline"
+                >
+                  Clear selection
+                </button>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  id="bulkPromoteBtn"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition"
+                >
+                  <i class="fa-solid fa-arrow-up mr-2"></i> Promote Selected
+                </button>
+              </div>
+            </div>
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="p-4 w-10">
+                    <input
+                      type="checkbox"
+                      id="selectAllStudents"
+                      class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    />
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase"
+                  >
+                    Admission No
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase"
+                  >
+                    Full Name
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase"
+                  >
+                    Guardian
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase"
+                  >
+                    Gender
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="studentsContainer"
+                class="divide-y divide-gray-200"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+    <!-- Promote Student Modal -->
+    <div
+      id="promoteStudentModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <div
+        id="promoteStudentModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+      <div
+        class="relative w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center"
+            >
+              <i
+                class="fa-solid fa-arrow-up-from-bracket text-indigo-600 text-xl"
+              ></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Promote Student</h2>
+              <p class="text-sm text-gray-500">
+                Move student to the next class
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="closePromoteStudentModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div id="promoteStudentLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+          <p class="text-gray-500">Loading classes...</p>
+        </div>
+
+        <div
+          id="promoteStudentError"
+          class="hidden m-5 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700"
+        ></div>
+
+        <form id="promoteStudentForm" class="hidden p-5 space-y-6">
+          <div
+            id="promoteStudentFormMessage"
+            class="hidden p-3 rounded-lg text-sm font-medium"
+          ></div>
+
+          <div>
+            <p class="text-sm text-gray-600 mb-2">
+              Promoting
+              <span
+                id="promoteStudentName"
+                class="font-bold text-gray-800"
+              ></span>
+              from
+              <span
+                id="promoteCurrentClass"
+                class="font-bold text-blue-600"
+              ></span>
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="nextClassId"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Next Class <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <i
+                class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+              ></i>
+              <select
+                id="nextClassId"
+                name="nextClassId"
+                required
+                class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition appearance-none"
+              >
+                <option value="">Select next class</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t"
+          >
+            <button
+              type="button"
+              id="cancelPromoteStudentBtn"
+              class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="confirmPromoteStudentBtn"
+              class="px-5 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <i class="fa-solid fa-arrow-up mr-2"></i>
+              Confirm Promotion
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Bulk Promote Modal -->
+    <div
+      id="bulkPromoteModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <div
+        id="bulkPromoteModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+      <div
+        class="relative w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">
+              Bulk Promote Students
+            </h2>
+            <p class="text-sm text-gray-500">
+              Move selected students to a new class
+            </p>
+          </div>
+          <button
+            type="button"
+            id="closeBulkPromoteModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 transition"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div id="bulkPromoteLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+          <p class="text-gray-500">Promoting students...</p>
+        </div>
+
+        <form id="bulkPromoteForm" class="hidden p-5 space-y-6">
+          <div
+            id="bulkPromoteFormMessage"
+            class="hidden p-3 rounded-lg text-sm font-medium"
+          ></div>
+
+          <div>
+            <p class="text-sm text-gray-600 mb-2">
+              Promoting
+              <span
+                id="bulkPromoteCount"
+                class="font-bold text-indigo-600"
+              ></span>
+              student(s)
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="bulkNextClassId"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Target Class <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <i
+                class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+              ></i>
+              <select
+                id="bulkNextClassId"
+                required
+                class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 transition appearance-none"
+              >
+                <option value="">Select target class</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t"
+          >
+            <button
+              type="button"
+              id="cancelBulkPromoteBtn"
+              class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="confirmBulkPromoteBtn"
+              class="px-5 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition disabled:opacity-60"
+            >
+              <i class="fa-solid fa-arrow-up mr-2"></i> Confirm Promotion
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="../admin/js/config.js"></script>
+    <script src="../admin/js/api.js"></script>
+    <script src="../admin/js/auth.js"></script>
+    <script src="../admin/js/utils.js"></script>
+    <script src="../admin/js/guard.js"></script>
+    <script src="./js/students.js"></script>
+  </body>
+</html>

@@ -84,7 +84,11 @@ async function generateReport() {
   hideMessage("reportMessage");
 
   if (!studentId || !sessionId || !termId) {
-    showMessage("reportMessage", "Please select student, session, and term.", "error");
+    showMessage(
+      "reportMessage",
+      "Please select student, session, and term.",
+      "error",
+    );
     return;
   }
 
@@ -94,11 +98,13 @@ async function generateReport() {
 
   try {
     const response = await apiRequest(
-      `/admin/report-card?studentId=${studentId}&sessionId=${sessionId}&termId=${termId}`
+      `/admin/report-card?studentId=${studentId}&sessionId=${sessionId}&termId=${termId}`,
     );
 
     if (!response.ok) {
-      throw new Error(response.data?.message || "Failed to generate report card.");
+      throw new Error(
+        response.data?.message || "Failed to generate report card.",
+      );
     }
 
     currentReport = response.data;
@@ -107,10 +113,18 @@ async function generateReport() {
     if (preview) preview.classList.remove("hidden");
     if (downloadBtn) downloadBtn.classList.remove("hidden");
 
-    showMessage("reportMessage", "Report card generated successfully.", "success");
+    showMessage(
+      "reportMessage",
+      "Report card generated successfully.",
+      "success",
+    );
   } catch (error) {
     console.error("Failed to generate report:", error);
-    showMessage("reportMessage", error.message || "Failed to generate report card.", "error");
+    showMessage(
+      "reportMessage",
+      error.message || "Failed to generate report card.",
+      "error",
+    );
   } finally {
     if (loading) loading.classList.add("hidden");
   }
@@ -192,7 +206,7 @@ function renderReportPreview(report) {
                   </td>
                   <td class="border border-gray-300 px-4 py-2 text-center text-sm text-gray-700">${escapeHTML(result.remark)}</td>
                 </tr>
-              `
+              `,
                 )
                 .join("")}
             </tbody>
@@ -267,7 +281,7 @@ function renderReportPreview(report) {
                     <span class="text-sm text-gray-700 capitalize">${key}</span>
                     <span class="font-semibold text-blue-600">${value}/5</span>
                   </div>
-                `
+                `,
                       )
                       .join("")
                   : ""
@@ -288,7 +302,7 @@ function renderReportPreview(report) {
                     <span class="text-sm text-gray-700 capitalize">${key.replace(/([A-Z])/g, " $1").trim()}</span>
                     <span class="font-semibold text-blue-600">${value}/5</span>
                   </div>
-                `
+                `,
                       )
                       .join("")
                   : ""
@@ -351,9 +365,6 @@ function getGradeColor(grade) {
   return colors[grade] || "bg-gray-100 text-gray-600";
 }
 
-/* =========================================================
-DOWNLOAD PDF
-========================================================= */
 function downloadPDF() {
   const studentId = document.getElementById("reportStudent")?.value;
   const sessionId = document.getElementById("reportSession")?.value;
@@ -364,16 +375,24 @@ function downloadPDF() {
     return;
   }
 
-  const pdfUrl = `${API_URL}/api/pdf/student-report?studentId=${studentId}&sessionId=${sessionId}&termId=${termId}`;
+  // ✅ Get token from localStorage (same as teacher endpoint)
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  
+  // ✅ Use CONFIG.BASE_URL and append token
+  const pdfUrl = `${CONFIG.BASE_URL}/pdf/student-report?studentId=${studentId}&sessionId=${sessionId}&termId=${termId}&token=${token}`;
+  
   window.open(pdfUrl, "_blank");
 }
-
 /* =========================================================
 EVENT LISTENERS
 ========================================================= */
 function setupEvents() {
-  document.getElementById("generateReportBtn")?.addEventListener("click", generateReport);
-  document.getElementById("downloadPdfBtn")?.addEventListener("click", downloadPDF);
+  document
+    .getElementById("generateReportBtn")
+    ?.addEventListener("click", generateReport);
+  document
+    .getElementById("downloadPdfBtn")
+    ?.addEventListener("click", downloadPDF);
 }
 
 /* =========================================================

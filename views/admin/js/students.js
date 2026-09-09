@@ -31,13 +31,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupClassFilter();
     // Handle student opened from global search
     await openStudentFromSearch();
-    await loadCurrentSessionDisplay(); 
+    await loadCurrentSessionDisplay();
     await loadCurrentTermDisplay();
   } catch (error) {
     console.error("Student Management initialization error:", error);
   }
 });
+// Bulk Selection Variables
+const selectAllCheckbox = document.getElementById("selectAllStudents");
+const bulkActionsBar = document.getElementById("bulkActionsBar");
+const selectedCountSpan = document.getElementById("selectedCount");
+const clearSelectionBtn = document.getElementById("clearSelectionBtn");
 
+function updateBulkSelection() {
+  const checkboxes = document.querySelectorAll(".student-checkbox:checked");
+  const count = checkboxes.length;
+
+  if (selectedCountSpan) selectedCountSpan.textContent = count;
+
+  if (count > 0) {
+    bulkActionsBar?.classList.remove("hidden");
+  } else {
+    bulkActionsBar?.classList.add("hidden");
+  }
+
+  // Update "Select All" state
+  const allCheckboxes = document.querySelectorAll(".student-checkbox");
+  if (selectAllCheckbox) {
+    selectAllCheckbox.checked =
+      allCheckboxes.length > 0 && count === allCheckboxes.length;
+  }
+}
+
+// Select All Event
+if (selectAllCheckbox) {
+  selectAllCheckbox.addEventListener("change", (e) => {
+    const checkboxes = document.querySelectorAll(".student-checkbox");
+    checkboxes.forEach((cb) => (cb.checked = e.target.checked));
+    updateBulkSelection();
+  });
+}
+
+// Clear Selection Event
+if (clearSelectionBtn) {
+  clearSelectionBtn.addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll(".student-checkbox");
+    checkboxes.forEach((cb) => (cb.checked = false));
+    if (selectAllCheckbox) selectAllCheckbox.checked = false;
+    updateBulkSelection();
+  });
+}
+
+// Delegate click events for dynamically created checkboxes
+document.addEventListener("change", (e) => {
+  if (e.target.classList.contains("student-checkbox")) {
+    updateBulkSelection();
+  }
+});
 async function loadStudents() {
   if (!studentsBody) return;
 
@@ -207,6 +257,9 @@ function renderStudents(studentList) {
           class="border-b hover:bg-gray-50 transition"
           data-student-id="${escapeHtml(studentId)}"
         >
+        <td class="p-4">
+      <input type="checkbox" class="student-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" value="${escapeHtml(studentId)}" />
+    </td>
           <td class="p-4 font-semibold text-gray-800">
             ${escapeHtml(fullname)}
           </td>
@@ -292,7 +345,14 @@ function renderStudents(studentList) {
                 <i class="fa-solid fa-user-slash mr-2 text-gray-500"></i>
                 Deactivate
               </button>
-
+           <button
+             type="button"
+             class="student-action-item promote-student-btn w-full text-left px-4 py-3 hover:bg-gray-50 text-indigo-600"
+             data-id="${escapeHtml(studentId)}"
+           >
+             <i class="fa-solid fa-arrow-up mr-2"></i>
+             Promote
+           </button>
               <button
                 type="button"
                 class="student-action-item transfer-student-btn w-full text-left px-4 py-3 hover:bg-gray-50 text-orange-600"
@@ -398,6 +458,8 @@ function setupStudentActionButtons() {
   const transferButtons = document.querySelectorAll(".transfer-student-btn");
 
   const graduateButtons = document.querySelectorAll(".graduate-student-btn");
+
+  const promoteButtons = document.querySelectorAll(".promote-student-btn");
 
   // VIEW
   viewButtons.forEach((button) => {
@@ -540,6 +602,16 @@ function setupStudentActionButtons() {
       closeAllStudentActionMenus();
 
       await graduateStudent(studentId);
+    });
+  });
+  // PROMOTE
+  promoteButtons.forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      const studentId = button.dataset.id;
+      if (!studentId) return;
+      closeAllStudentActionMenus();
+      await openPromoteStudentModal(studentId);
     });
   });
 }
@@ -1680,6 +1752,194 @@ if (addNewStudentForm) {
   });
 }
 
+// PROMOTE STUDENT MODAL
+const promoteStudentModal = document.getElementById("promoteStudentModal");
+const promoteStudentModalOverlay = document.getElementById(
+  "promoteStudentModalOverlay",
+);
+const closePromoteStudentModal = document.getElementById(
+  "closePromoteStudentModal",
+);
+const cancelPromoteStudentBtn = document.getElementById(
+  "cancelPromoteStudentBtn",
+);
+const promoteStudentForm = document.getElementById("promoteStudentForm");
+const promoteStudentFormMessage = document.getElementById(
+  "promoteStudentFormMessage",
+);
+const nextClassIdSelect = document.getElementById("nextClassId");
+const confirmPromoteStudentBtn = document.getElementById(
+  "confirmPromoteStudentBtn",
+);
+const promoteStudentName = document.getElementById("promoteStudentName");
+const promoteCurrentClass = document.getElementById("promoteCurrentClass");
+const promoteStudentLoading = document.getElementById("promoteStudentLoading");
+const promoteStudentError = document.getElementById("promoteStudentError");
+
+let currentPromotingStudentId = null;
+
+function openPromoteStudentModal(studentId) {
+  if (!promoteStudentModal) return;
+  currentPromotingStudentId = studentId;
+  const student = students.find(
+    (item) => String(item._id || item.id) === String(studentId),
+  );
+  if (!student) return;
+
+  promoteStudentModal.classList.remove("hidden");
+  promoteStudentModal.classList.add("flex");
+  document.body.classList.add("overflow-hidden");
+
+  if (promoteStudentName) promoteStudentName.textContent = student.fullname;
+  if (promoteCurrentClass)
+    promoteCurrentClass.textContent =
+      student.class?.className || "Unknown Class";
+
+  showPromoteStudentLoading();
+  populateNextClassSelect(student.class?._id);
+}
+
+function closePromoteStudent() {
+  if (!promoteStudentModal) return;
+  promoteStudentModal.classList.add("hidden");
+  promoteStudentModal.classList.remove("flex");
+  document.body.classList.remove("overflow-hidden");
+  currentPromotingStudentId = null;
+  resetPromoteStudentModal();
+}
+
+function resetPromoteStudentModal() {
+  if (promoteStudentLoading) promoteStudentLoading.classList.add("hidden");
+  if (promoteStudentError) {
+    promoteStudentError.classList.add("hidden");
+    promoteStudentError.textContent = "";
+  }
+  if (promoteStudentForm) promoteStudentForm.classList.add("hidden");
+  if (promoteStudentFormMessage) {
+    promoteStudentFormMessage.classList.add("hidden");
+    promoteStudentFormMessage.textContent = "";
+  }
+  if (promoteStudentForm) promoteStudentForm.reset();
+}
+
+function showPromoteStudentLoading() {
+  if (promoteStudentLoading) promoteStudentLoading.classList.remove("hidden");
+  if (promoteStudentError) promoteStudentError.classList.add("hidden");
+  if (promoteStudentForm) promoteStudentForm.classList.add("hidden");
+}
+
+function showPromoteStudentForm() {
+  if (promoteStudentLoading) promoteStudentLoading.classList.add("hidden");
+  if (promoteStudentError) promoteStudentError.classList.add("hidden");
+  if (promoteStudentForm) promoteStudentForm.classList.remove("hidden");
+}
+
+function populateNextClassSelect(currentClassId) {
+  if (!nextClassIdSelect) return;
+  nextClassIdSelect.innerHTML = `<option value="">Select next class</option>`;
+  classes.forEach((classItem) => {
+    if (classItem._id !== currentClassId) {
+      const option = document.createElement("option");
+      option.value = classItem._id;
+      option.textContent = classItem.className;
+      nextClassIdSelect.appendChild(option);
+    }
+  });
+  showPromoteStudentForm();
+}
+
+if (promoteStudentForm) {
+  promoteStudentForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!currentPromotingStudentId) return;
+
+    const nextClassId = nextClassIdSelect?.value;
+    if (!nextClassId) {
+      showPromoteFormMessage("Please select a next class.", "error");
+      return;
+    }
+
+    setPromoteStudentSaving(true);
+    try {
+      const response = await apiRequest(
+        `/admin/students/${currentPromotingStudentId}/promote`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ nextClassId }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(response.data?.message || "Failed to promote student.");
+      }
+      showPromoteFormMessage(
+        response.data?.message || "Student promoted successfully.",
+        "success",
+      );
+      await loadStudents();
+      setTimeout(() => {
+        closePromoteStudent();
+      }, 1500);
+    } catch (error) {
+      console.error("Promote student error:", error);
+      showPromoteFormMessage(
+        error.message || "Failed to promote student.",
+        "error",
+      );
+    } finally {
+      setPromoteStudentSaving(false);
+    }
+  });
+}
+
+function showPromoteFormMessage(message, type) {
+  if (!promoteStudentFormMessage) return;
+  promoteStudentFormMessage.textContent = message;
+  promoteStudentFormMessage.className = "p-3 rounded-lg text-sm font-medium";
+  if (type === "success") {
+    promoteStudentFormMessage.classList.add(
+      "bg-green-50",
+      "text-green-700",
+      "border",
+      "border-green-200",
+    );
+  } else {
+    promoteStudentFormMessage.classList.add(
+      "bg-red-50",
+      "text-red-700",
+      "border",
+      "border-red-200",
+    );
+  }
+  promoteStudentFormMessage.classList.remove("hidden");
+}
+
+function setPromoteStudentSaving(isSaving) {
+  if (!confirmPromoteStudentBtn) return;
+  confirmPromoteStudentBtn.disabled = isSaving;
+  if (isSaving) {
+    confirmPromoteStudentBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Promoting...`;
+  } else {
+    confirmPromoteStudentBtn.innerHTML = `<i class="fa-solid fa-arrow-up mr-2"></i> Confirm Promotion`;
+  }
+}
+
+if (closePromoteStudentModal)
+  closePromoteStudentModal.addEventListener("click", closePromoteStudent);
+if (cancelPromoteStudentBtn)
+  cancelPromoteStudentBtn.addEventListener("click", closePromoteStudent);
+if (promoteStudentModalOverlay)
+  promoteStudentModalOverlay.addEventListener("click", closePromoteStudent);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (
+    promoteStudentModal &&
+    !promoteStudentModal.classList.contains("hidden")
+  ) {
+    closePromoteStudent();
+  }
+});
+
 function setupClassFilter() {
   if (!classFilterBtn || !classFilterMenu) return;
 
@@ -1734,4 +1994,109 @@ async function openStudentFromSearch() {
 
   // Remove the query parameter from the URL
   window.history.replaceState({}, document.title, window.location.pathname);
+}
+// Bulk Promote Modal Variables
+const bulkPromoteModal = document.getElementById("bulkPromoteModal");
+const bulkPromoteModalOverlay = document.getElementById("bulkPromoteModalOverlay");
+const closeBulkPromoteModal = document.getElementById("closeBulkPromoteModal");
+const cancelBulkPromoteBtn = document.getElementById("cancelBulkPromoteBtn");
+const bulkPromoteBtn = document.getElementById("bulkPromoteBtn");
+const bulkPromoteForm = document.getElementById("bulkPromoteForm");
+const bulkPromoteFormMessage = document.getElementById("bulkPromoteFormMessage");
+const bulkNextClassIdSelect = document.getElementById("bulkNextClassId");
+const confirmBulkPromoteBtn = document.getElementById("confirmBulkPromoteBtn");
+const bulkPromoteCount = document.getElementById("bulkPromoteCount");
+const bulkPromoteLoading = document.getElementById("bulkPromoteLoading");
+
+// Open Modal
+if (bulkPromoteBtn) {
+  bulkPromoteBtn.addEventListener("click", () => {
+    const selectedIds = Array.from(document.querySelectorAll(".student-checkbox:checked")).map(cb => cb.value);
+    if (selectedIds.length === 0) return;
+    
+    if (bulkPromoteCount) bulkPromoteCount.textContent = selectedIds.length;
+    if (bulkPromoteFormMessage) bulkPromoteFormMessage.classList.add("hidden");
+    
+    // Populate classes dropdown
+    if (bulkNextClassIdSelect) {
+      bulkNextClassIdSelect.innerHTML = `<option value="">Select target class</option>`;
+      classes.forEach((classItem) => {
+        const option = document.createElement("option");
+        option.value = classItem._id;
+        option.textContent = classItem.className;
+        bulkNextClassIdSelect.appendChild(option);
+      });
+    }
+    
+    bulkPromoteModal?.classList.remove("hidden");
+    bulkPromoteModal?.classList.add("flex");
+    bulkPromoteLoading?.classList.add("hidden");
+    bulkPromoteForm?.classList.remove("hidden");
+  });
+}
+
+// Close Modal functions
+function closeBulkPromote() {
+  bulkPromoteModal?.classList.add("hidden");
+  bulkPromoteModal?.classList.remove("flex");
+}
+if (closeBulkPromoteModal) closeBulkPromoteModal.addEventListener("click", closeBulkPromote);
+if (cancelBulkPromoteBtn) cancelBulkPromoteBtn.addEventListener("click", closeBulkPromote);
+if (bulkPromoteModalOverlay) bulkPromoteModalOverlay.addEventListener("click", closeBulkPromote);
+
+// Submit Bulk Promote
+if (bulkPromoteForm) {
+  bulkPromoteForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const nextClassId = bulkNextClassIdSelect?.value;
+    if (!nextClassId) {
+      showBulkPromoteMessage("Please select a target class.", "error");
+      return;
+    }
+    
+    const selectedIds = Array.from(document.querySelectorAll(".student-checkbox:checked")).map(cb => cb.value);
+    
+    confirmBulkPromoteBtn.disabled = true;
+    confirmBulkPromoteBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Promoting...`;
+    bulkPromoteForm.classList.add("hidden");
+    bulkPromoteLoading.classList.remove("hidden");
+    
+    try {
+      const response = await apiRequest("/admin/students/bulk-promote", {
+        method: "POST",
+        body: JSON.stringify({ studentIds: selectedIds, nextClassId }),
+      });
+      
+      if (!response.ok) throw new Error(response.data?.message || "Failed to promote students.");
+      
+      showBulkPromoteMessage(response.data?.message || "Students promoted successfully!", "success");
+      await loadStudents(); // Refresh table
+      
+      // Clear selection after success
+      document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false);
+      if (selectAllCheckbox) selectAllCheckbox.checked = false;
+      updateBulkSelection();
+      
+      setTimeout(closeBulkPromote, 2000);
+    } catch (error) {
+      showBulkPromoteMessage(error.message || "Failed to promote students.", "error");
+      bulkPromoteLoading.classList.add("hidden");
+      bulkPromoteForm.classList.remove("hidden");
+    } finally {
+      confirmBulkPromoteBtn.disabled = false;
+      confirmBulkPromoteBtn.innerHTML = `<i class="fa-solid fa-arrow-up mr-2"></i> Confirm Promotion`;
+    }
+  });
+}
+
+function showBulkPromoteMessage(message, type) {
+  if (!bulkPromoteFormMessage) return;
+  bulkPromoteFormMessage.textContent = message;
+  bulkPromoteFormMessage.className = "p-3 rounded-lg text-sm font-medium";
+  if (type === "success") {
+    bulkPromoteFormMessage.classList.add("bg-green-50", "text-green-700", "border", "border-green-200");
+  } else {
+    bulkPromoteFormMessage.classList.add("bg-red-50", "text-red-700", "border", "border-red-200");
+  }
+  bulkPromoteFormMessage.classList.remove("hidden");
 }

@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const Class = require("../models/Class");
 const Student = require("../models/Student");
+const User = require("../models/User"); 
+const ClassSubject = require("../models/classSubject")
 
 const createStudent = async (req, res) => {
   try {
-    const {
+    let {
       admissionNumber,
       fullname,
       guardianName,
@@ -13,6 +15,26 @@ const createStudent = async (req, res) => {
       guardianPhone,
       classId,
     } = req.body;
+
+    // 🔒 SECURITY: If user is a teacher, enforce strict Class Teacher rules
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate(
+        "assignedClass",
+      );
+
+      // Explicitly block Subject Teachers (who have no assignedClass)
+      if (!teacher || !teacher.assignedClass) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied. Only Class Teachers can add students.",
+        });
+      }
+
+      // Force the class to be their assigned class, ignoring any classId sent from frontend
+      classId = teacher.assignedClass._id.toString();
+    }
+
+    // --- YOUR ORIGINAL VALIDATION LOGIC BELOW ---
     if (
       !admissionNumber ||
       !fullname ||
@@ -86,13 +108,58 @@ const createStudent = async (req, res) => {
 
 const getAllStudents = async (req, res) => {
   try {
-    const students = await Student.find()
+    const query = {};
+
+    // 🔒 SECURITY: If teacher, only fetch students from classes they are authorized to see
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate("assignedClass");
+      
+      if (teacher && teacher.assignedClass) {
+        // Class Teacher: only see their assigned homeroom class
+        query.class = teacher.assignedClass._id;
+      } else {
+        // Subject Teacher: see students in classes they teach
+        const assignments = await ClassSubject.find({ subjectTeacher: req.user.id }).select("class");
+        const classIds = assignments.map(a => a.class);
+        
+        if (classIds.length > 0) {
+          query.class = { $in: classIds };
+        } else {
+          // Subject teacher with no class assignments yet
+          return res.status(200).json({
+            success: true,
+            count: 0,
+            stats: { total: 0, active: 0, graduated: 0, transferred: 0, inactive: 0 },
+            students: [],
+          });
+        }
+      }
+    } else if (req.query.classId) {
+      // Admin can filter by specific class
+      query.class = req.query.classId;
+    }
+
+    if (req.query.status) {
+      query.status = req.query.status;
+    }
+
+    // --- FETCH LOGIC ---
+    const students = await Student.find(query)
       .select("-__v")
       .populate("class", "className")
       .sort({ createdAt: -1 });
+
+    // Calculate stats
+    const total = students.length;
+    const active = students.filter((s) => s.status === "Active").length;
+    const graduated = students.filter((s) => s.status === "Graduated").length;
+    const transferred = students.filter((s) => s.status === "Transferred").length;
+    const inactive = students.filter((s) => !s.isActive).length;
+
     return res.status(200).json({
       success: true,
-      count: students.length,
+      count: total,
+      stats: { total, active, graduated, transferred, inactive },
       students,
     });
   } catch (error) {
@@ -113,15 +180,45 @@ const getStudentById = async (req, res) => {
         message: "Invalid Student ID.",
       });
     }
+    
     const student = await Student.findById(id)
       .select("-__v")
       .populate("class", "className");
+      
     if (!student) {
       return res.status(404).json({
         success: false,
         message: "Student not found.",
       });
     }
+
+    // 🔒 SECURITY: If teacher, ensure they are authorized to view this student
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate("assignedClass");
+      let isAuthorized = false;
+
+      // 1. Check if they are the Class Teacher for this student's class
+      if (teacher && teacher.assignedClass && teacher.assignedClass._id.toString() === student.class._id.toString()) {
+        isAuthorized = true;
+      } else {
+        // 2. Check if they are a Subject Teacher for this student's class
+        const assignment = await ClassSubject.findOne({
+          class: student.class._id,
+          subjectTeacher: req.user.id,
+        });
+        if (assignment) {
+          isAuthorized = true;
+        }
+      }
+
+      if (!isAuthorized) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied. You are not assigned to this class.",
+        });
+      }
+    }
+
     return res.status(200).json({
       success: true,
       student,
@@ -134,7 +231,6 @@ const getStudentById = async (req, res) => {
     });
   }
 };
-
 const updateStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -253,6 +349,22 @@ const graduateStudent = async (req, res) => {
         message: "Student is already graduated.",
       });
     }
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate(
+        "assignedClass",
+      );
+      if (
+        !teacher ||
+        !teacher.assignedClass ||
+        teacher.assignedClass._id.toString() !== student.class._id.toString()
+      ) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Access denied. You can only graduate/transfer students in your assigned class.",
+        });
+      }
+    }
     if (student.status === "Transferred") {
       return res.status(400).json({
         success: false,
@@ -281,6 +393,7 @@ const graduateStudent = async (req, res) => {
     });
   }
 };
+
 const transferStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -297,6 +410,23 @@ const transferStudent = async (req, res) => {
         message: "Student not found.",
       });
     }
+
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate(
+        "assignedClass",
+      );
+      if (
+        !teacher ||
+        !teacher.assignedClass ||
+        teacher.assignedClass._id.toString() !== student.class._id.toString()
+      ) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Access denied. You can only graduate/transfer students in your assigned class.",
+        });
+      }
+    }
     if (student.status === "Transferred") {
       return res.status(400).json({
         success: false,
@@ -310,7 +440,7 @@ const transferStudent = async (req, res) => {
       });
     }
     student.status = "Transferred";
-    student.isActive = false
+    student.isActive = false;
     await student.save();
     return res.status(200).json({
       success: true,
@@ -374,6 +504,7 @@ const deactivateStudent = async (req, res) => {
     });
   }
 };
+
 const activateStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -390,12 +521,6 @@ const activateStudent = async (req, res) => {
         message: "Student not found.",
       });
     }
-    // if(student.status==="Graduated"||student.status==="Transferred"){
-    //   return res.status(400).json({
-    //     success:false,
-    //     message:"Graduated and Transferred students cannot be activated."
-    //   })
-    // }
     if (student.isActive && student.status === "Active") {
       return res.status(400).json({
         success: false,
@@ -424,6 +549,160 @@ const activateStudent = async (req, res) => {
   }
 };
 
+const promoteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nextClassId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Student ID." });
+    }
+    if (!nextClassId || !mongoose.Types.ObjectId.isValid(nextClassId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Valid Next Class ID is required." });
+    }
+
+    const student = await Student.findById(id).populate("class", "className");
+    if (!student) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Student not found." });
+    }
+
+    // 🔒 SECURITY: If teacher, ensure they are the class teacher of the student's CURRENT class
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate(
+        "assignedClass",
+      );
+      if (
+        !teacher ||
+        !teacher.assignedClass ||
+        teacher.assignedClass._id.toString() !== student.class._id.toString()
+      ) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Access denied. You can only promote students in your assigned class.",
+        });
+      }
+    }
+
+    if (student.status === "Graduated") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Student is already graduated." });
+    }
+    if (student.status === "Transferred") {
+      return res.status(400).json({
+        success: false,
+        message: "Transferred students cannot be promoted.",
+      });
+    }
+
+    const nextClass = await Class.findById(nextClassId);
+    if (!nextClass) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Next class not found." });
+    }
+
+    // Update student details
+    student.class = nextClassId;
+    student.status = "Active";
+    student.isActive = true;
+    await student.save();
+    await student.populate("class", "className");
+
+    return res.status(200).json({
+      success: true,
+      message: `Student promoted to ${nextClass.className} successfully.`,
+      student: {
+        id: student.id,
+        fullname: student.fullname,
+        class: student.class,
+        status: student.status,
+        isActive: student.isActive,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error." });
+  }
+};
+
+const bulkPromoteStudents = async (req, res) => {
+  try {
+    const { studentIds, nextClassId } = req.body;
+
+    if (!Array.isArray(studentIds) || studentIds.length === 0) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Please select at least one student.",
+        });
+    }
+    if (!nextClassId || !mongoose.Types.ObjectId.isValid(nextClassId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Valid Next Class ID is required." });
+    }
+
+    const nextClass = await Class.findById(nextClassId);
+    if (!nextClass) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Next class not found." });
+    }
+
+    // 🔒 SECURITY: If teacher, ensure all selected students belong to their class
+    if (req.user.role === "teacher") {
+      const teacher = await User.findById(req.user.id).populate(
+        "assignedClass",
+      );
+      if (!teacher || !teacher.assignedClass) {
+        return res
+          .status(403)
+          .json({ success: false, message: "Access denied." });
+      }
+
+      const students = await Student.find({ _id: { $in: studentIds } });
+      const unauthorized = students.some(
+        (s) => s.class.toString() !== teacher.assignedClass._id.toString(),
+      );
+      if (unauthorized) {
+        return res
+          .status(403)
+          .json({
+            success: false,
+            message: "You can only promote students in your assigned class.",
+          });
+      }
+    }
+
+    // Perform bulk update
+    const result = await Student.updateMany(
+      { _id: { $in: studentIds } },
+      { $set: { class: nextClassId, status: "Active", isActive: true } },
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `Successfully promoted ${result.modifiedCount} student(s) to ${nextClass.className}.`,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error." });
+  }
+};
+
 module.exports = {
   createStudent,
   getAllStudents,
@@ -433,4 +712,6 @@ module.exports = {
   transferStudent,
   deactivateStudent,
   activateStudent,
+  promoteStudent,
+  bulkPromoteStudents,
 };

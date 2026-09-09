@@ -37,13 +37,33 @@ RENDER TEACHER INFO
 ========================================================= */
 function renderTeacherInfo() {
   if (!dashboardData) return;
-
-  const { teacher, currentSession, currentTerm } = dashboardData;
-
+  const { teacher, currentSession, currentTerm, myAssignments } = dashboardData;
+  
   document.getElementById("teacherName").textContent = teacher.fullname || "Teacher";
   document.getElementById("currentSession").textContent = currentSession?.sessionName || "Not Set";
   document.getElementById("currentTerm").textContent = currentTerm?.termName || "Not Set";
-  document.getElementById("assignedClass").textContent = teacher.assignedClass?.className || "None";
+
+  const assignedClassEl = document.getElementById("assignedClass");
+  
+  // ✅ Check if they are a Class Teacher (Homeroom)
+  if (teacher.assignedClass && teacher.assignedClass.className) {
+    assignedClassEl.textContent = teacher.assignedClass.className;
+    assignedClassEl.title = "You are the Class Teacher for this class";
+    assignedClassEl.className = "text-blue-600 font-semibold";
+  } 
+  // ✅ Fallback: If they are only a Subject Teacher
+  else if (myAssignments && myAssignments.length > 0) {
+    // Get unique classes they teach in
+    const uniqueClasses = [...new Set(myAssignments.map(a => a.class?.className))];
+    assignedClassEl.textContent = `Subject Teacher (${uniqueClasses.join(', ')})`;
+    assignedClassEl.title = "You are a Subject Teacher, not a Class Teacher";
+    assignedClassEl.className = "text-gray-600";
+  } 
+  // ✅ Fallback: No assignments at all
+  else {
+    assignedClassEl.textContent = "None";
+    assignedClassEl.className = "text-gray-400";
+  }
 }
 
 /* =========================================================

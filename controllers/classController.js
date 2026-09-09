@@ -80,6 +80,12 @@ const createClass = async (req, res) => {
       classTeacher: teacher ? teacher._id : null,
     });
 
+    if (teacher) {
+      await User.findByIdAndUpdate(teacher._id, {
+        assignedClass: newClass._id,
+      });
+    }
+
     // -----------------------------
     // Populate response
     // -----------------------------
@@ -398,32 +404,11 @@ const deleteClass = async (req, res) => {
         message: "Class not found.",
       });
     }
-
-    // -----------------------------
-    // Optional: Check if class has students
-    // You can add this check if you want to prevent deletion
-    // when students are enrolled
-    // -----------------------------
-    // const Student = require("../models/Student");
-    // const studentsInClass = await Student.countDocuments({ class: id });
-    // if (studentsInClass > 0) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: `Cannot delete class. ${studentsInClass} student(s) are enrolled in this class.`,
-    //   });
-    // }
-
-    // -----------------------------
-    // Optional: Check if class has subject assignments
-    // -----------------------------
-    // const ClassSubject = require("../models/ClassSubject");
-    // const subjectAssignments = await ClassSubject.countDocuments({ class: id });
-    // if (subjectAssignments > 0) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: `Cannot delete class. ${subjectAssignments} subject assignment(s) exist for this class.`,
-    //   });
-    // }
+    if (classData.classTeacher) {
+      await User.findByIdAndUpdate(classData.classTeacher, {
+        assignedClass: null,
+      });
+    }
 
     // -----------------------------
     // Delete the class

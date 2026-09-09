@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const userSchema = new mongoose.Schema(
   {
     fullname: {
@@ -29,20 +30,30 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "teacher"],
-      default: "teacher",
+      enum: ["admin", "teacher"],  
+      default: "teacher",  
     },
     assignedClass: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Class",
+      ref: "Class",  
     },
-    subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subject" }],
+    subjects: [{ 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "Subject" 
+    }],
     status: {
       type: String,
-      enum: ["active", "inactive"],
+      enum: ["active", "inactive"], 
       default: "active",
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpire: {
+      type: Date,
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
+
 module.exports = mongoose.model("User", userSchema);

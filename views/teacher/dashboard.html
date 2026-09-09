@@ -1,24 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="../assets/css/output.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body class="bg-gray-50 h-screen overflow-hidden font-[Inter]">
-    <div class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen">
-      
+    <div
+      class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen"
+    >
       <!-- Sidebar -->
-      <aside class="hidden md:col-span-1 row-span-3 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300">
-        <div class="flex flex-col border-b-2 border-gray-400 justify-center items-center p-4">
+      <aside
+        class="hidden md:col-span-1 row-span-3 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300"
+      >
+        <div
+          class="flex flex-col border-b-2 border-gray-400 justify-center items-center p-4"
+        >
           <div class="w-[80px] h-[80px] mb-2">
-            <img src="../images/Education logo.jpg" class="w-full h-full object-contain" alt="Edulog Academy logo" />
+            <img
+              src="../images/Education logo.jpg"
+              class="w-full h-full object-contain"
+              alt="Edulog Academy logo"
+            />
           </div>
-          <h1 class="font-bold text-xl text-blue-500 text-center">Edulog Academy</h1>
+          <h1 class="font-bold text-xl text-blue-500 text-center">
+            Edulog Academy
+          </h1>
           <p class="text-xs text-gray-500 text-center">Teacher Portal</p>
         </div>
 
@@ -29,22 +46,37 @@
                 <i class="fa-solid fa-gauge-high"></i> Dashboard
               </a>
             </li>
-            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./students.html" class="flex items-center gap-3"
+                ><i class="fa-solid fa-user-graduate"></i> My Students</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
               <a href="./results.html" class="flex items-center gap-3">
                 <i class="fa-solid fa-chart-column"></i> Enter Results
               </a>
             </li>
-            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
               <a href="./assessments.html" class="flex items-center gap-3">
                 <i class="fa-solid fa-clipboard-check"></i> Assessments
               </a>
             </li>
-            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
               <a href="./report-card.html" class="flex items-center gap-3">
                 <i class="fa-solid fa-file-pdf"></i> Report Cards
               </a>
             </li>
-            <li class="rounded hover:bg-blue-500 hover:text-white p-3 transition">
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
               <a href="./annual-report.html" class="flex items-center gap-3">
                 <i class="fa-solid fa-file-lines"></i> Annual Reports
               </a>
@@ -53,19 +85,34 @@
         </nav>
 
         <div class="p-4 border-t-2 border-gray-400">
-          <button id="logoutBtn" class="w-full p-2 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2">
+          <button
+            id="logoutBtn"
+            class="w-full p-2 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2"
+          >
             <i class="fa-solid fa-right-from-bracket"></i> Sign Out
           </button>
         </div>
       </aside>
 
       <!-- Header -->
-      <header class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-between items-center text-blue-500">
+      <header
+        class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-between items-center text-blue-500"
+      >
         <div class="flex items-center gap-3">
-          <img src="../images/Education logo.jpg" alt="Edulog logo" class="w-12 h-12 md:hidden" />
-          <p class="hidden md:block font-semibold">Edulog > Teacher Dashboard</p>
+          <img
+            src="../images/Education logo.jpg"
+            alt="Edulog logo"
+            class="w-12 h-12 md:hidden"
+          />
+          <p class="hidden md:block font-semibold">
+            Edulog > Teacher Dashboard
+          </p>
         </div>
-        <button id="mobileMenuBtn" class="md:hidden text-blue-500 p-2 text-xl" aria-label="Open navigation menu">
+        <button
+          id="mobileMenuBtn"
+          class="md:hidden text-blue-500 p-2 text-xl"
+          aria-label="Open navigation menu"
+        >
           <i class="fa-solid fa-bars"></i>
         </button>
       </header>
@@ -73,22 +120,57 @@
       <!-- Mobile Navigation -->
       <div id="mobileMenu" class="hidden md:hidden fixed inset-0 z-50">
         <div id="mobileMenuOverlay" class="absolute inset-0 bg-black/40"></div>
-        <aside class="absolute right-0 top-0 h-full w-72 bg-white shadow-xl p-5 overflow-y-auto">
+        <aside
+          class="absolute right-0 top-0 h-full w-72 bg-white shadow-xl p-5 overflow-y-auto"
+        >
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-blue-500">Teacher Portal</h2>
-            <button id="closeMobileMenu" class="text-gray-600 hover:text-blue-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <button
+              id="closeMobileMenu"
+              class="text-gray-600 hover:text-blue-500 text-xl"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
           </div>
           <nav>
             <ul class="flex flex-col gap-2 font-bold">
-              <li class="rounded bg-blue-500 text-white p-3"><a href="./dashboard.html" class="flex items-center gap-3"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
-              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./results.html" class="flex items-center gap-3"><i class="fa-solid fa-chart-column"></i> Enter Results</a></li>
-              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./assessments.html" class="flex items-center gap-3"><i class="fa-solid fa-clipboard-check"></i> Assessments</a></li>
-              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./report-card.html" class="flex items-center gap-3"><i class="fa-solid fa-file-pdf"></i> Report Cards</a></li>
-              <li class="rounded hover:bg-blue-500 hover:text-white p-3"><a href="./annual-report.html" class="flex items-center gap-3"><i class="fa-solid fa-file-lines"></i> Annual Reports</a></li>
+              <li class="rounded bg-blue-500 text-white p-3">
+                <a href="./dashboard.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-gauge-high"></i> Dashboard</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./students.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-user-graduate"></i> My Students</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./results.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-chart-column"></i> Enter Results</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./assessments.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-clipboard-check"></i> Assessments</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./report-card.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-file-pdf"></i> Report Cards</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./annual-report.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
+                >
+              </li>
             </ul>
           </nav>
           <div class="mt-6 pt-5 border-t">
-            <button id="mobileLogoutBtn" class="w-full p-3 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2">
+            <button
+              id="mobileLogoutBtn"
+              class="w-full p-3 bg-red-500 text-white font-bold hover:bg-red-600 transition rounded flex items-center justify-center gap-2"
+            >
               <i class="fa-solid fa-right-from-bracket"></i> Sign Out
             </button>
           </div>
@@ -96,31 +178,48 @@
       </div>
 
       <!-- Main Content -->
-      <main class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4">
-        
+      <main
+        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4"
+      >
         <!-- Welcome Banner -->
         <div class="col-span-1 md:col-span-4">
-          <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl p-6 text-white shadow-md">
-            <h1 class="text-2xl md:text-3xl font-bold">Welcome, <span id="teacherName">Teacher</span>!</h1>
+          <div
+            class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl p-6 text-white shadow-md"
+          >
+            <h1 class="text-2xl md:text-3xl font-bold">
+              Welcome, <span id="teacherName">Teacher</span>!
+            </h1>
             <p class="mt-2 text-blue-100">
-              Current Session: <span id="currentSession" class="font-semibold">Loading...</span> | 
-              Current Term: <span id="currentTerm" class="font-semibold">Loading...</span>
+              Current Session:
+              <span id="currentSession" class="font-semibold">Loading...</span>
+              | Current Term:
+              <span id="currentTerm" class="font-semibold">Loading...</span>
             </p>
             <p class="mt-1 text-sm text-blue-100">
-              Assigned Class: <span id="assignedClass" class="font-semibold">Loading...</span>
+              Assigned Class:
+              <span id="assignedClass" class="font-semibold">Loading...</span>
             </p>
           </div>
         </div>
 
         <!-- Stats Cards -->
-        <div class="col-span-1 md:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div
+          class="col-span-1 md:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
           <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm text-gray-500 font-medium">My Students</p>
-                <p id="statStudents" class="text-3xl font-bold text-blue-500 mt-2">0</p>
+                <p
+                  id="statStudents"
+                  class="text-3xl font-bold text-blue-500 mt-2"
+                >
+                  0
+                </p>
               </div>
-              <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+              <div
+                class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+              >
                 <i class="fa-solid fa-user-graduate text-blue-500 text-xl"></i>
               </div>
             </div>
@@ -130,9 +229,16 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm text-gray-500 font-medium">My Subjects</p>
-                <p id="statSubjects" class="text-3xl font-bold text-green-500 mt-2">0</p>
+                <p
+                  id="statSubjects"
+                  class="text-3xl font-bold text-green-500 mt-2"
+                >
+                  0
+                </p>
               </div>
-              <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+              <div
+                class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center"
+              >
                 <i class="fa-solid fa-book text-green-500 text-xl"></i>
               </div>
             </div>
@@ -142,13 +248,28 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm text-gray-500 font-medium">Results Entered</p>
-                <p id="statResults" class="text-3xl font-bold text-purple-500 mt-2">0</p>
+                <p
+                  id="statResults"
+                  class="text-3xl font-bold text-purple-500 mt-2"
+                >
+                  0
+                </p>
                 <p class="text-xs text-gray-400 mt-1">
-                  <span id="statPublished" class="text-green-600 font-semibold">0</span> published | 
-                  <span id="statUnpublished" class="text-yellow-600 font-semibold">0</span> pending
+                  <span id="statPublished" class="text-green-600 font-semibold"
+                    >0</span
+                  >
+                  published |
+                  <span
+                    id="statUnpublished"
+                    class="text-yellow-600 font-semibold"
+                    >0</span
+                  >
+                  pending
                 </p>
               </div>
-              <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+              <div
+                class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center"
+              >
                 <i class="fa-solid fa-chart-column text-purple-500 text-xl"></i>
               </div>
             </div>
@@ -158,10 +279,19 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm text-gray-500 font-medium">Assessments</p>
-                <p id="statAssessments" class="text-3xl font-bold text-yellow-500 mt-2">0</p>
+                <p
+                  id="statAssessments"
+                  class="text-3xl font-bold text-yellow-500 mt-2"
+                >
+                  0
+                </p>
               </div>
-              <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                <i class="fa-solid fa-clipboard-check text-yellow-500 text-xl"></i>
+              <div
+                class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center"
+              >
+                <i
+                  class="fa-solid fa-clipboard-check text-yellow-500 text-xl"
+                ></i>
               </div>
             </div>
           </div>
@@ -171,33 +301,56 @@
         <div class="col-span-1 md:col-span-4">
           <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="./results.html" class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:shadow-md transition flex items-center gap-4">
-              <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+            <a
+              href="./results.html"
+              class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:shadow-md transition flex items-center gap-4"
+            >
+              <div
+                class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center"
+              >
                 <i class="fa-solid fa-pen-to-square text-blue-500 text-2xl"></i>
               </div>
               <div>
                 <h3 class="font-bold text-gray-800">Enter Results</h3>
-                <p class="text-sm text-gray-500">Enter marks for your students</p>
+                <p class="text-sm text-gray-500">
+                  Enter marks for your students
+                </p>
               </div>
             </a>
 
-            <a href="./assessments.html" class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:shadow-md transition flex items-center gap-4">
-              <div class="w-14 h-14 rounded-full bg-yellow-100 flex items-center justify-center">
-                <i class="fa-solid fa-clipboard-check text-yellow-500 text-2xl"></i>
+            <a
+              href="./assessments.html"
+              class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:shadow-md transition flex items-center gap-4"
+            >
+              <div
+                class="w-14 h-14 rounded-full bg-yellow-100 flex items-center justify-center"
+              >
+                <i
+                  class="fa-solid fa-clipboard-check text-yellow-500 text-2xl"
+                ></i>
               </div>
               <div>
                 <h3 class="font-bold text-gray-800">Student Assessments</h3>
-                <p class="text-sm text-gray-500">Attendance, affective & psychomotor</p>
+                <p class="text-sm text-gray-500">
+                  Attendance, affective & psychomotor
+                </p>
               </div>
             </a>
 
-            <a href="./report-card.html" class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:shadow-md transition flex items-center gap-4">
-              <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
+            <a
+              href="./report-card.html"
+              class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:shadow-md transition flex items-center gap-4"
+            >
+              <div
+                class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center"
+              >
                 <i class="fa-solid fa-file-pdf text-green-500 text-2xl"></i>
               </div>
               <div>
                 <h3 class="font-bold text-gray-800">View Report Cards</h3>
-                <p class="text-sm text-gray-500">Preview and download report cards</p>
+                <p class="text-sm text-gray-500">
+                  Preview and download report cards
+                </p>
               </div>
             </a>
           </div>
@@ -205,8 +358,12 @@
 
         <!-- My Subject Assignments -->
         <div class="col-span-1 md:col-span-2">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 h-full">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">My Subject Assignments</h2>
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 h-full"
+          >
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+              My Subject Assignments
+            </h2>
             <div id="assignmentsLoading" class="hidden py-8 text-center">
               <i class="fa-solid fa-spinner fa-spin text-blue-500 text-2xl"></i>
             </div>
@@ -218,7 +375,9 @@
 
         <!-- Recent Results -->
         <div class="col-span-1 md:col-span-2">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 h-full">
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 h-full"
+          >
             <h2 class="text-xl font-bold text-gray-800 mb-4">Recent Results</h2>
             <div id="recentResultsLoading" class="hidden py-8 text-center">
               <i class="fa-solid fa-spinner fa-spin text-blue-500 text-2xl"></i>
@@ -228,11 +387,12 @@
             </div>
           </div>
         </div>
-
       </main>
 
       <!-- Footer -->
-      <footer class="col-span-1 md:col-span-5 p-6 text-center text-sm text-gray-500 border-t border-gray-200 bg-white">
+      <footer
+        class="col-span-1 md:col-span-5 p-6 text-center text-sm text-gray-500 border-t border-gray-200 bg-white"
+      >
         <p>All Rights Reserved. &copy; 2026 Edulog Academy</p>
       </footer>
     </div>

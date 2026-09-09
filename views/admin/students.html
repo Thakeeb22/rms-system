@@ -670,12 +670,46 @@
             </div>
           </div>
           <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+            <!-- Bulk Actions Bar (Hidden by default) -->
+            <div
+              id="bulkActionsBar"
+              class="hidden bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4 items-center justify-between"
+            >
+              <div class="flex items-center gap-3">
+                <span class="font-semibold text-indigo-700">
+                  <span id="selectedCount">0</span> student(s) selected
+                </span>
+                <button
+                  type="button"
+                  id="clearSelectionBtn"
+                  class="text-sm text-indigo-600 hover:text-indigo-800 underline"
+                >
+                  Clear selection
+                </button>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  id="bulkPromoteBtn"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition"
+                >
+                  <i class="fa-solid fa-arrow-up mr-2"></i> Promote Selected
+                </button>
+              </div>
+            </div>
             <table class="w-full min-w-[750px]">
               <thead
                 class="bg-gray-100 items-center justify-center p-4 border-b-2 text-blue-600"
                 id="studentsHead"
               >
                 <tr>
+                  <th class="p-4 w-10">
+                    <input
+                      type="checkbox"
+                      id="selectAllStudents"
+                      class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    />
+                  </th>
                   <th>Student's Name</th>
                   <th>Admission Number</th>
                   <th>Guardian Name</th>
@@ -1148,6 +1182,216 @@
             >
               <i class="fa-solid fa-floppy-disk mr-2"></i>
               Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Promote Student Modal -->
+    <div
+      id="promoteStudentModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <div
+        id="promoteStudentModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+      <div
+        class="relative w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center"
+            >
+              <i
+                class="fa-solid fa-arrow-up-from-bracket text-indigo-600 text-xl"
+              ></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Promote Student</h2>
+              <p class="text-sm text-gray-500">
+                Move student to the next class
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="closePromoteStudentModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div id="promoteStudentLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+          <p class="text-gray-500">Loading classes...</p>
+        </div>
+
+        <div
+          id="promoteStudentError"
+          class="hidden m-5 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700"
+        ></div>
+
+        <form id="promoteStudentForm" class="hidden p-5 space-y-6">
+          <div
+            id="promoteStudentFormMessage"
+            class="hidden p-3 rounded-lg text-sm font-medium"
+          ></div>
+
+          <div>
+            <p class="text-sm text-gray-600 mb-2">
+              Promoting
+              <span
+                id="promoteStudentName"
+                class="font-bold text-gray-800"
+              ></span>
+              from
+              <span
+                id="promoteCurrentClass"
+                class="font-bold text-blue-600"
+              ></span>
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="nextClassId"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Next Class <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <i
+                class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+              ></i>
+              <select
+                id="nextClassId"
+                name="nextClassId"
+                required
+                class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition appearance-none"
+              >
+                <option value="">Select next class</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t"
+          >
+            <button
+              type="button"
+              id="cancelPromoteStudentBtn"
+              class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="confirmPromoteStudentBtn"
+              class="px-5 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <i class="fa-solid fa-arrow-up mr-2"></i>
+              Confirm Promotion
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Bulk Promote Modal -->
+    <div
+      id="bulkPromoteModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <div
+        id="bulkPromoteModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+      <div
+        class="relative w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">
+              Bulk Promote Students
+            </h2>
+            <p class="text-sm text-gray-500">
+              Move selected students to a new class
+            </p>
+          </div>
+          <button
+            type="button"
+            id="closeBulkPromoteModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 transition"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div id="bulkPromoteLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+          <p class="text-gray-500">Promoting students...</p>
+        </div>
+
+        <form id="bulkPromoteForm" class="hidden p-5 space-y-6">
+          <div
+            id="bulkPromoteFormMessage"
+            class="hidden p-3 rounded-lg text-sm font-medium"
+          ></div>
+
+          <div>
+            <p class="text-sm text-gray-600 mb-2">
+              Promoting
+              <span
+                id="bulkPromoteCount"
+                class="font-bold text-indigo-600"
+              ></span>
+              student(s)
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="bulkNextClassId"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Target Class <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <i
+                class="fa-solid fa-school absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+              ></i>
+              <select
+                id="bulkNextClassId"
+                required
+                class="w-full p-3 pl-10 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 transition appearance-none"
+              >
+                <option value="">Select target class</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t"
+          >
+            <button
+              type="button"
+              id="cancelBulkPromoteBtn"
+              class="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="confirmBulkPromoteBtn"
+              class="px-5 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition disabled:opacity-60"
+            >
+              <i class="fa-solid fa-arrow-up mr-2"></i> Confirm Promotion
             </button>
           </div>
         </form>

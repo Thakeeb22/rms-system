@@ -50,7 +50,7 @@ const {
   getTermById,
   updateTerm,
   setCurrentTerm,
-  deleteTerm
+  deleteTerm,
 } = require("../controllers/termController");
 
 const {
@@ -70,6 +70,8 @@ const {
   transferStudent,
   deactivateStudent,
   activateStudent,
+  promoteStudent,
+  bulkPromoteStudents,
 } = require("../controllers/studentController");
 
 const {
@@ -122,7 +124,7 @@ router.patch(
 
 // class routes
 router.post("/classes", auth, isAdmin, createClass);
-router.get("/classes", auth, isAdmin, getAllClasses);
+router.get("/classes", auth, isAdminOrTeacher, getAllClasses);
 router.get("/classes/:id", auth, isAdmin, getClassById);
 router.put("/classes/:id", auth, isAdmin, updateClass);
 router.delete("/classes/:id", auth, isAdmin, deleteClass);
@@ -165,14 +167,21 @@ router.patch(
 );
 
 // student routes
-router.post("/students", auth, isAdmin, createStudent);
-router.get("/students", auth, isAdmin, getAllStudents);
-router.get("/students/:id", auth, isAdmin, getStudentById);
+router.post("/students", auth, isAdminOrTeacher, createStudent);
+router.get("/students", auth, isAdminOrTeacher, getAllStudents);
+router.get("/students/:id", auth, isAdminOrTeacher, getStudentById);
 router.put("/students/:id", auth, isAdmin, updateStudent);
 router.patch("/students/:id/graduate", auth, isAdmin, graduateStudent);
 router.patch("/students/:id/transfer", auth, isAdmin, transferStudent);
 router.patch("/students/:id/deactivate", auth, isAdmin, deactivateStudent);
 router.patch("/students/:id/activate", auth, isAdmin, activateStudent);
+router.patch("/students/:id/promote", auth, isAdminOrTeacher, promoteStudent);
+router.post(
+  "/students/bulk-promote",
+  auth,
+  isAdminOrTeacher,
+  bulkPromoteStudents,
+);
 
 // result routes
 router.post("/results", auth, isAdminOrTeacher, createResult);
