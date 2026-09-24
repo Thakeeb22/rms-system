@@ -109,18 +109,25 @@ async function loadStudentsForClass(classId) {
   try {
     // ✅ Pass classId as query parameter
     const response = await apiRequest(`/teacher/students?classId=${classId}`);
-    
+
     if (response.ok) {
       const students = response.data?.students || [];
       classStudents[classId] = students;
-      
+
       if (students.length === 0) {
-        studentSelect.innerHTML = '<option value="">No students in this class</option>';
+        studentSelect.innerHTML =
+          '<option value="">No students in this class</option>';
         return;
       }
-      
-      studentSelect.innerHTML = '<option value="">Select Student</option>' + 
-        students.map(s => `<option value="${s._id}">${s.fullname} (${s.admissionNumber})</option>`).join("");
+
+      studentSelect.innerHTML =
+        '<option value="">Select Student</option>' +
+        students
+          .map(
+            (s) =>
+              `<option value="${s._id}">${s.fullname} (${s.admissionNumber})</option>`,
+          )
+          .join("");
     } else {
       throw new Error(response.data?.message || "Failed to load students.");
     }
@@ -306,7 +313,7 @@ function updatePreview() {
 }
 
 /* =========================================================
-SAVE RESULT
+SAVE RESULT (Updated for Offline Support)
 ========================================================= */
 async function saveResult(event) {
   event.preventDefault();
@@ -315,9 +322,9 @@ async function saveResult(event) {
   const classId = document.getElementById("resultClass").value;
   const subjectId = document.getElementById("resultSubject").value;
   const studentId = document.getElementById("resultStudent").value;
-  const test1 = parseInt(document.getElementById("resultTest1").value);
-  const test2 = parseInt(document.getElementById("resultTest2").value);
-  const exam = parseInt(document.getElementById("resultExam").value);
+  const test1 = parseInt(document.getElementById("resultTest1").value) || 0;
+  const test2 = parseInt(document.getElementById("resultTest2").value) || 0;
+  const exam = parseInt(document.getElementById("resultExam").value) || 0;
   const sessionId = document.getElementById("filterSession").value;
   const termId = document.getElementById("filterTerm").value;
 
@@ -348,23 +355,43 @@ async function saveResult(event) {
       : "/admin/results";
     const method = editingResultId ? "PUT" : "POST";
 
-    const response = await apiRequest(url, {
-      method,
-      body: JSON.stringify(payload),
-    });
+    if (navigator.onLine) {
+      // ✅ ONLINE: Standard API call
+      const response = await apiRequest(url, {
+        method,
+        body: JSON.stringify(payload),
+      });
 
-    if (!response.ok)
-      throw new Error(response.data?.message || "Failed to save result.");
+      if (!response.ok)
+        throw new Error(response.data?.message || "Failed to save result.");
 
-    showMessage(
-      "resultFormMessage",
-      response.data?.message || "Result saved successfully!",
-      "success",
-    );
-    setTimeout(() => {
-      closeResultModal();
-      loadResults();
-    }, 1000);
+      showMessage(
+        "resultFormMessage",
+        response.data?.message || "Result saved successfully!",
+        "success",
+      );
+      setTimeout(() => {
+        closeResultModal();
+        loadResults();
+      }, 1000);
+    } else {
+      // ✅ OFFLINE: Add to Action Queue
+      if (window.OfflineQueue) {
+        await window.OfflineQueue.enqueue({ method, url, payload });
+
+        showMessage(
+          "resultFormMessage",
+          "📡 You are offline. Result saved locally and will sync automatically.",
+          "success",
+        );
+        setTimeout(() => {
+          closeResultModal();
+          if (window.updateOfflineSyncBadge) window.updateOfflineSyncBadge();
+        }, 1000);
+      } else {
+        throw new Error("Offline queue not initialized.");
+      }
+    }
   } catch (error) {
     console.error("Failed to save result:", error);
     showMessage(
@@ -485,11 +512,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById(id)?.addEventListener("input", updatePreview);
   });
 
-  // Load students when class changes in modal
-  document.getElementById("resultClass")?.addEventListener("change", (e) => {
-    loadStudentsForClass(e.target.value);
-  });
-
   // Edit/Delete buttons
   document.addEventListener("click", (e) => {
     const editBtn = e.target.closest(".edit-result-btn");
@@ -499,38 +521,53 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (deleteBtn && !deleteBtn.disabled) deleteResult(deleteBtn.dataset.id);
   });
   // When class changes in modal, filter subjects for that class
-document.getElementById("resultClass")?.addEventListener("change", (e) => {
-  const classId = e.target.value;
-  loadStudentsForClass(classId);
-  filterSubjectsByClass(classId);
-});
+  document.getElementById("resultClass")?.addEventListener("change", (e) => {
+    const classId = e.target.value;
+    loadStudentsForClass(classId);
+    filterSubjectsByClass(classId);
+  });
 
-function filterSubjectsByClass(classId) {
-  const subjectSelect = document.getElementById("resultSubject");
-  if (!subjectSelect) return;
-  
-  if (!classId) {
-    // Show all subjects
-    const subjects = [...new Set(teacherAssignments.map(a => JSON.stringify({ id: a.subject._id, name: a.subject.subjectName })))].map(s => JSON.parse(s));
-    subjectSelect.innerHTML = '<option value="">Select Subject</option>' + 
-      subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
-    return;
+  function filterSubjectsByClass(classId) {
+    const subjectSelect = document.getElementById("resultSubject");
+    if (!subjectSelect) return;
+
+    if (!classId) {
+      // Show all subjects
+      const subjects = [
+        ...new Set(
+          teacherAssignments.map((a) =>
+            JSON.stringify({ id: a.subject._id, name: a.subject.subjectName }),
+          ),
+        ),
+      ].map((s) => JSON.parse(s));
+      subjectSelect.innerHTML =
+        '<option value="">Select Subject</option>' +
+        subjects
+          .map((s) => `<option value="${s.id}">${s.name}</option>`)
+          .join("");
+      return;
+    }
+
+    // Filter to only subjects teacher teaches in this class
+    const subjectsInClass = teacherAssignments
+      .filter((a) => a.class._id === classId)
+      .map((a) => ({ id: a.subject._id, name: a.subject.subjectName }));
+
+    // Remove duplicates
+    const uniqueSubjects = [
+      ...new Map(subjectsInClass.map((s) => [s.id, s])).values(),
+    ];
+
+    if (uniqueSubjects.length === 0) {
+      subjectSelect.innerHTML =
+        '<option value="">No subjects assigned to this class</option>';
+      return;
+    }
+
+    subjectSelect.innerHTML =
+      '<option value="">Select Subject</option>' +
+      uniqueSubjects
+        .map((s) => `<option value="${s.id}">${s.name}</option>`)
+        .join("");
   }
-  
-  // Filter to only subjects teacher teaches in this class
-  const subjectsInClass = teacherAssignments
-    .filter(a => a.class._id === classId)
-    .map(a => ({ id: a.subject._id, name: a.subject.subjectName }));
-  
-  // Remove duplicates
-  const uniqueSubjects = [...new Map(subjectsInClass.map(s => [s.id, s])).values()];
-  
-  if (uniqueSubjects.length === 0) {
-    subjectSelect.innerHTML = '<option value="">No subjects assigned to this class</option>';
-    return;
-  }
-  
-  subjectSelect.innerHTML = '<option value="">Select Subject</option>' + 
-    uniqueSubjects.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
-}
 });

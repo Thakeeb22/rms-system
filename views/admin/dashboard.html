@@ -39,8 +39,8 @@
           <h1 class="font-bold text-2xl text-blue-500">Edulog Academy</h1>
           <p>Result Management System</p>
         </div>
-        <nav>
-          <ul class="flex flex-col p-3 font-bold">
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="flex flex-col p-3 font-bold space-y-1">
             <li
               class="rounded bg-blue-500 transition-all duration-200 p-4 cursor-pointer text-white ease-in-out"
             >
@@ -106,6 +106,22 @@
             <li
               class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
             >
+              <a href="./attendance-view.html"
+                ><i class="fa-solid fa-clipboard-list text-current"></i>
+                Attendance</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
+              <a href="./id-cards.html"
+                ><i class="fa-solid fa-qrcode text-current"></i>
+                Generate ID Card</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 transition-all duration-200 p-4 cursor-pointer hover:text-white ease-in-out"
+            >
               <a href="./results.html"
                 ><i class="fa-solid fa-chart-column text-current"></i>
                 Reports</a
@@ -122,6 +138,7 @@
           </button>
         </div>
       </aside>
+      
       <header
         class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-evenly items-center text-blue-500"
       >
@@ -247,6 +264,22 @@
                 <a href="./class-subject.html" class="flex items-center gap-3">
                   <i class="fa-solid fa-diagram-project"></i>
                   Assignments
+                </a>
+              </li>
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./attendance-view.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-clipboard-list"></i>
+                  Attendance
+                </a>
+              </li>
+              <li
+                class="rounded hover:bg-blue-500 hover:text-white p-4 transition"
+              >
+                <a href="./id-cards.html" class="flex items-center gap-3">
+                  <i class="fa-solid fa-qrcode"></i>
+                  Generate ID Card
                 </a>
               </li>
 

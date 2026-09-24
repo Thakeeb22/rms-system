@@ -177,7 +177,9 @@ function renderAssessments() {
     return;
   }
 
-  assessmentsContainer.innerHTML = filteredAssessments.map((assessment) => createAssessmentCard(assessment)).join("");
+  assessmentsContainer.innerHTML = filteredAssessments
+    .map((assessment) => createAssessmentCard(assessment))
+    .join("");
 }
 
 /* =========================================================
@@ -208,7 +210,9 @@ function createAssessmentCard(assessment) {
         <p class="text-sm text-gray-800 mt-1">${escapeHTML(sessionName)} - ${escapeHTML(termName)}</p>
       </div>
 
-      ${assessment.attendance ? `
+      ${
+        assessment.attendance
+          ? `
         <div class="mb-3 pt-3 border-t">
           <p class="text-xs font-semibold text-gray-600 mb-2">Attendance</p>
           <div class="flex gap-2 text-xs">
@@ -217,7 +221,9 @@ function createAssessmentCard(assessment) {
             <span class="px-2 py-1 bg-red-100 text-red-700 rounded">Absent: ${assessment.attendance.absent || 0}</span>
           </div>
         </div>
-      ` : ""}
+      `
+          : ""
+      }
 
       <div class="mt-4 pt-4 border-t flex justify-end gap-2">
         <button
@@ -258,7 +264,11 @@ async function createAssessment() {
   hideMessage("addAssessmentFormMessage");
 
   if (!student || !session || !term) {
-    showMessage("addAssessmentFormMessage", "Please select student, session, and term.", "error");
+    showMessage(
+      "addAssessmentFormMessage",
+      "Please select student, session, and term.",
+      "error",
+    );
     return;
   }
 
@@ -269,24 +279,31 @@ async function createAssessment() {
   };
 
   const affective = {
-    punctuality: parseInt(document.getElementById("punctuality")?.value) || null,
+    punctuality:
+      parseInt(document.getElementById("punctuality")?.value) || null,
     neatness: parseInt(document.getElementById("neatness")?.value) || null,
     honesty: parseInt(document.getElementById("honesty")?.value) || null,
     politeness: parseInt(document.getElementById("politeness")?.value) || null,
-    attentiveness: parseInt(document.getElementById("attentiveness")?.value) || null,
+    attentiveness:
+      parseInt(document.getElementById("attentiveness")?.value) || null,
     leadership: parseInt(document.getElementById("leadership")?.value) || null,
   };
 
   const psychomotor = {
-    handwriting: parseInt(document.getElementById("handwriting")?.value) || null,
+    handwriting:
+      parseInt(document.getElementById("handwriting")?.value) || null,
     sports: parseInt(document.getElementById("sports")?.value) || null,
-    handlingTools: parseInt(document.getElementById("handlingTools")?.value) || null,
+    handlingTools:
+      parseInt(document.getElementById("handlingTools")?.value) || null,
     drawing: parseInt(document.getElementById("drawing")?.value) || null,
   };
 
-  const nextTermBegins = document.getElementById("nextTermBegins")?.value || null;
-  const classTeacherComment = document.getElementById("classTeacherComment")?.value || "";
-  const principalComment = document.getElementById("principalComment")?.value || "";
+  const nextTermBegins =
+    document.getElementById("nextTermBegins")?.value || null;
+  const classTeacherComment =
+    document.getElementById("classTeacherComment")?.value || "";
+  const principalComment =
+    document.getElementById("principalComment")?.value || "";
 
   try {
     setButtonLoading(createButton, true, "Creating assessment...");
@@ -310,14 +327,22 @@ async function createAssessment() {
       throw new Error(response.data?.message || "Failed to create assessment.");
     }
 
-    showMessage("addAssessmentFormMessage", response.data?.message || "Assessment created successfully.", "success");
+    showMessage(
+      "addAssessmentFormMessage",
+      response.data?.message || "Assessment created successfully.",
+      "success",
+    );
     form.reset();
     await loadAssessments();
 
     setTimeout(() => closeAddAssessmentModal(), 1000);
   } catch (error) {
     console.error("Failed to create assessment:", error);
-    showMessage("addAssessmentFormMessage", error.message || "Failed to create assessment.", "error");
+    showMessage(
+      "addAssessmentFormMessage",
+      error.message || "Failed to create assessment.",
+      "error",
+    );
   } finally {
     setButtonLoading(createButton, false);
   }
@@ -457,7 +482,7 @@ function buildEditFields(assessment) {
           </div>
           <div>
             <label for="editNextTermBegins" class="block text-sm font-medium text-gray-700 mb-2">Next Term Begins</label>
-            <input type="date" id="editNextTermBegins" value="${assessment.nextTermBegins ? new Date(assessment.nextTermBegins).toISOString().split('T')[0] : ""}" class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition" />
+            <input type="date" id="editNextTermBegins" value="${assessment.nextTermBegins ? new Date(assessment.nextTermBegins).toISOString().split("T")[0] : ""}" class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition" />
           </div>
         </div>
       </div>
@@ -475,30 +500,40 @@ async function updateAssessment(event) {
   const assessmentId = form.dataset.assessmentId;
 
   const attendance = {
-    schoolOpened: parseInt(document.getElementById("editSchoolOpened")?.value) || 0,
+    schoolOpened:
+      parseInt(document.getElementById("editSchoolOpened")?.value) || 0,
     present: parseInt(document.getElementById("editPresent")?.value) || 0,
     absent: parseInt(document.getElementById("editAbsent")?.value) || 0,
   };
 
   const affective = {
-    punctuality: parseInt(document.getElementById("editPunctuality")?.value) || null,
+    punctuality:
+      parseInt(document.getElementById("editPunctuality")?.value) || null,
     neatness: parseInt(document.getElementById("editNeatness")?.value) || null,
     honesty: parseInt(document.getElementById("editHonesty")?.value) || null,
-    politeness: parseInt(document.getElementById("editPoliteness")?.value) || null,
-    attentiveness: parseInt(document.getElementById("editAttentiveness")?.value) || null,
-    leadership: parseInt(document.getElementById("editLeadership")?.value) || null,
+    politeness:
+      parseInt(document.getElementById("editPoliteness")?.value) || null,
+    attentiveness:
+      parseInt(document.getElementById("editAttentiveness")?.value) || null,
+    leadership:
+      parseInt(document.getElementById("editLeadership")?.value) || null,
   };
 
   const psychomotor = {
-    handwriting: parseInt(document.getElementById("editHandwriting")?.value) || null,
+    handwriting:
+      parseInt(document.getElementById("editHandwriting")?.value) || null,
     sports: parseInt(document.getElementById("editSports")?.value) || null,
-    handlingTools: parseInt(document.getElementById("editHandlingTools")?.value) || null,
+    handlingTools:
+      parseInt(document.getElementById("editHandlingTools")?.value) || null,
     drawing: parseInt(document.getElementById("editDrawing")?.value) || null,
   };
 
-  const nextTermBegins = document.getElementById("editNextTermBegins")?.value || null;
-  const classTeacherComment = document.getElementById("editClassTeacherComment")?.value || "";
-  const principalComment = document.getElementById("editPrincipalComment")?.value || "";
+  const nextTermBegins =
+    document.getElementById("editNextTermBegins")?.value || null;
+  const classTeacherComment =
+    document.getElementById("editClassTeacherComment")?.value || "";
+  const principalComment =
+    document.getElementById("editPrincipalComment")?.value || "";
 
   hideMessage("editAssessmentFormMessage");
 
@@ -521,13 +556,21 @@ async function updateAssessment(event) {
       throw new Error(response.data?.message || "Failed to update assessment.");
     }
 
-    showMessage("editAssessmentFormMessage", response.data?.message || "Assessment updated successfully.", "success");
+    showMessage(
+      "editAssessmentFormMessage",
+      response.data?.message || "Assessment updated successfully.",
+      "success",
+    );
     await loadAssessments();
 
     setTimeout(() => closeEditAssessmentModal(), 1000);
   } catch (error) {
     console.error("Failed to update assessment:", error);
-    showMessage("editAssessmentFormMessage", error.message || "Failed to update assessment.", "error");
+    showMessage(
+      "editAssessmentFormMessage",
+      error.message || "Failed to update assessment.",
+      "error",
+    );
   } finally {
     setButtonLoading(updateButton, false);
   }
@@ -537,7 +580,11 @@ async function updateAssessment(event) {
 DELETE ASSESSMENT
 ========================================================= */
 async function deleteAssessment(assessmentId, studentName) {
-  if (!confirm(`Are you sure you want to delete the assessment for "${studentName}"? This action cannot be undone.`)) {
+  if (
+    !confirm(
+      `Are you sure you want to delete the assessment for "${studentName}"? This action cannot be undone.`,
+    )
+  ) {
     return;
   }
 
@@ -618,7 +665,9 @@ function updateAssessmentCount() {
 EVENT LISTENERS
 ========================================================= */
 function setupEvents() {
-  document.getElementById("applyFiltersBtn")?.addEventListener("click", loadAssessments);
+  document
+    .getElementById("applyFiltersBtn")
+    ?.addEventListener("click", loadAssessments);
   document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
     document.getElementById("filterStudent").value = "";
     document.getElementById("filterSession").value = "";
@@ -626,15 +675,25 @@ function setupEvents() {
     loadAssessments();
   });
 
-  document.getElementById("addNewAssessmentBtn")?.addEventListener("click", openAddAssessmentModal);
-  document.getElementById("closeAddAssessmentModal")?.addEventListener("click", closeAddAssessmentModal);
-  document.getElementById("cancelAddAssessmentBtn")?.addEventListener("click", closeAddAssessmentModal);
-  document.getElementById("addAssessmentModalOverlay")?.addEventListener("click", closeAddAssessmentModal);
+  document
+    .getElementById("addNewAssessmentBtn")
+    ?.addEventListener("click", openAddAssessmentModal);
+  document
+    .getElementById("closeAddAssessmentModal")
+    ?.addEventListener("click", closeAddAssessmentModal);
+  document
+    .getElementById("cancelAddAssessmentBtn")
+    ?.addEventListener("click", closeAddAssessmentModal);
+  document
+    .getElementById("addAssessmentModalOverlay")
+    ?.addEventListener("click", closeAddAssessmentModal);
 
-  document.getElementById("addAssessmentForm")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    createAssessment();
-  });
+  document
+    .getElementById("addAssessmentForm")
+    ?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      createAssessment();
+    });
 
   document.addEventListener("click", (event) => {
     const editButton = event.target.closest(".edit-assessment-btn");
@@ -644,11 +703,19 @@ function setupEvents() {
     openEditAssessmentModal(assessmentId);
   });
 
-  document.getElementById("editAssessmentForm")?.addEventListener("submit", updateAssessment);
+  document
+    .getElementById("editAssessmentForm")
+    ?.addEventListener("submit", updateAssessment);
 
-  document.getElementById("closeEditAssessmentModal")?.addEventListener("click", closeEditAssessmentModal);
-  document.getElementById("cancelEditAssessmentBtn")?.addEventListener("click", closeEditAssessmentModal);
-  document.getElementById("editAssessmentModalOverlay")?.addEventListener("click", closeEditAssessmentModal);
+  document
+    .getElementById("closeEditAssessmentModal")
+    ?.addEventListener("click", closeEditAssessmentModal);
+  document
+    .getElementById("cancelEditAssessmentBtn")
+    ?.addEventListener("click", closeEditAssessmentModal);
+  document
+    .getElementById("editAssessmentModalOverlay")
+    ?.addEventListener("click", closeEditAssessmentModal);
 
   document.addEventListener("click", (event) => {
     const deleteButton = event.target.closest(".delete-assessment-btn");
@@ -672,6 +739,48 @@ function escapeHTML(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+// ==========================================
+// AUTO-FILL ATTENDANCE STATS IN MODAL
+// ==========================================
+const assessmentStudent = document.getElementById("assessmentStudent");
+const assessmentSession = document.getElementById("assessmentSession");
+const assessmentTerm = document.getElementById("assessmentTerm");
+
+async function autoFillAttendanceStats() {
+  const studentId = assessmentStudent?.value;
+  const sessionId = assessmentSession?.value;
+  const termId = assessmentTerm?.value;
+
+  // Only fetch if all three are selected
+  if (studentId && sessionId && termId) {
+    try {
+      const res = await apiRequest(
+        `/attendance/student-stats?studentId=${studentId}&sessionId=${sessionId}&termId=${termId}`,
+      );
+      if (res.ok) {
+        const stats = res.data?.data || {};
+
+        const schoolOpenedEl = document.getElementById("schoolOpened");
+        const presentEl = document.getElementById("present");
+        const absentEl = document.getElementById("absent");
+
+        if (schoolOpenedEl) schoolOpenedEl.value = stats.schoolOpened || 0;
+        if (presentEl) presentEl.value = stats.present || 0;
+        if (absentEl) absentEl.value = stats.absent || 0;
+      }
+    } catch (error) {
+      console.error("Failed to fetch attendance stats:", error);
+    }
+  }
+}
+
+// Trigger auto-fill whenever any of the three dropdowns change
+if (assessmentStudent)
+  assessmentStudent.addEventListener("change", autoFillAttendanceStats);
+if (assessmentSession)
+  assessmentSession.addEventListener("change", autoFillAttendanceStats);
+if (assessmentTerm)
+  assessmentTerm.addEventListener("change", autoFillAttendanceStats);
 
 /* =========================================================
 INITIALIZE

@@ -16,7 +16,7 @@
   </head>
   <body class="bg-gray-50 h-screen overflow-hidden font-[Inter]">
     <div
-      class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen"
+      class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr] h-screen min-h-0"
     >
       <!-- Sidebar -->
       <aside
@@ -79,6 +79,23 @@
                 <i class="fa-solid fa-file-lines"></i> Annual Reports
               </a>
             </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./attendance-view.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-user"></i> Attendance
+              </a>
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a
+                href="../attendance-scanner.html"
+                class="flex items-center gap-3"
+              >
+                <i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)
+              </a>
+            </li>
           </ul>
         </nav>
         <div class="p-4 border-t-2 border-gray-400">
@@ -112,7 +129,7 @@
       <div id="mobileMenu" class="hidden md:hidden fixed inset-0 z-50">
         <div id="mobileMenuOverlay" class="absolute inset-0 bg-black/40"></div>
         <aside
-          class="absolute right-0 top-0 h-full w-72 bg-white shadow-xl p-5 overflow-y-auto"
+          class="hidden md:col-span-1 row-span-2 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300"
         >
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-blue-500">Teacher Portal</h2>
@@ -155,6 +172,18 @@
                   ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
                 >
               </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./attendance-view.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a
+                  href="../attendance-scanner.html"
+                  class="flex items-center gap-3"
+                  ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
+                >
+              </li>
             </ul>
           </nav>
           <div class="mt-6 pt-5 border-t">
@@ -170,7 +199,7 @@
 
       <!-- Main Content -->
       <main
-        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4"
+        class="col-span-1 md:col-span-5 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden p-4"
       >
         <div class="col-span-1 md:col-span-4">
           <h1 class="text-3xl font-bold text-gray-800">My Students</h1>
@@ -282,6 +311,22 @@
                   class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
                 />
               </div>
+
+              <div class="col-span-1 md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Student Photo
+                  <span class="text-gray-400 text-xs">(Optional)</span>
+                </label>
+                <input
+                  type="file"
+                  id="teacherStudentPhoto"
+                  accept="image/*"
+                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p class="text-xs text-gray-400 mt-1">
+                  Recommended: Square passport photo (Max 2MB)
+                </p>
+              </div>
             </div>
             <div class="flex justify-end gap-3 pt-4 border-t">
               <button
@@ -309,7 +354,7 @@
           <div id="studentsLoading" class="hidden p-10 text-center">
             <i class="fa-solid fa-spinner fa-spin text-blue-500 text-2xl"></i>
           </div>
-          <div class="overflow-x-auto">
+          <div class="w-full min-w-0 overflow-x-auto">
             <!-- Bulk Actions Bar (Hidden by default) -->
             <div
               id="bulkActionsBar"
@@ -598,6 +643,258 @@
         </form>
       </div>
     </div>
+    <!-- Teacher Edit Student Modal -->
+    <div
+      id="teacherEditModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <div
+        id="teacherEditModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+      <div
+        class="relative w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">Edit Student Info</h2>
+            <p class="text-sm text-gray-500">Update basic student details.</p>
+          </div>
+          <button
+            type="button"
+            id="closeTeacherEditModal"
+            class="w-8 h-8 rounded-full text-gray-500 hover:bg-gray-200 transition"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <form id="teacherEditForm" class="p-5 space-y-4">
+          <div
+            id="teacherEditMessage"
+            class="hidden p-3 rounded-lg text-sm font-medium"
+          ></div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Full Name</label
+            >
+            <input
+              type="text"
+              id="editTeacherFullname"
+              required
+              class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Guardian Name</label
+            >
+            <input
+              type="text"
+              id="editTeacherGuardianName"
+              required
+              class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Guardian Phone</label
+            >
+            <input
+              type="tel"
+              id="editTeacherGuardianPhone"
+              required
+              class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Update Photo (Optional)</label
+            >
+            <input
+              type="file"
+              id="editTeacherStudentPhoto"
+              accept="image/*"
+              class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            <p class="text-xs text-gray-400 mt-1">
+              Leave empty to keep the current photo. (Max 2MB)
+            </p>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-4 border-t">
+            <button
+              type="button"
+              id="cancelTeacherEditBtn"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="saveTeacherEditBtn"
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Teacher View Student Modal -->
+    <div
+      id="teacherViewStudentModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center p-4"
+    >
+      <div
+        id="teacherViewModalOverlay"
+        class="absolute inset-0 bg-black/40"
+      ></div>
+      <div
+        class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between p-5 border-b bg-gray-50">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-user-graduate text-blue-600 text-xl"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Student Details</h2>
+              <p class="text-sm text-gray-500">View student information</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="closeTeacherViewModal"
+            class="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div id="teacherViewLoading" class="hidden p-10 text-center">
+          <i
+            class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
+          ></i>
+          <p class="text-gray-500">Loading student details...</p>
+        </div>
+
+        <!-- Error -->
+        <div
+          id="teacherViewError"
+          class="hidden m-5 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700"
+        ></div>
+
+        <!-- Content -->
+        <div id="teacherViewContent" class="hidden p-5 space-y-6">
+          <!-- Student Identity -->
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          >
+            <div>
+              <h3 id="teacherViewName" class="text-2xl font-bold text-gray-800">
+                —
+              </h3>
+              <p id="teacherViewAdmissionNumber" class="text-gray-500 mt-1">
+                —
+              </p>
+            </div>
+            <span
+              id="teacherViewStatus"
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
+              >—</span
+            >
+          </div>
+
+          <!-- Information Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-venus-mars text-blue-600"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Gender</p>
+                  <p id="teacherViewGender" class="font-semibold text-gray-800">
+                    —
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-school text-purple-600"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Assigned Class</p>
+                  <p id="teacherViewClass" class="font-semibold text-gray-800">
+                    —
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Of Birth -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-regular fa-calendar-days text-blue-500"></i>
+              <h3 class="font-semibold text-gray-800">Date of Birth</h3>
+            </div>
+            <p
+              id="teacherViewDateOfBirth"
+              class="font-medium text-gray-800"
+            ></p>
+          </div>
+
+          <!-- Guardian Name -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-user-shield text-blue-500"></i>
+              <h3 class="font-semibold text-gray-800">Guardian Name</h3>
+            </div>
+            <p id="teacherViewGuardianName" class="font-medium text-gray-800">
+              —
+            </p>
+          </div>
+
+          <!-- Guardian Phone Number -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-phone text-blue-500"></i>
+              <h3 class="font-semibold text-gray-800">Guardian Phone Number</h3>
+            </div>
+            <p id="teacherViewGuardianPhone" class="font-medium text-gray-800">
+              —
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end p-5 border-t bg-gray-50">
+          <button
+            type="button"
+            id="closeTeacherViewModalBtn"
+            class="px-5 py-2.5 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="../admin/js/config.js"></script>
     <script src="../admin/js/api.js"></script>
     <script src="../admin/js/auth.js"></script>

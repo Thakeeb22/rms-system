@@ -1168,6 +1168,16 @@ if (editStudentForm) {
       return;
     }
 
+let photoBase64 = "";
+    if (editStudentPhotoInput.files && editStudentPhotoInput.files[0]) {
+      if (editStudentPhotoInput.files[0].size > 2 * 1024 * 1024) {
+        showEditFormMessage("Photo must be less than 2MB.", "error");
+        setEditStudentSaving(false);
+        return;
+      }
+      photoBase64 = await convertToBase64(editStudentPhotoInput.files[0]);
+    }
+
     const selectedGender = editStudentForm.querySelector(
       'input[name="gender"]:checked',
     );
@@ -1180,6 +1190,7 @@ if (editStudentForm) {
       guardianName: editGuardianName?.value.trim(),
       guardianPhone: editGuardianPhoneNumber?.value.trim(),
       classId: editClassId?.value,
+      photo: photoBase64,
     };
 
     if (
@@ -1468,6 +1479,8 @@ const classIdInput = document.getElementById("classId");
 
 const createStudentBtn = document.getElementById("createStudentBtn");
 
+const studentPhotoInput = document.getElementById("studentPhoto");
+const editStudentPhotoInput = document.getElementById("editStudentPhoto");
 // ------------------------------------------------------------
 // Open Add Student Form
 // ------------------------------------------------------------
@@ -1625,6 +1638,16 @@ if (addNewStudentForm) {
 
     hideStudentFormMessage();
 
+    let photoBase64 = "";
+    if (studentPhotoInput.files && studentPhotoInput.files[0]) {
+      if (studentPhotoInput.files[0].size > 2 * 1024 * 1024) {
+        showStudentFormMessage("Photo must be less than 2MB.", "error");
+        setCreateStudentSaving(false);
+        return;
+      }
+      photoBase64 = await convertToBase64(studentPhotoInput.files[0]);
+    }
+
     // Get selected gender
     const selectedGender = addNewStudentForm.querySelector(
       'input[name="gender"]:checked',
@@ -1644,6 +1667,7 @@ if (addNewStudentForm) {
       guardianPhone: guardianPhoneInput?.value.trim(),
 
       classId: classIdInput?.value,
+      photo: photoBase64,
     };
 
     // ------------------------------------------------------
@@ -1997,12 +2021,16 @@ async function openStudentFromSearch() {
 }
 // Bulk Promote Modal Variables
 const bulkPromoteModal = document.getElementById("bulkPromoteModal");
-const bulkPromoteModalOverlay = document.getElementById("bulkPromoteModalOverlay");
+const bulkPromoteModalOverlay = document.getElementById(
+  "bulkPromoteModalOverlay",
+);
 const closeBulkPromoteModal = document.getElementById("closeBulkPromoteModal");
 const cancelBulkPromoteBtn = document.getElementById("cancelBulkPromoteBtn");
 const bulkPromoteBtn = document.getElementById("bulkPromoteBtn");
 const bulkPromoteForm = document.getElementById("bulkPromoteForm");
-const bulkPromoteFormMessage = document.getElementById("bulkPromoteFormMessage");
+const bulkPromoteFormMessage = document.getElementById(
+  "bulkPromoteFormMessage",
+);
 const bulkNextClassIdSelect = document.getElementById("bulkNextClassId");
 const confirmBulkPromoteBtn = document.getElementById("confirmBulkPromoteBtn");
 const bulkPromoteCount = document.getElementById("bulkPromoteCount");
@@ -2011,12 +2039,14 @@ const bulkPromoteLoading = document.getElementById("bulkPromoteLoading");
 // Open Modal
 if (bulkPromoteBtn) {
   bulkPromoteBtn.addEventListener("click", () => {
-    const selectedIds = Array.from(document.querySelectorAll(".student-checkbox:checked")).map(cb => cb.value);
+    const selectedIds = Array.from(
+      document.querySelectorAll(".student-checkbox:checked"),
+    ).map((cb) => cb.value);
     if (selectedIds.length === 0) return;
-    
+
     if (bulkPromoteCount) bulkPromoteCount.textContent = selectedIds.length;
     if (bulkPromoteFormMessage) bulkPromoteFormMessage.classList.add("hidden");
-    
+
     // Populate classes dropdown
     if (bulkNextClassIdSelect) {
       bulkNextClassIdSelect.innerHTML = `<option value="">Select target class</option>`;
@@ -2027,7 +2057,7 @@ if (bulkPromoteBtn) {
         bulkNextClassIdSelect.appendChild(option);
       });
     }
-    
+
     bulkPromoteModal?.classList.remove("hidden");
     bulkPromoteModal?.classList.add("flex");
     bulkPromoteLoading?.classList.add("hidden");
@@ -2040,9 +2070,12 @@ function closeBulkPromote() {
   bulkPromoteModal?.classList.add("hidden");
   bulkPromoteModal?.classList.remove("flex");
 }
-if (closeBulkPromoteModal) closeBulkPromoteModal.addEventListener("click", closeBulkPromote);
-if (cancelBulkPromoteBtn) cancelBulkPromoteBtn.addEventListener("click", closeBulkPromote);
-if (bulkPromoteModalOverlay) bulkPromoteModalOverlay.addEventListener("click", closeBulkPromote);
+if (closeBulkPromoteModal)
+  closeBulkPromoteModal.addEventListener("click", closeBulkPromote);
+if (cancelBulkPromoteBtn)
+  cancelBulkPromoteBtn.addEventListener("click", closeBulkPromote);
+if (bulkPromoteModalOverlay)
+  bulkPromoteModalOverlay.addEventListener("click", closeBulkPromote);
 
 // Submit Bulk Promote
 if (bulkPromoteForm) {
@@ -2053,33 +2086,46 @@ if (bulkPromoteForm) {
       showBulkPromoteMessage("Please select a target class.", "error");
       return;
     }
-    
-    const selectedIds = Array.from(document.querySelectorAll(".student-checkbox:checked")).map(cb => cb.value);
-    
+
+    const selectedIds = Array.from(
+      document.querySelectorAll(".student-checkbox:checked"),
+    ).map((cb) => cb.value);
+
     confirmBulkPromoteBtn.disabled = true;
     confirmBulkPromoteBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Promoting...`;
     bulkPromoteForm.classList.add("hidden");
     bulkPromoteLoading.classList.remove("hidden");
-    
+
     try {
       const response = await apiRequest("/admin/students/bulk-promote", {
         method: "POST",
         body: JSON.stringify({ studentIds: selectedIds, nextClassId }),
       });
-      
-      if (!response.ok) throw new Error(response.data?.message || "Failed to promote students.");
-      
-      showBulkPromoteMessage(response.data?.message || "Students promoted successfully!", "success");
+
+      if (!response.ok)
+        throw new Error(
+          response.data?.message || "Failed to promote students.",
+        );
+
+      showBulkPromoteMessage(
+        response.data?.message || "Students promoted successfully!",
+        "success",
+      );
       await loadStudents(); // Refresh table
-      
+
       // Clear selection after success
-      document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false);
+      document
+        .querySelectorAll(".student-checkbox")
+        .forEach((cb) => (cb.checked = false));
       if (selectAllCheckbox) selectAllCheckbox.checked = false;
       updateBulkSelection();
-      
+
       setTimeout(closeBulkPromote, 2000);
     } catch (error) {
-      showBulkPromoteMessage(error.message || "Failed to promote students.", "error");
+      showBulkPromoteMessage(
+        error.message || "Failed to promote students.",
+        "error",
+      );
       bulkPromoteLoading.classList.add("hidden");
       bulkPromoteForm.classList.remove("hidden");
     } finally {
@@ -2094,9 +2140,28 @@ function showBulkPromoteMessage(message, type) {
   bulkPromoteFormMessage.textContent = message;
   bulkPromoteFormMessage.className = "p-3 rounded-lg text-sm font-medium";
   if (type === "success") {
-    bulkPromoteFormMessage.classList.add("bg-green-50", "text-green-700", "border", "border-green-200");
+    bulkPromoteFormMessage.classList.add(
+      "bg-green-50",
+      "text-green-700",
+      "border",
+      "border-green-200",
+    );
   } else {
-    bulkPromoteFormMessage.classList.add("bg-red-50", "text-red-700", "border", "border-red-200");
+    bulkPromoteFormMessage.classList.add(
+      "bg-red-50",
+      "text-red-700",
+      "border",
+      "border-red-200",
+    );
   }
   bulkPromoteFormMessage.classList.remove("hidden");
 }
+// Helper function to convert File to Base64
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};

@@ -15,9 +15,11 @@
     />
   </head>
 
-  <body class="bg-gray-50 h-screen overflow-hidden font-[Inter]">
+  <body
+    class="bg-gray-50 min-h-screen md:h-screen md:overflow-hidden font-[Inter]"
+  >
     <div
-      class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen"
+      class="grid grid-cols-1 md:grid-cols-6 md:grid-rows-[auto_1fr_auto] justify-center min-h-screen md:h-screen"
     >
       <!-- Sidebar -->
       <aside
@@ -81,6 +83,20 @@
                 ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
               >
             </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./attendance-view.html" class="flex items-center gap-3"
+                ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="../attendance-scanner.html" class="flex items-center gap-3"
+                ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
+              >
+            </li>
           </ul>
         </nav>
 
@@ -96,7 +112,7 @@
 
       <!-- Header -->
       <header
-        class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-between items-center text-blue-500"
+        class="col-span-1 md:col-span-5 p-3 border-b-2 border-gray-300 flex bg-white justify-between items-center text-blue-500 sticky top-0 z-40"
       >
         <div class="flex items-center gap-3">
           <img
@@ -162,6 +178,16 @@
                   ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
                 >
               </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./attendance-view.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="../attendance-scanner.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
+                >
+              </li>
             </ul>
           </nav>
           <div class="mt-6 pt-5 border-t">
@@ -174,10 +200,9 @@
           </div>
         </aside>
       </div>
-
       <!-- Main Content -->
       <main
-        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4"
+        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto overflow-x-hidden justify-center p-4 gap-4 min-h-0 min-w-0"
       >
         <!-- Page Header -->
         <div class="col-span-1 md:col-span-4">
@@ -249,14 +274,15 @@
 
         <!-- Results Table -->
         <div
-          class="col-span-1 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+          class="col-span-1 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden min-w-0"
         >
           <div id="resultsLoading" class="hidden p-10 text-center">
             <i class="fa-solid fa-spinner fa-spin text-blue-500 text-2xl"></i>
             <p class="text-gray-500 mt-2">Loading results...</p>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full">
+
+          <div class="w-full min-w-0 overflow-x-auto">
+            <table class="w-full min-w-[800px]">
               <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th
@@ -264,36 +290,43 @@
                   >
                     Student
                   </th>
+
                   <th
                     class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase"
                   >
                     Test 1 (20)
                   </th>
+
                   <th
                     class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase"
                   >
                     Test 2 (20)
                   </th>
+
                   <th
                     class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase"
                   >
                     Exam (60)
                   </th>
+
                   <th
                     class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase"
                   >
                     Total
                   </th>
+
                   <th
                     class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase"
                   >
                     Grade
                   </th>
+
                   <th
                     class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase"
                   >
                     Status
                   </th>
+
                   <th
                     class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase"
                   >
@@ -301,10 +334,10 @@
                   </th>
                 </tr>
               </thead>
-              <tbody
-                id="resultsContainer"
-                class="divide-y divide-gray-200"
-              ></tbody>
+
+              <tbody id="resultsContainer" class="divide-y divide-gray-200">
+                <!-- Results injected by results.js -->
+              </tbody>
             </table>
           </div>
         </div>
@@ -477,7 +510,6 @@
         </form>
       </div>
     </div>
-
     <script src="../admin/js/config.js"></script>
     <script src="../admin/js/api.js"></script>
     <script src="../admin/js/auth.js"></script>

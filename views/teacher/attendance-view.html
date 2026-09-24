@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Report Cards</title>
+    <title>My Class Attendance</title>
     <link rel="stylesheet" href="../assets/css/output.css" />
     <link
       rel="stylesheet"
@@ -19,7 +19,7 @@
     <div
       class="grid grid-cols-1 md:grid-cols-6 grid-rows-[auto_1fr_auto] justify-center h-screen"
     >
-      <!-- Sidebar -->
+      <!-- Sidebar (Same as dashboard) -->
       <aside
         class="hidden md:col-span-1 row-span-3 h-screen bg-white md:flex md:flex-col justify-start border-r-2 border-gray-300"
       >
@@ -30,7 +30,7 @@
             <img
               src="../images/Education logo.jpg"
               class="w-full h-full object-contain"
-              alt="Edulog Academy logo"
+              alt="Logo"
             />
           </div>
           <h1 class="font-bold text-xl text-blue-500 text-center">
@@ -38,15 +38,14 @@
           </h1>
           <p class="text-xs text-gray-500 text-center">Teacher Portal</p>
         </div>
-
         <nav class="flex-1 overflow-y-auto">
           <ul class="flex flex-col p-3 font-bold space-y-1">
             <li
               class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
             >
-              <a href="./dashboard.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-gauge-high"></i> Dashboard</a
-              >
+              <a href="./dashboard.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+              </a>
             </li>
             <li
               class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
@@ -58,46 +57,48 @@
             <li
               class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
             >
-              <a href="./results.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-chart-column"></i> Enter Results</a
-              >
+              <a href="./results.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-chart-column"></i> Enter Results
+              </a>
             </li>
             <li
               class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
             >
-              <a href="./assessments.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-clipboard-check"></i> Assessments</a
-              >
+              <a href="./assessments.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-check"></i> Assessments
+              </a>
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./report-card.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-file-pdf"></i> Report Cards
+              </a>
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./annual-report.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-file-lines"></i> Annual Reports
+              </a>
             </li>
             <li class="rounded bg-blue-500 text-white p-3 transition">
-              <a href="./report-card.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-file-pdf"></i> Report Cards</a
-              >
+              <a href="./attendance-view.html" class="flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-user"></i> Attendance
+              </a>
             </li>
             <li
               class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
             >
-              <a href="./annual-report.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
+              <a
+                href="../attendance-scanner.html"
+                class="flex items-center gap-3"
               >
-            </li>
-            <li
-              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
-            >
-              <a href="./attendance-view.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
-              >
-            </li>
-            <li
-              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
-            >
-              <a href="../attendance-scanner.html" class="flex items-center gap-3"
-                ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
-              >
+                <i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)
+              </a>
             </li>
           </ul>
         </nav>
-
         <div class="p-4 border-t-2 border-gray-400">
           <button
             id="logoutBtn"
@@ -115,21 +116,17 @@
         <div class="flex items-center gap-3">
           <img
             src="../images/Education logo.jpg"
-            alt="Edulog logo"
+            alt="Logo"
             class="w-12 h-12 md:hidden"
           />
-          <p class="hidden md:block font-semibold">Edulog > Report Cards</p>
+          <p class="hidden md:block font-semibold">Edulog > Attendance</p>
         </div>
-        <button
-          id="mobileMenuBtn"
-          class="md:hidden text-blue-500 p-2 text-xl"
-          aria-label="Open navigation menu"
-        >
+        <button id="mobileMenuBtn" class="md:hidden text-blue-500 p-2 text-xl">
           <i class="fa-solid fa-bars"></i>
         </button>
       </header>
 
-      <!-- Mobile Navigation -->
+      <!-- Mobile Menu -->
       <div id="mobileMenu" class="hidden md:hidden fixed inset-0 z-50">
         <div id="mobileMenuOverlay" class="absolute inset-0 bg-black/40"></div>
         <aside
@@ -166,7 +163,7 @@
                   ><i class="fa-solid fa-clipboard-check"></i> Assessments</a
                 >
               </li>
-              <li class="rounded bg-blue-500 text-white p-3">
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
                 <a href="./report-card.html" class="flex items-center gap-3"
                   ><i class="fa-solid fa-file-pdf"></i> Report Cards</a
                 >
@@ -176,13 +173,15 @@
                   ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
                 >
               </li>
-              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+              <li class="rounded bg-blue-500 text-white p-3">
                 <a href="./attendance-view.html" class="flex items-center gap-3"
                   ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
                 >
               </li>
               <li class="rounded hover:bg-blue-500 hover:text-white p-3">
-                <a href="../attendance-scanner.html" class="flex items-center gap-3"
+                <a
+                  href="../attendance-scanner.html"
+                  class="flex items-center gap-3"
                   ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
                 >
               </li>
@@ -201,119 +200,48 @@
 
       <!-- Main Content -->
       <main
-        class="col-span-1 md:col-span-5 grid grid-cols-1 md:grid-cols-4 overflow-y-auto justify-center p-4 gap-4"
+        class="col-span-1 md:col-span-5 grid grid-cols-1 overflow-y-auto justify-center p-4 gap-4 min-h-0"
       >
-        <!-- Page Header -->
-        <div class="col-span-1 md:col-span-4">
-          <h1 class="text-3xl font-bold text-gray-800">
-            Report Card Generation
-          </h1>
-          <p class="text-gray-500 mt-1">
-            Generate and download student term report cards.
-          </p>
-
-          <!-- Quick Links -->
-          <div class="flex flex-wrap gap-3 mt-4">
-            <a
-              href="./results.html"
-              class="rounded p-3 bg-blue-500 text-white font-bold hover:bg-blue-600 transition"
-            >
-              <i class="fa-solid fa-arrow-left mr-2"></i>Back to Results
-            </a>
-            <a
-              href="./annual-report.html"
-              class="rounded p-3 bg-purple-500 text-white font-bold hover:bg-purple-600 transition"
-            >
-              <i class="fa-solid fa-file-lines mr-2"></i>Generate Annual Report
-            </a>
-          </div>
-        </div>
-
-        <!-- Selection Form -->
-        <div
-          class="col-span-1 md:col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 p-5"
+        <header
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2"
         >
-          <h2 class="text-xl font-bold text-gray-800 mb-4">
-            Select Student and Period
-          </h2>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+              My Class Attendance
+            </h1>
+            <p class="text-gray-500 text-sm" id="classNameDisplay">
+              Loading class...
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <input
+              type="date"
+              id="attendanceDate"
+              class="p-2 border border-gray-300 rounded-lg text-sm"
+            />
+          </div>
+        </header>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1"
-                >Student <span class="text-red-500">*</span></label
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-700">Student List</h2>
+            <div class="flex gap-4 text-sm font-semibold">
+              <span class="text-green-600"
+                ><i class="fa-solid fa-check"></i> Present:
+                <span id="presentCount">0</span></span
               >
-              <select
-                id="reportStudent"
-                class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500"
+              <span class="text-red-600"
+                ><i class="fa-solid fa-xmark"></i> Absent:
+                <span id="absentCount">0</span></span
               >
-                <option value="">Select a student</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1"
-                >Session <span class="text-red-500">*</span></label
-              >
-              <select
-                id="reportSession"
-                class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500"
-              >
-                <option value="">Select a session</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1"
-                >Term <span class="text-red-500">*</span></label
-              >
-              <select
-                id="reportTerm"
-                class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 text-sm outline-none focus:border-blue-500"
-              >
-                <option value="">Select a term</option>
-              </select>
             </div>
           </div>
-
-          <div class="flex gap-3 mt-4">
-            <button
-              id="generateReportBtn"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-semibold hover:bg-green-600 transition"
-            >
-              <i class="fa-solid fa-file-pdf mr-1"></i> Generate Report Card
-            </button>
-            <button
-              id="downloadPdfBtn"
-              class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 transition hidden"
-            >
-              <i class="fa-solid fa-download mr-1"></i> Download PDF
-            </button>
+          <div id="attendanceList" class="divide-y divide-gray-200">
+            <p class="p-4 text-center text-gray-500">Loading...</p>
           </div>
-
-          <div
-            id="reportMessage"
-            class="hidden mt-4 p-3 rounded-lg text-sm font-medium"
-          ></div>
-        </div>
-
-        <!-- Report Preview -->
-        <div class="col-span-1 md:col-span-4">
-          <div
-            id="reportLoading"
-            class="hidden p-10 text-center bg-white rounded-xl shadow-sm border border-gray-200"
-          >
-            <i
-              class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"
-            ></i>
-            <p class="text-gray-500">Generating report card...</p>
-          </div>
-
-          <div
-            id="reportPreview"
-            class="hidden bg-white rounded-xl shadow-sm border border-gray-200 p-8"
-          ></div>
         </div>
       </main>
 
-      <!-- Footer -->
       <footer
         class="col-span-1 md:col-span-5 p-6 text-center text-sm text-gray-500 border-t border-gray-200 bg-white"
       >
@@ -326,6 +254,6 @@
     <script src="../admin/js/auth.js"></script>
     <script src="../admin/js/utils.js"></script>
     <script src="../admin/js/guard.js"></script>
-    <script src="./js/report-card.js"></script>
+    <script src="./js/teacher-attendance.js"></script>
   </body>
 </html>

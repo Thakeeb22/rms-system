@@ -49,7 +49,7 @@ function renderTeacherInfo() {
   if (teacher.assignedClass && teacher.assignedClass.className) {
     assignedClassEl.textContent = teacher.assignedClass.className;
     assignedClassEl.title = "You are the Class Teacher for this class";
-    assignedClassEl.className = "text-blue-600 font-semibold";
+    assignedClassEl.className = "text-blue-100 font-semibold";
   } 
   // ✅ Fallback: If they are only a Subject Teacher
   else if (myAssignments && myAssignments.length > 0) {

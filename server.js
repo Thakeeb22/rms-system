@@ -7,8 +7,9 @@ const adminRoutes = require("./routes/adminRoutes");
 const pdfRoutes = require("./routes/pdfRoutes");
 const annualReportRoutes = require("./routes/annualReportRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
-const path = require("path")
+const path = require("path");
 const teacherRoutes = require("./routes/teacherRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
 
 dotenv.config();
 connectDB();
@@ -16,15 +17,16 @@ const app = express();
 
 // middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/pdf", pdfRoutes);
 app.use("/api/annual-report", annualReportRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use(express.static(path.join(__dirname,"views")))
+app.use(express.static(path.join(__dirname, "views")));
 app.use("/api/teacher", teacherRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 // test route
 app.get("/", (req, res) => {

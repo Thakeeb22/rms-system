@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto");
+
 const studentSchema = new mongoose.Schema(
   {
     admissionNumber: {
@@ -46,9 +48,22 @@ const studentSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    qrToken: {
+      type: String,
+      unique: true,
+      required: true,
+      immutable: true,
+      index: true,
+      default:()=>
+        "EDU-" + crypto.randomBytes(12).toString("hex").toUpperCase(),
+    },
+    photo: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 module.exports = mongoose.model("Student", studentSchema);

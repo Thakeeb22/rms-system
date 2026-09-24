@@ -477,3 +477,45 @@ document.addEventListener("DOMContentLoaded", async () => {
       deleteAssessment(deleteBtn.dataset.id, deleteBtn.dataset.student);
   });
 });
+// ==========================================
+// AUTO-FILL ATTENDANCE STATS IN MODAL
+// ==========================================
+const assessmentStudent = document.getElementById("assessmentStudent");
+const assessmentSession = document.getElementById("assessmentSession");
+const assessmentTerm = document.getElementById("assessmentTerm");
+
+async function autoFillAttendanceStats() {
+  const studentId = assessmentStudent?.value;
+  const sessionId = assessmentSession?.value;
+  const termId = assessmentTerm?.value;
+
+  // Only fetch if all three are selected
+  if (studentId && sessionId && termId) {
+    try {
+      const res = await apiRequest(
+        `/attendance/student-stats?studentId=${studentId}&sessionId=${sessionId}&termId=${termId}`,
+      );
+      if (res.ok) {
+        const stats = res.data?.data || {};
+
+        const schoolOpenedEl = document.getElementById("schoolOpened");
+        const presentEl = document.getElementById("present");
+        const absentEl = document.getElementById("absent");
+
+        if (schoolOpenedEl) schoolOpenedEl.value = stats.schoolOpened || 0;
+        if (presentEl) presentEl.value = stats.present || 0;
+        if (absentEl) absentEl.value = stats.absent || 0;
+      }
+    } catch (error) {
+      console.error("Failed to fetch attendance stats:", error);
+    }
+  }
+}
+
+// Trigger auto-fill whenever any of the three dropdowns change
+if (assessmentStudent)
+  assessmentStudent.addEventListener("change", autoFillAttendanceStats);
+if (assessmentSession)
+  assessmentSession.addEventListener("change", autoFillAttendanceStats);
+if (assessmentTerm)
+  assessmentTerm.addEventListener("change", autoFillAttendanceStats);

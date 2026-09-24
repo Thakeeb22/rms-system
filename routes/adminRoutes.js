@@ -93,6 +93,8 @@ const {
   deleteAssessment,
 } = require("../controllers/studentAssessmentController");
 
+const {getStudentsForIdCards} = require("../controllers/idCardController")
+
 router.get("/dashboard", auth, isAdmin, (req, res) => {
   res.status(200).json({
     success: true,
@@ -170,7 +172,7 @@ router.patch(
 router.post("/students", auth, isAdminOrTeacher, createStudent);
 router.get("/students", auth, isAdminOrTeacher, getAllStudents);
 router.get("/students/:id", auth, isAdminOrTeacher, getStudentById);
-router.put("/students/:id", auth, isAdmin, updateStudent);
+router.put("/students/:id", auth, isAdminOrTeacher, updateStudent);
 router.patch("/students/:id/graduate", auth, isAdmin, graduateStudent);
 router.patch("/students/:id/transfer", auth, isAdmin, transferStudent);
 router.patch("/students/:id/deactivate", auth, isAdmin, deactivateStudent);
@@ -202,5 +204,7 @@ router.get("/assessments", auth, isAdminOrTeacher, getAllAssessments);
 router.get("/assessments/:id", auth, isAdminOrTeacher, getAssessmentById);
 router.put("/assessments/:id", auth, isAdminOrTeacher, updateAssessment);
 router.delete("/assessments/:id", auth, isAdminOrTeacher, deleteAssessment);
+
+router.get("/id-cards/students", auth, isAdmin, getStudentsForIdCards)
 
 module.exports = router;

@@ -81,6 +81,20 @@
                 ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
               >
             </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="./attendance-view.html" class="flex items-center gap-3"
+                ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
+              >
+            </li>
+            <li
+              class="rounded hover:bg-blue-500 hover:text-white p-3 transition"
+            >
+              <a href="../attendance-scanner.html" class="flex items-center gap-3"
+                ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
+              >
+            </li>
           </ul>
         </nav>
 
@@ -162,6 +176,16 @@
               <li class="rounded hover:bg-blue-500 hover:text-white p-3">
                 <a href="./annual-report.html" class="flex items-center gap-3"
                   ><i class="fa-solid fa-file-lines"></i> Annual Reports</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="./attendance-view.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-clipboard-user"></i> Attendance</a
+                >
+              </li>
+              <li class="rounded hover:bg-blue-500 hover:text-white p-3">
+                <a href="../attendance-scanner.html" class="flex items-center gap-3"
+                  ><i class="fa-solid fa-qrcode"></i> Take Attendance (Scan)</a
                 >
               </li>
             </ul>
@@ -338,41 +362,43 @@
             </div>
           </div>
 
-          <!-- Attendance -->
+                    <!-- Attendance -->
           <div>
-            <h3 class="text-lg font-bold text-gray-800 mb-3">Attendance</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-3">
+              Attendance 
+              <span class="text-xs font-normal text-gray-500 ml-2">
+                <i class="fa-solid fa-info-circle"></i> Auto-calculated from daily records
+              </span>
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >School Opened</label
-                >
+                <label class="block text-sm font-medium text-gray-700 mb-1">School Opened</label>
                 <input
                   type="number"
                   id="schoolOpened"
                   min="0"
-                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                  readonly
+                  class="w-full p-2 bg-gray-100 rounded-lg border border-gray-300 outline-none cursor-not-allowed text-gray-600"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >Present</label
-                >
+                <label class="block text-sm font-medium text-gray-700 mb-1">Present</label>
                 <input
                   type="number"
                   id="present"
                   min="0"
-                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                  readonly
+                  class="w-full p-2 bg-gray-100 rounded-lg border border-gray-300 outline-none cursor-not-allowed text-gray-600"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >Absent</label
-                >
+                <label class="block text-sm font-medium text-gray-700 mb-1">Absent</label>
                 <input
                   type="number"
                   id="absent"
                   min="0"
-                  class="w-full p-2 bg-gray-50 rounded-lg border border-gray-300 outline-none focus:border-blue-500"
+                  readonly
+                  class="w-full p-2 bg-gray-100 rounded-lg border border-gray-300 outline-none cursor-not-allowed text-gray-600"
                 />
               </div>
             </div>

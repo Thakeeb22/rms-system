@@ -19,7 +19,7 @@ function getUser() {
 }
 function requireAuth() {
   if (!isAuthenticated()) {
-    window.location.href = "../login.html";
+    window.location.href = "/views/login.html";
   }
 }
 function requireRole(role) {
@@ -38,7 +38,7 @@ function logout() {
   localStorage.removeItem("user");
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("user");
-  window.location.href = "../login.html";
+  window.location.href = "/views/login.html";
 }
 function isAuthenticated() {
   return !!getToken();

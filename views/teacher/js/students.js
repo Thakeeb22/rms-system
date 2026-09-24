@@ -146,16 +146,27 @@ function renderStudents(students) {
         </span>
       </td>
       <td class="px-6 py-4 text-right">
-        ${
-          canPromote
-            ? `
-          <button class="promote-student-btn text-indigo-600 hover:text-indigo-800 text-sm font-semibold" data-id="${student._id}">
-            <i class="fa-solid fa-arrow-up mr-1"></i> Promote
-          </button>
-        `
-            : '<span class="text-xs text-gray-400">No actions</span>'
-        }
-      </td>
+  <div class="flex justify-end gap-3">
+    <!-- ✅ NEW: Edit Button -->
+    <button class="edit-student-btn text-blue-600 hover:text-blue-800 text-sm font-semibold" data-id="${student._id}">
+      <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+    </button>
+    <!-- ✅ NEW: View Button -->
+    <button class="view-student-btn text-blue-600 hover:text-blue-800 text-sm font-semibold" data-id="${student._id}">
+      <i class="fa-solid fa-eye mr-1"></i> View
+    </button>
+    
+    ${
+      canPromote
+        ? `
+      <button class="promote-student-btn text-indigo-600 hover:text-indigo-800 text-sm font-semibold" data-id="${student._id}">
+        <i class="fa-solid fa-arrow-up mr-1"></i> Promote
+      </button>
+    `
+        : '<span class="text-xs text-gray-400">No actions</span>'
+    }
+  </div>
+</td>
     </tr>
   `;
     })
@@ -335,6 +346,26 @@ async function createStudent(event) {
   event.preventDefault();
   const saveBtn = document.getElementById("createStudentBtn");
 
+  const photoInput = document.getElementById("teacherStudentPhoto");
+  let photoBase64 = "";
+
+  if (photoInput.files && photoInput.files[0]) {
+    if (photoInput.files[0].size > 2 * 1024 * 1024) {
+      showMessage(
+        "studentFormMessage",
+        "Photo must be less than 2MB.",
+        "error",
+      );
+      return;
+    }
+    try {
+      photoBase64 = await convertToBase64(photoInput.files[0]);
+    } catch (error) {
+      showMessage("studentFormMessage", "Error processing image.", "error");
+      return;
+    }
+  }
+
   const payload = {
     admissionNumber: document.getElementById("admissionNumber").value.trim(),
     fullname: document.getElementById("fullname").value.trim(),
@@ -342,6 +373,7 @@ async function createStudent(event) {
     guardianPhone: document.getElementById("guardianPhone").value.trim(),
     gender: document.getElementById("gender").value,
     dateOfBirth: document.getElementById("dateOfBirth").value,
+    photo: photoBase64,
   };
 
   if (
@@ -594,3 +626,229 @@ function showBulkPromoteMessage(message, type) {
   }
   bulkPromoteFormMessage.classList.remove("hidden");
 }
+// Helper function to convert File to Base64
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+// ==========================================
+// TEACHER EDIT STUDENT LOGIC
+// ==========================================
+const teacherEditModal = document.getElementById("teacherEditModal");
+const teacherEditForm = document.getElementById("teacherEditForm");
+let currentEditingTeacherStudentId = null;
+
+// 1. Listen for Edit Button Clicks (Event Delegation)
+document.addEventListener("click", (e) => {
+  const editBtn = e.target.closest(".edit-student-btn");
+  if (editBtn) {
+    openTeacherEditModal(editBtn.dataset.id);
+  }
+});
+
+// 2. Open Modal and Fetch Data
+async function openTeacherEditModal(studentId) {
+  currentEditingTeacherStudentId = studentId;
+  teacherEditModal.classList.remove("hidden");
+  teacherEditModal.classList.add("flex");
+
+  const saveBtn = document.getElementById("saveTeacherEditBtn");
+  saveBtn.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading...';
+  saveBtn.disabled = true;
+
+  try {
+    const res = await apiRequest(`/admin/students/${studentId}`);
+    if (!res.ok) throw new Error("Failed to load student.");
+    const student = res.data?.student;
+
+    document.getElementById("editTeacherFullname").value =
+      student.fullname || "";
+    document.getElementById("editTeacherGuardianName").value =
+      student.guardianName || "";
+    document.getElementById("editTeacherGuardianPhone").value =
+      student.guardianPhone || "";
+
+    saveBtn.innerHTML = "Save Changes";
+    saveBtn.disabled = false;
+  } catch (error) {
+    alert(error.message);
+    closeTeacherEditModal();
+  }
+}
+
+// 3. Handle Form Submission
+if (teacherEditForm) {
+  teacherEditForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!currentEditingTeacherStudentId) return;
+
+    const saveBtn = document.getElementById("saveTeacherEditBtn");
+    saveBtn.innerHTML =
+      '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
+    saveBtn.disabled = true;
+
+    const photoInput = document.getElementById("editTeacherStudentPhoto");
+    let photoBase64 = "";
+
+    if (photoInput.files && photoInput.files[0]) {
+      if (photoInput.files[0].size > 2 * 1024 * 1024) {
+        alert("Photo must be less than 2MB.");
+        saveBtn.innerHTML = "Save Changes";
+        saveBtn.disabled = false;
+        return;
+      }
+      try {
+        photoBase64 = await convertToBase64(photoInput.files[0]);
+      } catch (error) {
+        alert("Error processing image.");
+        saveBtn.innerHTML = "Save Changes";
+        saveBtn.disabled = false;
+        return;
+      }
+    }
+
+    const payload = {
+      fullname: document.getElementById("editTeacherFullname").value.trim(),
+      guardianName: document
+        .getElementById("editTeacherGuardianName")
+        .value.trim(),
+      guardianPhone: document
+        .getElementById("editTeacherGuardianPhone")
+        .value.trim(),
+        photo:photoBase64,
+    };
+
+    try {
+      const res = await apiRequest(
+        `/admin/students/${currentEditingTeacherStudentId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (!res.ok) throw new Error(res.data?.message || "Failed to update.");
+
+      alert("Student updated successfully!");
+      closeTeacherEditModal();
+      loadStudents(); // Refresh the table
+    } catch (error) {
+      alert(error.message);
+      saveBtn.innerHTML = "Save Changes";
+      saveBtn.disabled = false;
+    }
+  });
+}
+
+// 4. Close Modal Functions
+function closeTeacherEditModal() {
+  teacherEditModal.classList.add("hidden");
+  teacherEditModal.classList.remove("flex");
+  currentEditingTeacherStudentId = null;
+  teacherEditForm.reset();
+}
+
+document
+  .getElementById("closeTeacherEditModal")
+  ?.addEventListener("click", closeTeacherEditModal);
+document
+  .getElementById("cancelTeacherEditBtn")
+  ?.addEventListener("click", closeTeacherEditModal);
+document
+  .getElementById("teacherEditModalOverlay")
+  ?.addEventListener("click", closeTeacherEditModal);
+// ==========================================
+// TEACHER VIEW STUDENT MODAL LOGIC
+// ==========================================
+const teacherViewModal = document.getElementById("teacherViewStudentModal");
+const teacherViewModalOverlay = document.getElementById("teacherViewModalOverlay");
+
+// Helper to format date
+function formatViewDate(dateValue) {
+  if (!dateValue) return "—";
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+// 1. Listen for View Button Clicks
+document.addEventListener("click", (e) => {
+  const viewBtn = e.target.closest(".view-student-btn");
+  if (viewBtn) {
+    openTeacherViewModal(viewBtn.dataset.id);
+  }
+});
+
+// 2. Open Modal and Fetch Data
+async function openTeacherViewModal(studentId) {
+  if (!teacherViewModal) return;
+  
+  teacherViewModal.classList.remove("hidden");
+  teacherViewModal.classList.add("flex");
+  document.body.classList.add("overflow-hidden");
+
+  // Reset UI states
+  document.getElementById("teacherViewLoading").classList.remove("hidden");
+  document.getElementById("teacherViewContent").classList.add("hidden");
+  document.getElementById("teacherViewError").classList.add("hidden");
+
+  try {
+    // Fetch student details
+    const res = await apiRequest(`/admin/students/${studentId}`);
+    if (!res.ok) throw new Error(res.data?.message || "Failed to load student.");
+    
+    const student = res.data?.student;
+    if (!student) throw new Error("Student data not found.");
+
+    // Populate Modal Fields
+    document.getElementById("teacherViewName").textContent = student.fullname || "—";
+    document.getElementById("teacherViewAdmissionNumber").textContent = student.admissionNumber || "—";
+    document.getElementById("teacherViewGender").textContent = student.gender || "—";
+    document.getElementById("teacherViewClass").textContent = student.class?.className || "—";
+    document.getElementById("teacherViewDateOfBirth").textContent = formatViewDate(student.dateOfBirth);
+    document.getElementById("teacherViewGuardianName").textContent = student.guardianName || "—";
+    document.getElementById("teacherViewGuardianPhone").textContent = student.guardianPhone || "—";
+
+    // Status Badge
+    const statusEl = document.getElementById("teacherViewStatus");
+    const status = student.status || "Active";
+    statusEl.textContent = status;
+    statusEl.className = "inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold " + 
+      (status === "Active" ? "bg-green-100 text-green-700" : 
+       status === "Graduated" ? "bg-purple-100 text-purple-700" : 
+       "bg-gray-100 text-gray-700");
+
+    // Show Content
+    document.getElementById("teacherViewLoading").classList.add("hidden");
+    document.getElementById("teacherViewContent").classList.remove("hidden");
+
+  } catch (error) {
+    document.getElementById("teacherViewLoading").classList.add("hidden");
+    document.getElementById("teacherViewError").textContent = error.message;
+    document.getElementById("teacherViewError").classList.remove("hidden");
+  }
+}
+
+// 3. Close Modal Functions
+function closeTeacherViewModal() {
+  if (!teacherViewModal) return;
+  teacherViewModal.classList.add("hidden");
+  teacherViewModal.classList.remove("flex");
+  document.body.classList.remove("overflow-hidden");
+}
+
+document.getElementById("closeTeacherViewModal")?.addEventListener("click", closeTeacherViewModal);
+document.getElementById("closeTeacherViewModalBtn")?.addEventListener("click", closeTeacherViewModal);
+teacherViewModalOverlay?.addEventListener("click", closeTeacherViewModal);
+
+// Close on Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && teacherViewModal && !teacherViewModal.classList.contains("hidden")) {
+    closeTeacherViewModal();
+  }
+});
